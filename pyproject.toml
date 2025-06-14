@@ -1,13 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "quill"
 version = "0.1.0"
+description = "A command-line interface tool for interacting with Google Drive"
+readme = "README.md"
 requires-python = ">=3.8"
+license = "MIT"
+authors = [
+    { name = "Ignasi Fosch", email = "natx@y10k.ws" }
+]
+dependencies = [
+    "click>=8.1.7",
+    "google-api-python-client>=2.108.0",
+    "google-auth-httplib2>=0.1.1",
+    "google-auth-oauthlib>=1.1.0",
+]
 
-[tool.ruff]
-line-length = 88
-target-version = "py38" 
-
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
     "myst-parser>=3.0.1",
     "pre-commit>=3.6.0",
@@ -18,6 +30,9 @@ dev = [
     "sphinx-rtd-theme>=3.0.2",
     "ty>=0.0.1a9",
 ]
+
+[project.scripts]
+quill = "quill.cli:cli"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
