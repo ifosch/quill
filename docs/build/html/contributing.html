@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contributing Guide &mdash; Quill 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=a94fc882" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/custom.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Quill
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Contributing Guide</a><ul>
+<li><a class="reference internal" href="#development-environment">Development Environment</a></li>
+<li><a class="reference internal" href="#contribution-process">Contribution Process</a></li>
+<li><a class="reference internal" href="#pull-request-process">Pull Request Process</a></li>
+<li><a class="reference internal" href="#code-review-guidelines">Code Review Guidelines</a></li>
+<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
+<li><a class="reference internal" href="#getting-help">Getting Help</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Quill</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Contributing Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/contributing.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="contributing-guide">
+<h1>Contributing Guide<a class="headerlink" href="#contributing-guide" title="Link to this heading"></a></h1>
+<p>Thank you for your interest in contributing to the Quill project! This guide will help you understand how to contribute effectively.</p>
+<section id="development-environment">
+<h2>Development Environment<a class="headerlink" href="#development-environment" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Setup</strong></p>
+<ul class="simple">
+<li><p>Follow the <a class="reference internal" href="installation.html"><span class="std std-doc">Installation Guide</span></a></p></li>
+<li><p>Ensure all development tools are installed</p></li>
+<li><p>Configure your IDE with the recommended settings</p></li>
+</ul>
+</li>
+<li><p><strong>Code Style</strong></p>
+<ul class="simple">
+<li><p>Follow PEP 8 guidelines</p></li>
+<li><p>Use type hints</p></li>
+<li><p>Write docstrings in Google style</p></li>
+<li><p>Format code with ruff</p></li>
+<li><p>Run type checking with ty</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="contribution-process">
+<h2>Contribution Process<a class="headerlink" href="#contribution-process" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Before You Start</strong></p>
+<ul class="simple">
+<li><p>Check existing issues and pull requests</p></li>
+<li><p>Discuss major changes in issues first</p></li>
+<li><p>Ensure you have the latest code</p></li>
+</ul>
+</li>
+<li><p><strong>Making Changes</strong></p>
+<ul class="simple">
+<li><p>Create a new branch for your changes</p></li>
+<li><p>Make focused, atomic commits</p></li>
+<li><p>Write clear commit messages</p></li>
+<li><p>Update documentation as needed</p></li>
+</ul>
+</li>
+<li><p><strong>Testing</strong></p>
+<ul class="simple">
+<li><p>Write tests for new features</p></li>
+<li><p>Update tests for changed features</p></li>
+<li><p>Ensure all tests pass</p></li>
+<li><p>Maintain or improve test coverage</p></li>
+</ul>
+</li>
+<li><p><strong>Documentation</strong></p>
+<ul class="simple">
+<li><p>Update docstrings</p></li>
+<li><p>Add or update examples</p></li>
+<li><p>Update relevant documentation</p></li>
+<li><p>Build and check documentation</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="pull-request-process">
+<h2>Pull Request Process<a class="headerlink" href="#pull-request-process" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Before Submitting</strong></p>
+<ul class="simple">
+<li><p>Run all quality checks</p></li>
+<li><p>Ensure tests pass</p></li>
+<li><p>Update documentation</p></li>
+<li><p>Check for type errors</p></li>
+<li><p>Verify formatting</p></li>
+</ul>
+</li>
+<li><p><strong>Pull Request Guidelines</strong></p>
+<ul class="simple">
+<li><p>Use the PR template</p></li>
+<li><p>Link related issues</p></li>
+<li><p>Describe changes clearly</p></li>
+<li><p>Include test results</p></li>
+<li><p>Update documentation</p></li>
+</ul>
+</li>
+<li><p><strong>Review Process</strong></p>
+<ul class="simple">
+<li><p>Address review comments</p></li>
+<li><p>Keep PRs focused and small</p></li>
+<li><p>Respond to feedback promptly</p></li>
+<li><p>Update PR as needed</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="code-review-guidelines">
+<h2>Code Review Guidelines<a class="headerlink" href="#code-review-guidelines" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>What to Look For</strong></p>
+<ul class="simple">
+<li><p>Code style and formatting</p></li>
+<li><p>Type hints and annotations</p></li>
+<li><p>Test coverage and quality</p></li>
+<li><p>Documentation updates</p></li>
+<li><p>Performance considerations</p></li>
+</ul>
+</li>
+<li><p><strong>Review Process</strong></p>
+<ul class="simple">
+<li><p>Be constructive and specific</p></li>
+<li><p>Focus on the code, not the person</p></li>
+<li><p>Suggest improvements clearly</p></li>
+<li><p>Consider maintainability</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Code Quality</strong></p>
+<ul class="simple">
+<li><p>Write clean, maintainable code</p></li>
+<li><p>Follow project conventions</p></li>
+<li><p>Use appropriate abstractions</p></li>
+<li><p>Consider edge cases</p></li>
+</ul>
+</li>
+<li><p><strong>Testing</strong></p>
+<ul class="simple">
+<li><p>Write comprehensive tests</p></li>
+<li><p>Include edge cases</p></li>
+<li><p>Test error conditions</p></li>
+<li><p>Maintain high coverage</p></li>
+</ul>
+</li>
+<li><p><strong>Documentation</strong></p>
+<ul class="simple">
+<li><p>Keep docstrings up to date</p></li>
+<li><p>Document public APIs</p></li>
+<li><p>Include usage examples</p></li>
+<li><p>Update README when needed</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="getting-help">
+<h2>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Open an issue for bugs</p></li>
+<li><p>Use discussions for questions</p></li>
+<li><p>Join the community chat</p></li>
+<li><p>Check existing documentation</p></li>
+</ul>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Read the <a class="reference internal" href="installation.html"><span class="std std-doc">Installation Guide</span></a></p></li>
+<li><p>Review the <a class="reference internal" href="quickstart.html"><span class="std std-doc">Quick Start Guide</span></a></p></li>
+<li><p>Check the <a class="reference internal" href="#../api/index.html"><span class="xref myst">API Documentation</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Quill Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
