@@ -14,4 +14,4 @@ def config():
 @pytest.fixture
 def drive_client():
     """Provide a Drive client instance."""
-    return DriveClient() 
+    return DriveClient()

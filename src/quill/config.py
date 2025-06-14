@@ -1,6 +1,5 @@
 """Configuration management for Quill."""
 
-import os
 from pathlib import Path
 
 
@@ -22,4 +21,4 @@ class Config:
 
     def get_token_path(self):
         """Get the path to the token file."""
-        return str(self.token_file) 
+        return str(self.token_file)

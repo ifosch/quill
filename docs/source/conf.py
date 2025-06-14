@@ -83,4 +83,4 @@ html_js_files = ["custom.js"]
 
 # Build settings
 templates_path = ["_templates"]
-exclude_patterns = [] 
+exclude_patterns = []

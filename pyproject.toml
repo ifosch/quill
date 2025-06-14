@@ -7,7 +7,7 @@ name = "quill"
 version = "0.1.0"
 description = "A command-line interface tool for interacting with Google Drive"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = "MIT"
 authors = [
     { name = "Ignasi Fosch", email = "natx@y10k.ws" }
@@ -17,6 +17,9 @@ dependencies = [
     "google-api-python-client>=2.108.0",
     "google-auth-httplib2>=0.1.1",
     "google-auth-oauthlib>=1.1.0",
+    "pytest>=8.4.0",
+    "pytest-cov>=6.2.1",
+    "python-dateutil>=2.9.0.post0",
 ]
 
 [project.optional-dependencies]
@@ -42,3 +45,9 @@ addopts = "-v --cov=quill --cov-report=term-missing --cov-fail-under=80"
 [tool.ruff]
 line-length = 88
 target-version = "py38"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.13",
+    "ty>=0.0.1a9",
+]

@@ -1,1 +1,1 @@
-"""Google Drive integration module.""" 
+"""Google Drive integration module."""

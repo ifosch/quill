@@ -1,1 +1,1 @@
-"""Output formatting for CLI display.""" 
+"""Output formatting for CLI display."""

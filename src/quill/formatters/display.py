@@ -25,4 +25,4 @@ def format_file_list(files: List[DriveFile]) -> str:
             f"{file.name:<{name_width}}  {file.mime_type:<{type_width}}  {size:>10}"
         )
 
-    return "\n".join(rows) 
+    return "\n".join(rows)
