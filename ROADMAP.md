@@ -138,6 +138,7 @@ This document outlines the planned features and development goals for the Quill 
 - [ ] Usage analytics
 - [ ] Health checks
 
-## Known Issues
+## Accumulated Tech Debt
 
+- The `test_list_files_command` in `tests/unit/test_cli.py` is currently skipped due to a `FileNotFoundError`. This issue needs to be resolved to ensure proper testing of the `list-files` command.
 - **ty Error in `test_drive_file_creation`:** The type checker (`ty`) reports a false positive error in `tests/unit/drive/test_models.py` regarding missing arguments for `DriveFile.__init__`. This is due to `ty`'s pre-release status and limitations in static analysis. The test is correct, and the error can be ignored for now. Future updates to `ty` may resolve this issue. 

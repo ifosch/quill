@@ -1,6 +1,8 @@
 """Command-line interface for Quill."""
 
 import click
+from quill.drive.client import DriveClient
+from quill.formatters.display import format_file_list
 
 
 @click.group()
@@ -13,4 +15,6 @@ def cli():
 @cli.command()
 def list_files():
     """List files in your Google Drive."""
-    click.echo("Listing files...")  # Placeholder for actual implementation
+    client = DriveClient()
+    result = client.list_files()
+    click.echo(format_file_list(result["files"]))
