@@ -37,8 +37,3 @@ ENV/
 .vscode/
 *.swp
 *.swo
-
-# Misc
-.DS_Store
-
-PROMPTS.md 
