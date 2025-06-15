@@ -5,7 +5,7 @@ This guide will help you install and set up the Quill project.
 ## Prerequisites
 
 - Python 3.8 or higher
-- `uv` package manager
+- [uv](https://github.com/astral-sh/uv) for dependency management
 - Git
 
 ## Installation Steps
@@ -16,38 +16,57 @@ This guide will help you install and set up the Quill project.
    cd quill
    ```
 
-2. Create and activate a virtual environment:
+2. Install dependencies:
    ```bash
-   uv venv
-   source .venv/bin/activate  # On Unix/macOS
-   # or
-   .venv\Scripts\activate  # On Windows
+   uv sync
    ```
 
-3. Install development dependencies:
-   ```bash
-   uv add --dev ruff ty pytest sphinx sphinx-rtd-theme myst-parser
-   ```
-
-4. Verify the installation:
-   ```bash
-   ruff --version
-   ty --version
-   pytest --version
-   sphinx-build --version
-   ```
-
-## Development Setup
-
-1. Install pre-commit hooks (if configured):
+3. Install pre-commit hooks:
    ```bash
    pre-commit install
    ```
 
-2. Configure your IDE:
-   - Enable ruff for linting and formatting
-   - Enable ty for type checking
-   - Configure pytest for testing
+## Development Setup
+
+The project uses several tools to ensure code quality:
+
+- **ruff**: For linting and formatting
+- **ty**: For type checking
+- **pytest**: For testing
+- **pre-commit**: For automated checks before commits
+
+### Pre-commit Hooks
+
+The project includes pre-commit hooks that automatically run:
+- Code formatting and linting with ruff
+- Type checking with mypy
+- Tests with pytest and coverage checks
+
+These hooks run automatically before each commit. If any check fails, the commit will be blocked until the issues are fixed.
+
+To manually run the pre-commit checks:
+```bash
+pre-commit run --all-files
+```
+
+## Verification
+
+After installation, verify that everything is working:
+
+1. Run the tests:
+   ```bash
+   pytest
+   ```
+
+2. Check code formatting:
+   ```bash
+   ruff format .
+   ```
+
+3. Run type checking:
+   ```bash
+   ty
+   ```
 
 ## Troubleshooting
 

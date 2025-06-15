@@ -30,7 +30,7 @@ This guide will help you install and set up Quill.
 
 4. Configure Quill:
    - Place the credentials file in `~/.config/quill/credentials.json`
-   - Run `quill list` to authenticate with Google Drive
+   - Run `quill list-files` to authenticate with Google Drive
 
 ## Verifying Installation
 

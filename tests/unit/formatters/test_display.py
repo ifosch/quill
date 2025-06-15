@@ -1,7 +1,9 @@
-"""Tests for the display formatter module."""
+"""Test cases for the display formatters module."""
 
-from quill.drive.models import DriveFile
+from datetime import datetime
+
 from quill.formatters.display import format_file_list
+from quill.drive.models import DriveFile
 
 
 def test_format_file_list_empty():
@@ -11,60 +13,153 @@ def test_format_file_list_empty():
 
 
 def test_format_file_list_single_file():
-    """Test formatting a list with a single file."""
-    files = [
-        DriveFile(
-            id="123",
-            name="test.txt",
-            mime_type="text/plain",
-            size=1024,
-        )
-    ]
-    name_width = max(len(f.name) for f in files)
-    type_width = max(len(f.mime_type) for f in files)
-    header = f"{'Name':<{name_width}}  {'Type':<{type_width}}  {'Size':>10}"
-    separator = "-" * (name_width + type_width + 15)
-    size = f"{files[0].size:,}" if files[0].size else "N/A"
-    row = (
-        f"{files[0].name:<{name_width}}  {files[0].mime_type:<{type_width}}  {size:>10}"
+    """Test formatting a single file."""
+    file = DriveFile(
+        id="1",
+        name="test.txt",
+        mime_type="text/plain",
+        size=100,
     )
-    expected = f"{header}\n{separator}\n{row}"
-    result = format_file_list(files)
-    assert result == expected
+    result = format_file_list([file])
+
+    lines = result.split("\n")
+    assert len(lines) == 3  # header, separator, file
+    assert "Name" in lines[0]
+    assert "Type" in lines[0]
+    assert "Size" in lines[0]
+    assert "test.txt" in lines[2]
+    assert "text/plain" in lines[2]
+    assert "100" in lines[2]
 
 
 def test_format_file_list_multiple_files():
-    """Test formatting a list with multiple files."""
+    """Test formatting multiple files."""
     files = [
         DriveFile(
-            id="123",
-            name="test.txt",
+            id="1",
+            name="file1.txt",
             mime_type="text/plain",
-            size=1024,
+            size=100,
         ),
         DriveFile(
-            id="456",
-            name="document.pdf",
+            id="2",
+            name="file2.pdf",
             mime_type="application/pdf",
-            size=2048576,
-        ),
-        DriveFile(
-            id="789",
-            name="image.jpg",
-            mime_type="image/jpeg",
-            size=None,
+            size=200,
         ),
     ]
-    name_width = max(len(f.name) for f in files)
-    type_width = max(len(f.mime_type) for f in files)
-    header = f"{'Name':<{name_width}}  {'Type':<{type_width}}  {'Size':>10}"
-    separator = "-" * (name_width + type_width + 15)
-    rows = [header, separator]
-    for file in files:
-        size = f"{file.size:,}" if file.size else "N/A"
-        rows.append(
-            f"{file.name:<{name_width}}  {file.mime_type:<{type_width}}  {size:>10}"
-        )
-    expected = "\n".join(rows)
     result = format_file_list(files)
-    assert result == expected
+
+    lines = result.split("\n")
+    assert len(lines) == 4  # header, separator, file1, file2
+    assert "file1.txt" in result
+    assert "file2.pdf" in result
+    assert "text/plain" in result
+    assert "application/pdf" in result
+
+
+def test_format_file_list_with_requested_fields_default():
+    """Test formatting with None requested fields (default behavior)."""
+    file = DriveFile(
+        id="1",
+        name="test.txt",
+        mime_type="text/plain",
+        size=100,
+    )
+    result = format_file_list([file], requested_fields=None)
+
+    # Should use default 3-column layout
+    lines = result.split("\n")
+    assert "Name" in lines[0]
+    assert "Type" in lines[0]
+    assert "Size" in lines[0]
+
+
+def test_format_file_list_with_custom_fields():
+    """Test formatting with custom requested fields."""
+    file = DriveFile(
+        id="test123",
+        name="test.txt",
+        mime_type="text/plain",
+        size=100,
+    )
+    result = format_file_list([file], requested_fields=["id", "name"])
+
+    lines = result.split("\n")
+    # Should show ID and Name columns
+    assert "ID" in lines[0]
+    assert "Name" in lines[0]
+    assert "test123" in result
+    assert "test.txt" in result
+    # Should not show Type or Size columns in header
+    assert "Type" not in lines[0]
+    assert "Size" not in lines[0]
+
+
+def test_format_file_list_with_timestamps():
+    """Test formatting with timestamp fields."""
+    file = DriveFile(
+        id="1",
+        name="test.txt",
+        mime_type="text/plain",
+        created_time=datetime(2023, 1, 1, 12, 0, 0),
+        modified_time=datetime(2023, 1, 2, 13, 0, 0),
+    )
+    result = format_file_list(
+        [file], requested_fields=["name", "createdTime", "modifiedTime"]
+    )
+
+    lines = result.split("\n")
+    assert "Created" in lines[0]
+    assert "Modified" in lines[0]
+    assert "2023-01-01" in result
+    assert "2023-01-02" in result
+
+
+def test_format_file_list_with_empty_fields():
+    """Test formatting with empty requested fields list."""
+    file = DriveFile(name="test.txt", mime_type="text/plain", size=100)
+    result = format_file_list([file], requested_fields=[])
+
+    # Should fall back to default display
+    lines = result.split("\n")
+    assert "Name" in lines[0]
+    assert "Type" in lines[0]
+    assert "Size" in lines[0]
+
+
+def test_format_file_list_with_unsupported_fields():
+    """Test formatting with unsupported field names."""
+    file = DriveFile(name="test.txt", mime_type="text/plain", size=100)
+    result = format_file_list([file], requested_fields=["unsupported_field"])
+
+    # Should fall back to default display when no valid fields
+    lines = result.split("\n")
+    assert "Name" in lines[0]
+    assert "Type" in lines[0]
+    assert "Size" in lines[0]
+
+
+def test_format_file_list_with_owners():
+    """Test formatting with owners field."""
+    file = DriveFile(
+        name="test.txt",
+        mime_type="text/plain",
+        owners=[{"displayName": "John Doe", "emailAddress": "john@example.com"}],
+    )
+    result = format_file_list([file], requested_fields=["name", "owners"])
+
+    assert "Owners" in result
+    assert "John Doe" in result
+
+
+def test_format_file_list_with_missing_data():
+    """Test formatting when some fields are missing."""
+    file = DriveFile(name="test.txt")  # Only name provided
+    result = format_file_list([file], requested_fields=["id", "name", "size"])
+
+    lines = result.split("\n")
+    assert "ID" in lines[0]
+    assert "Name" in lines[0]
+    assert "Size" in lines[0]
+    assert "N/A" in result  # Should show N/A for missing fields

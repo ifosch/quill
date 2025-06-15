@@ -78,11 +78,43 @@ Options:
 - `--page-size`: Number of files to list per page (default: 10)
 - `--page-token`: Token for the next page of results
 - `--query`: Search query to filter files
-- `--fields`: Comma-separated list of fields to include in the response
+- `--fields`: Comma-separated list of fields to include in the response (default: id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink)
 
-Example with options:
+#### Available Fields
+The `--fields` option accepts any combination of these Google Drive API fields:
+- `id`: File ID
+- `name`: File name
+- `mimeType`: MIME type of the file
+- `size`: File size in bytes
+- `createdTime`: Creation timestamp
+- `modifiedTime`: Last modification timestamp
+- `description`: File description
+- `owners`: File owners information
+- `webViewLink`: Link to view the file in Google Drive
+- And many others supported by the Google Drive API
+
+**Note:** The fields `name`, `mimeType`, and `size` are always included to ensure proper display formatting.
+
+#### Examples
+
+List files with default fields:
+```bash
+quill list-files
+```
+
+List files with custom fields (only ID and name):
+```bash
+quill list-files --fields "id,name"
+```
+
+List files with pagination and search:
 ```bash
 quill list-files --page-size 20 --query "name contains 'report'"
+```
+
+List files with specific fields and search:
+```bash
+quill list-files --fields "id,name,size,modifiedTime" --query "mimeType='application/pdf'"
 ```
 
 ### View File Details

@@ -7,6 +7,7 @@ This document outlines the planned features and development goals for the Quill 
 ### File Management
 - [x] List files with pagination
 - [x] Get file metadata
+- [x] Custom field selection for file listing (--fields option)
 - [ ] Upload files
   - Support for different file types
   - Progress tracking

@@ -11,9 +11,9 @@ class DriveFile:
 
     def __init__(
         self,
-        id: str,
-        name: str,
-        mime_type: str,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        mime_type: Optional[str] = None,
         size: Optional[int] = None,
         created_time: Optional[datetime] = None,
         modified_time: Optional[datetime] = None,
@@ -35,8 +35,8 @@ class DriveFile:
             web_view_link: URL to view the file in a web browser.
         """
         self.id = id
-        self.name = name
-        self.mime_type = mime_type
+        self.name = name or "N/A"
+        self.mime_type = mime_type or "N/A"
         self.size = size
         self.created_time = created_time
         self.modified_time = modified_time
@@ -64,9 +64,9 @@ class DriveFile:
         )
 
         return cls(
-            id=data["id"],
-            name=data["name"],
-            mime_type=data["mimeType"],
+            id=data.get("id"),
+            name=data.get("name"),
+            mime_type=data.get("mimeType"),
             size=size,
             created_time=created_time,
             modified_time=modified_time,
@@ -81,11 +81,13 @@ class DriveFile:
 
     def __repr__(self) -> str:
         """Return a detailed string representation of the file."""
-        attrs = [
-            f"id='{self.id}'",
-            f"name='{self.name}'",
-            f"mime_type='{self.mime_type}'",
-        ]
+        attrs = []
+        if self.id is not None:
+            attrs.append(f"id='{self.id}'")
+        if self.name is not None:
+            attrs.append(f"name='{self.name}'")
+        if self.mime_type is not None:
+            attrs.append(f"mime_type='{self.mime_type}'")
         if self.size is not None:
             attrs.append(f"size={self.size}")
         if self.created_time is not None:

@@ -20,6 +20,7 @@ Quill is a Python project that follows modern development practices and tools. T
 
 installation
 quickstart
+commands
 contributing
 ```
 

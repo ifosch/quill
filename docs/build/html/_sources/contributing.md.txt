@@ -34,6 +34,8 @@ Thank you for your interest in contributing to the Quill project! This guide wil
    - Update tests for changed features
    - Ensure all tests pass
    - Maintain or improve test coverage
+   - Use `pytest-cov` to measure coverage (minimum 80%)
+   - Review coverage reports and address uncovered code
 
 4. **Documentation**
    - Update docstrings
@@ -68,7 +70,7 @@ Thank you for your interest in contributing to the Quill project! This guide wil
 1. **What to Look For**
    - Code style and formatting
    - Type hints and annotations
-   - Test coverage and quality
+   - Test coverage and quality (minimum 80%, enforced by pytest-cov)
    - Documentation updates
    - Performance considerations
 
