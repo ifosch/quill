@@ -1,5 +1,6 @@
 """Configuration management for Quill."""
 
+import os
 from pathlib import Path
 
 
@@ -8,7 +9,7 @@ class Config:
 
     def __init__(self):
         self.config_dir = Path.home() / ".config" / "quill"
-        self.credentials_file = self.config_dir / "credentials.json"
+        self.credentials_file = Path(os.environ.get("GOOGLE_DRIVE_CREDENTIALS", str(self.config_dir / "credentials.json")))
         self.token_file = self.config_dir / "token.json"
 
     def ensure_config_dir(self):

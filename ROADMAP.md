@@ -76,6 +76,12 @@ This document outlines the planned features and development goals for the Quill 
 - [ ] Concurrent operations
   - Parallel file transfers
   - Background operations
+- [ ] API Rate Limiting
+  - Implement exponential backoff for retries
+  - Handle quota exceeded errors
+  - Respect Google Drive API limits
+  - Monitor and log API usage
+  - Implement request queuing
 
 ### Security
 - [ ] Enhanced authentication
