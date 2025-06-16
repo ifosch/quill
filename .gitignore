@@ -6,6 +6,10 @@ __pycache__/
 .Python
 build/
 develop-eggs/
+
+# Documentation
+docs/build/
+docs/_build/
 dist/
 downloads/
 eggs/
