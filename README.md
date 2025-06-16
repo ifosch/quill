@@ -4,11 +4,14 @@ A command-line interface tool for interacting with Google Drive, providing a sim
 
 ## Features
 
-- List files and folders in Google Drive
-- View file details
-- Filter and search files
-- Pagination support
-- Beautiful terminal output
+- **Interactive file browsing** with intuitive pagination controls
+- List files and folders in Google Drive with advanced filtering
+- View detailed file information
+- **Smart pagination** with next/previous page navigation
+- Advanced search and query capabilities
+- Beautiful, clean terminal output
+- **Token-based pagination** support for large datasets
+- Flexible field selection for customized output
 
 ## Installation
 
@@ -67,23 +70,91 @@ You can provide your Google Drive API credentials in two ways:
 
 ## Usage
 
-### List Files
+### Interactive File Browsing
 
-List files in your Google Drive:
+**New!** Quill now provides an interactive pagination experience by default:
+
 ```bash
 quill list-files
 ```
 
-Options:
-- `--page-size`: Number of files to list per page (default: 10)
-- `--page-token`: Token for the next page of results
+This will show your files with a clean navigation interface:
+```
+My Document.pdf (1.2 MB) - PDF - Modified: 2024-01-15
+Project Report.docx (856 KB) - Word - Modified: 2024-01-14
+...
+[P]rev [N]ext [Q]uit: _
+```
+
+**Navigation:**
+- **N** or **n**: Go to next page
+- **P** or **p**: Go to previous page  
+- **Q** or **q**: Quit and return to command line
+
+### Non-Interactive Mode
+
+For scripting or automated use, disable interactive mode:
+```bash
+quill list-files --no-interactive
+```
+
+### List Files Options
+
+All list-files options work in both interactive and non-interactive modes:
+
+- `--page-size`: Number of files per page (default: 10)
+- `--page-token`: Specific page token for direct page access
 - `--query`: Search query to filter files
-- `--fields`: Comma-separated list of fields to include in the response (default: id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink)
+- `--fields`: Custom field selection for output
+- `--no-interactive`: Disable interactive pagination
+
+#### Advanced Search Examples
+
+**Interactive search with pagination:**
+```bash
+# Search for PDFs interactively
+quill list-files --query "mimeType='application/pdf'"
+
+# Find files modified in the last week (interactive)
+quill list-files --query "modifiedTime > '2024-01-01'"
+
+# Complex search with multiple conditions
+quill list-files --query "name contains 'report' and mimeType='application/pdf'"
+```
+
+**Non-interactive with specific pages:**
+```bash
+# Get exactly 20 files, no interaction
+quill list-files --page-size 20 --no-interactive
+
+# Use page token for specific page access
+quill list-files --page-token "ABC123token" --no-interactive
+```
+
+#### Field Customization
+
+**Default fields:** `id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink`
+
+Choose exactly what information you want to see:
+
+```bash
+# Use default fields (comprehensive output)
+quill list-files
+
+# Minimal output - just names and sizes
+quill list-files --fields "name,size"
+
+# Detailed output with timestamps and owners
+quill list-files --fields "name,size,modifiedTime,createdTime,owners"
+
+# Full metadata output (same as default)
+quill list-files --fields "id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink"
+```
 
 #### Available Fields
 The `--fields` option accepts any combination of these Google Drive API fields:
 - `id`: File ID
-- `name`: File name
+- `name`: File name  
 - `mimeType`: MIME type of the file
 - `size`: File size in bytes
 - `createdTime`: Creation timestamp
@@ -94,28 +165,6 @@ The `--fields` option accepts any combination of these Google Drive API fields:
 - And many others supported by the Google Drive API
 
 **Note:** The fields `name`, `mimeType`, and `size` are always included to ensure proper display formatting.
-
-#### Examples
-
-List files with default fields:
-```bash
-quill list-files
-```
-
-List files with custom fields (only ID and name):
-```bash
-quill list-files --fields "id,name"
-```
-
-List files with pagination and search:
-```bash
-quill list-files --page-size 20 --query "name contains 'report'"
-```
-
-List files with specific fields and search:
-```bash
-quill list-files --fields "id,name,size,modifiedTime" --query "mimeType='application/pdf'"
-```
 
 ### View File Details
 
@@ -142,6 +191,32 @@ quill list-files --help
 quill get-file --help
 ```
 
+## Architecture
+
+Quill features a clean, modular architecture:
+
+```
+src/quill/
+├── cli/                    # Command-line interface
+│   ├── __init__.py        # CLI registration and main entry
+│   ├── commands.py        # Click command definitions  
+│   ├── pagination.py      # Pagination state management
+│   └── navigation.py      # Interactive navigation logic
+├── drive/                 # Google Drive integration
+│   ├── client.py         # Drive API client
+│   └── models.py         # Data models
+├── formatters/           # Output formatting
+│   └── display.py       # Terminal display formatters
+├── auth.py              # Authentication handling
+└── config.py            # Configuration management
+```
+
+This modular design ensures:
+- **Separation of concerns** for maintainability
+- **Easy testing** with focused unit tests
+- **Extensibility** for future features
+- **Clean interfaces** between components
+
 ## Development
 
 ### Setup
@@ -150,9 +225,9 @@ quill get-file --help
    ```bash
    pip install -e ".[dev]"
    ```
-f
-2. Install pre-commit hooks:ff
-   ```bashf
+
+2. Install pre-commit hooks:
+   ```bash
    pre-commit install
    ```
 
@@ -168,22 +243,69 @@ Run tests with coverage (fails if coverage is less than 80%):
 pytest --cov=quill --cov-report=term-missing --cov-fail-under=80
 ```
 
-### Code Quality
+**Current test coverage: 82.72%** ✅ (exceeds 80% requirement)
 
-- Format code:
-  ```bash
-  ruff format .
-  ```
+### Code Quality Checks
 
-- Check code:
-  ```bash
-  ruff check .
-  ```
+Run the complete verification suite:
 
-- Type checking:
-  ```bash
-  ty check .
-  ```
+```bash
+# Format code
+ruff format .
+
+# Lint and auto-fix issues  
+ruff check . --fix
+
+# Type checking
+ty check .
+
+# Run tests with coverage
+pytest --cov=quill --cov-report=term-missing --cov-fail-under=80
+```
+
+**All checks must pass before committing changes.**
+
+### Documentation Generation
+
+Generate HTML documentation using Sphinx:
+
+```bash
+# Build documentation
+cd docs && sphinx-build -b html source build/html
+
+# View documentation locally
+# Open docs/build/html/index.html in your browser
+```
+
+**Documentation features:**
+- **API documentation** - Automatically generated from docstrings
+- **User guides** - Installation, quickstart, and usage examples
+- **Command reference** - Detailed CLI documentation
+- **Google-style docstrings** - Follow project conventions
+- **Markdown support** - Write docs in Markdown format
+
+The generated documentation includes comprehensive API reference, usage examples, and development guides.
+
+### Pre-commit Hooks
+
+The project uses pre-commit hooks to ensure code quality:
+- **ruff**: Code formatting and linting
+- **ty**: Type checking
+- **pytest**: Test execution
+
+Hooks run automatically on commit, or manually:
+```bash
+pre-commit run --all-files
+```
+
+### Project Standards
+
+- **Test Coverage**: Minimum 80% (currently 82.72%)
+- **Type Safety**: Full type annotation coverage with `ty`
+- **Code Quality**: Enforced via `ruff` linting
+- **Commit Messages**: Follow conventional commit format
+- **Interactive Features**: Default to user-friendly interactive mode
+- **Backward Compatibility**: Support non-interactive mode for automation
 
 ## Troubleshooting
 
