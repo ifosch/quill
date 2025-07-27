@@ -5,17 +5,20 @@ The `export` command allows you to download and export Google Workspace document
 ## Overview
 
 ```bash
-quill export <file_id> [OPTIONS]
+quill export [<file_id>] [OPTIONS]
 ```
 
 The export command supports Google Workspace documents (Docs, Sheets, Slides, Drawings, Forms) and automatically selects the optimal export format based on the file type. You can override the default format using the `--format` option.
 
+You can export files using either a file ID or a search query. File ID and query options are mutually exclusive.
+
 ## Arguments
 
-- `file_id` (required): The Google Drive file ID of the document to export
+- `file_id` (optional): The Google Drive file ID of the document to export. Required if `--query` is not provided.
 
 ## Options
 
+- `--query TEXT`: Search query to find files to export (e.g., "name contains 'report'")
 - `--output TEXT`: Output path for the exported file. If not provided, saves to current directory with document name
 - `--format [html|pdf|xlsx|csv]`: Export format (auto-detected if not specified)
 - `--verbose`: Show detailed progress information
@@ -32,6 +35,68 @@ Quill automatically selects the optimal export format based on the file's MIME t
 | Google Slides | PDF | PDF format for presentations |
 | Google Drawings | PNG | PNG image format |
 | Google Forms | ZIP | HTML export in ZIP format |
+
+## Query-Based Export
+
+Instead of using a file ID, you can export files by searching for them using Google Drive's query syntax:
+
+### Query Examples
+
+```bash
+# Export a file by exact name
+quill export --query "name = 'My Important Document'"
+
+# Export files containing specific text in the name
+quill export --query "name contains 'report'"
+
+# Export files by MIME type
+quill export --query "mimeType = 'application/vnd.google-apps.document'"
+
+# Export files modified recently
+quill export --query "modifiedTime > '2024-01-01'"
+
+# Export files by owner
+quill export --query "'me' in owners"
+
+# Complex queries with multiple conditions
+quill export --query "name contains 'report' and mimeType = 'application/vnd.google-apps.document'"
+```
+
+### Query Behavior
+
+The export command handles query results in different ways:
+
+**Single Match:**
+- Automatically exports the found file
+- Shows confirmation message with file details
+
+**Multiple Matches:**
+- Displays all matching files with IDs, names, and MIME types
+- Prompts you to use a specific file ID for export
+- Example output:
+  ```
+  Multiple files found matching the query:
+  
+    1abc123def456ghi789jkl012mno345pqr678stu901vwx - Report 2024 (application/vnd.google-apps.document)
+    2def456ghi789jkl012mno345pqr678stu901vwx - Report 2023 (application/vnd.google-apps.document)
+  
+  Please use the file ID to export a specific file.
+  ```
+
+**No Matches:**
+- Displays "No files found" message
+- Exits with error code
+
+### Query Syntax
+
+Quill supports the full Google Drive API query syntax, including:
+
+- **String matching**: `name = 'exact name'`, `name contains 'text'`
+- **Date comparisons**: `modifiedTime > '2024-01-01'`, `createdTime < '2023-12-31'`
+- **MIME type filtering**: `mimeType = 'application/vnd.google-apps.document'`
+- **Owner filtering**: `'me' in owners`, `'user@example.com' in owners`
+- **Logical operators**: `and`, `or`, `not`
+- **Parent folder**: `'folder_id' in parents`
 
 ## Supported Formats
 
@@ -57,6 +122,27 @@ quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
 
 # Export a Google Slides presentation to PDF (default)
 quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+```
+
+### Query-Based Export
+
+Export files by searching for them instead of using file IDs:
+
+```bash
+# Export a file by exact name
+quill export --query "name = 'My Important Document'"
+
+# Export files containing specific text
+quill export --query "name contains 'report'"
+
+# Export files by MIME type
+quill export --query "mimeType = 'application/vnd.google-apps.document'"
+
+# Export files modified recently
+quill export --query "modifiedTime > '2024-01-01'"
+
+# Export with verbose output to see search details
+quill export --query "name contains 'report'" --verbose
 ```
 
 ### Custom Format Export

@@ -95,7 +95,11 @@ def list_files(page_size, page_token, query, fields, no_interactive):
 
 
 @click.command()
-@click.argument("file_id", required=True)
+@click.argument("file_id", required=False)
+@click.option(
+    "--query",
+    help="Search query to find files to export (e.g., \"name contains 'report'\")",
+)
 @click.option(
     "--output",
     default=None,
@@ -111,7 +115,7 @@ def list_files(page_size, page_token, query, fields, no_interactive):
     is_flag=True,
     help="Show detailed progress information",
 )
-def export(file_id, output, format, verbose):
+def export(file_id, query, output, format, verbose):
     """Export a file from Google Drive.
     
     Supports Google Workspace documents (Docs, Sheets, Slides) with smart format defaults:
@@ -123,17 +127,61 @@ def export(file_id, output, format, verbose):
     
     Use --format to override the default format. Supported formats: html, pdf, xlsx, csv
     
-    FILE_ID is the Google Drive file ID of the document to export.
+    Either FILE_ID or --query must be provided. Use --query to search for files by name or other criteria.
     """
+    # Validate that either file_id or query is provided
+    if not file_id and not query:
+        raise click.ClickException("Either FILE_ID or --query must be provided")
+    
+    if file_id and query:
+        raise click.ClickException("FILE_ID and --query are mutually exclusive")
+    
     try:
         client = DriveClient()
         
-        if verbose:
-            click.echo(f"Exporting file with ID: {file_id}")
+        # Handle query-based export
+        if query:
+            if verbose:
+                click.echo(f"Searching for files with query: {query}")
+            
+            # Search for files matching the query
+            search_result = client.list_files(
+                page_size=100,  # Get more results to handle multiple matches
+                query=query,
+                fields=["id", "name", "mimeType"]
+            )
+            
+            files = search_result["files"]
+            
+            if not files:
+                click.echo("No files found matching the query.", err=True)
+                raise click.ClickException("No files found")
+            
+            if len(files) > 1:
+                # Multiple matches - show the options
+                click.echo("Multiple files found matching the query:", err=True)
+                click.echo("", err=True)
+                for file in files:
+                    click.echo(f"  {file.id} - {file.name} ({file.mime_type})", err=True)
+                click.echo("", err=True)
+                click.echo("Please use the file ID to export a specific file.", err=True)
+                raise click.ClickException("Multiple files found")
+            
+            # Single match - proceed with export
+            file = files[0]
+            if verbose:
+                click.echo(f"Found single match: {file.name} (ID: {file.id})")
+            
+            result_path = client.export(file.id, output_path=output, format=format)
+            click.echo(f"Successfully exported to: {result_path}")
         
-        result_path = client.export(file_id, output_path=output, format=format)
-        
-        click.echo(f"Successfully exported to: {result_path}")
+        # Handle file ID-based export (existing functionality)
+        else:
+            if verbose:
+                click.echo(f"Exporting file with ID: {file_id}")
+            
+            result_path = client.export(file_id, output_path=output, format=format)
+            click.echo(f"Successfully exported to: {result_path}")
         
     except FileNotFoundError as e:
         click.echo(f"Error: {str(e)}", err=True)

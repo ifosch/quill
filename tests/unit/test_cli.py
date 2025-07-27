@@ -273,6 +273,7 @@ def test_list_files_with_complex_query(mock_drive_client):
     # Should still show next page token since we have one
     assert "Next page token:" in result.output
     assert "next_page_123" in result.output
+    assert "Use --page-token option to get the next page" in result.output
 
 
 @patch("quill.cli.commands.DriveClient")

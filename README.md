@@ -182,11 +182,14 @@ quill get-file 1abc...xyz
 
 ### Export Files
 
-Export Google Workspace documents with smart format defaults:
+Export Google Workspace documents with smart format defaults. You can export files using either a file ID or a search query:
 
 ```bash
-# Export with automatic format selection
+# Export by file ID (automatic format selection)
 quill export <file_id>
+
+# Export by search query (finds and exports single match)
+quill export --query "name contains 'My Document'"
 
 # Export with custom format
 quill export <file_id> --format pdf
@@ -207,6 +210,31 @@ Quill automatically selects the optimal export format based on file type:
 - **Google Slides** → PDF
 - **Google Drawings** → PNG
 - **Google Forms** → ZIP (HTML export)
+
+#### Query-Based Export
+
+Export files by searching for them instead of using file IDs:
+
+```bash
+# Export a single file by name
+quill export --query "name = 'My Important Document'"
+
+# Export files containing specific text
+quill export --query "name contains 'report'"
+
+# Export files by MIME type
+quill export --query "mimeType = 'application/vnd.google-apps.document'"
+
+# Export files modified recently
+quill export --query "modifiedTime > '2024-01-01'"
+```
+
+**Query Behavior:**
+- **Single match**: Automatically exports the found file
+- **Multiple matches**: Shows all matching files with IDs and names for you to choose
+- **No matches**: Displays an appropriate error message
+
+**Note:** File ID and query options are mutually exclusive - use one or the other.
 
 #### Supported Formats
 
@@ -298,7 +326,7 @@ Run tests with coverage (fails if coverage is less than 80%):
 pytest --cov=quill --cov-report=term-missing --cov-fail-under=80
 ```
 
-**Current test coverage: 95.51%** ✅ (exceeds 80% requirement)
+**Current test coverage: 95.78%** ✅ (exceeds 80% requirement)
 
 ### Code Quality Checks
 
@@ -355,7 +383,7 @@ pre-commit run --all-files
 
 ### Project Standards
 
-- **Test Coverage**: Minimum 80% (currently 95.51%)
+- **Test Coverage**: Minimum 80% (currently 95.78%)
 - **Type Safety**: Full type annotation coverage with `ty`
 - **Code Quality**: Enforced via `ruff` linting
 - **Commit Messages**: Follow conventional commit format

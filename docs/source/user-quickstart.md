@@ -71,23 +71,30 @@ quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx
 
 ### 5. Export Google Workspace Documents
 
-Export your Google Workspace documents with smart defaults:
+Export your Google Workspace documents with smart defaults. You can export using either a file ID or a search query:
 
 ```bash
-# Export with automatic format selection
+# Export by file ID (automatic format selection)
 quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+
+# Export by search query (finds and exports single match)
+quill export --query "name = 'My Important Document'"
 
 # Export with custom format
 quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
 
 # Export to specific location
 quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --output "My Document.pdf"
+
+# Export with verbose output
+quill export --query "name contains 'report'" --verbose
 ```
 
 ## Common Workflows
 
 ### Workflow 1: Find and Export a Document
 
+**Method 1: Traditional approach (search then export)**
 ```bash
 # 1. Search for your document
 quill list-files --query "name contains 'Project Report'"
@@ -95,6 +102,12 @@ quill list-files --query "name contains 'Project Report'"
 # 2. Copy the file ID from the output
 # 3. Export the document
 quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
+```
+
+**Method 2: Direct query-based export (new!)**
+```bash
+# Export directly by searching for the document
+quill export --query "name contains 'Project Report'" --format pdf
 ```
 
 ### Workflow 2: Export Multiple Spreadsheets
@@ -108,7 +121,37 @@ quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format xlsx --outp
 quill export 2def456ghi789jkl012mno345pqr678stu901vwx --format xlsx --output "Sheet2.xlsx"
 ```
 
-### Workflow 3: Backup Presentations
+### Workflow 3: Query-Based Export Examples
+
+**Export recent documents:**
+```bash
+# Export documents modified in the last week
+quill export --query "modifiedTime > '2024-01-01' and mimeType='application/vnd.google-apps.document'"
+
+# Export files by owner
+quill export --query "'me' in owners and name contains 'report'"
+```
+
+**Export specific file types:**
+```bash
+# Export all Google Docs to HTML
+quill export --query "mimeType='application/vnd.google-apps.document'"
+
+# Export all Google Sheets to Excel
+quill export --query "mimeType='application/vnd.google-apps.spreadsheet'" --format xlsx
+```
+
+**Handle multiple matches:**
+```bash
+# If multiple files match, Quill will show you the options
+quill export --query "name contains 'report'"
+# Output: Multiple files found matching the query:
+#         1abc123... - Report 2024 (application/vnd.google-apps.document)
+#         2def456... - Report 2023 (application/vnd.google-apps.document)
+#         Please use the file ID to export a specific file.
+```
+
+### Workflow 4: Backup Presentations
 
 ```bash
 # 1. Find all Google Slides presentations
@@ -141,11 +184,18 @@ quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --verbose
 
 ### 2. Combine Search and Export
 
+**Method 1: Traditional approach**
 ```bash
 # Find and export in one workflow
 quill list-files --query "name contains 'report'" --fields "id,name" --no-interactive
 # Copy the ID and export
 quill export <file_id> --format pdf
+```
+
+**Method 2: Direct query-based export (simpler!)**
+```bash
+# Export directly by searching
+quill export --query "name contains 'report'" --format pdf
 ```
 
 ### 3. Batch Export with Scripting
@@ -193,6 +243,16 @@ quill get-file --help
    - Try with `--verbose` for more details
    - Check your internet connection
    - Verify the file is a Google Workspace document
+
+5. **"Multiple files found" error**
+   - Your query matched multiple files
+   - Use a more specific query to narrow down results
+   - Or use the file ID approach for the specific file you want
+
+6. **"No files found" error**
+   - Check your query syntax
+   - Verify the search terms are correct
+   - Try a broader search query
 
 ## Next Steps
 
