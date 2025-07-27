@@ -34,7 +34,7 @@ class TestDriveClientDownload:
             client.service = mock_service
             
             # This should fail initially - method doesn't exist yet
-            client.export_google_doc_html(file_id, str(output_path))
+            client.export(file_id, str(output_path))
             
             # Verify the API was called correctly
             mock_service.files().export.assert_called_once_with(
@@ -82,7 +82,7 @@ class TestDriveClientDownload:
                 client.service = mock_service
                 
                 # This should fail - method doesn't exist yet
-                result_path = client.export_google_doc_html(file_id)
+                result_path = client.export(file_id)
                 
                 # Verify file was created with expected name
                 expected_path = Path("My Document.zip")
@@ -123,7 +123,7 @@ class TestDriveClientDownload:
         
         # Should raise FileNotFoundError
         with pytest.raises(FileNotFoundError, match="File with ID nonexistent_file_id not found"):
-            client.export_google_doc_html(file_id)
+            client.export(file_id)
 
     def test_export_google_doc_html_permission_error(self):
         """Test error handling for permission denied."""
@@ -148,4 +148,29 @@ class TestDriveClientDownload:
         
         # Should raise PermissionError
         with pytest.raises(PermissionError, match="Insufficient permissions"):
-            client.export_google_doc_html(file_id) 
+            client.export(file_id)
+
+    def test_export_google_doc_html_generic_error(self):
+        """Test error handling for generic API errors."""
+        from googleapiclient.errors import HttpError
+        
+        file_id = "error_file_id"
+        
+        # Mock HTTP 500 error (generic server error)
+        mock_error_response = Mock()
+        mock_error_response.status = 500
+        mock_http_error = HttpError(mock_error_response, b"Internal server error")
+        
+        # Mock service to raise error on export
+        mock_service = MagicMock()
+        mock_get_request = MagicMock()
+        mock_get_request.execute.return_value = {"name": "Test Doc"}
+        mock_service.files().get.return_value = mock_get_request
+        mock_service.files().export.side_effect = mock_http_error
+        
+        client = DriveClient()
+        client.service = mock_service
+        
+        # Should raise RuntimeError for generic HTTP errors
+        with pytest.raises(RuntimeError, match="Failed to export file"):
+            client.export(file_id) 

@@ -92,3 +92,46 @@ def list_files(page_size, page_token, query, fields, no_interactive):
     else:
         # Use interactive pagination by default
         interactive_pagination(client, page_size, query, all_fields, requested_fields)
+
+
+@click.command()
+@click.argument("file_id", required=True)
+@click.option(
+    "--output",
+    default=None,
+    help="Output path for the exported file. If not provided, saves to current directory with document name.",
+)
+@click.option(
+    "--verbose",
+    is_flag=True,
+    help="Show detailed progress information",
+)
+def export(file_id, output, verbose):
+    """Export a file from Google Drive.
+    
+    Currently supports Google Docs export to HTML format (ZIP file).
+    
+    FILE_ID is the Google Drive file ID of the document to export.
+    
+    The exported file will be saved as a ZIP file containing the HTML representation
+    of the Google Doc, including embedded images and styling.
+    """
+    try:
+        client = DriveClient()
+        
+        if verbose:
+            click.echo(f"Exporting file with ID: {file_id}")
+        
+        result_path = client.export(file_id, output)
+        
+        click.echo(f"Successfully exported to: {result_path}")
+        
+    except FileNotFoundError as e:
+        click.echo(f"Error: {str(e)}", err=True)
+        raise click.ClickException("File not found")
+    except PermissionError as e:
+        click.echo(f"Error: {str(e)}", err=True)
+        raise click.ClickException("Permission denied")
+    except Exception as e:
+        click.echo(f"Error: {str(e)}", err=True)
+        raise click.ClickException("Export failed")

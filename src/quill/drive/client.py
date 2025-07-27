@@ -128,13 +128,15 @@ class DriveClient:
                 ) from error
             raise RuntimeError(f"Failed to get file: {error}") from error
 
-    def export_google_doc_html(self, file_id: str, output_path: Optional[str] = None) -> str:
-        """Export a Google Doc to HTML format (ZIP file).
+    def export(self, file_id: str, output_path: Optional[str] = None) -> str:
+        """Export a file from Google Drive.
+
+        Currently supports Google Docs export to HTML format (ZIP file).
 
         Args:
-            file_id: The ID of the Google Doc to export.
+            file_id: The ID of the file to export.
             output_path: Optional path where to save the file. If not provided,
-                        saves to current directory with the document name.
+                         saves to current directory with the document name.
 
         Returns:
             String path where the file was saved.
