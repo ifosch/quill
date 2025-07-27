@@ -96,6 +96,28 @@ def test_format_file_list_with_custom_fields():
     assert "Size" not in lines[0]
 
 
+def test_format_file_list_with_complete_google_drive_id():
+    """Test formatting with realistic Google Drive ID length (should not be truncated)."""
+    # Realistic Google Drive ID (44 characters) - fake but same length as actual Google Drive IDs
+    full_drive_id = "1ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqr"
+    file = DriveFile(
+        id=full_drive_id,
+        name="test.txt",
+        mime_type="text/plain",
+        size=100,
+    )
+    result = format_file_list([file], requested_fields=["id", "name"])
+
+    lines = result.split("\n")
+    # Should show complete ID without truncation
+    assert "ID" in lines[0]
+    assert "Name" in lines[0]
+    assert full_drive_id in result
+    # Should NOT contain truncation indicator
+    assert "..." not in result
+    assert "test.txt" in result
+
+
 def test_format_file_list_with_timestamps():
     """Test formatting with timestamp fields."""
     file = DriveFile(

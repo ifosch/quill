@@ -49,7 +49,7 @@ def _format_dynamic_display(files: List[DriveFile], requested_fields: List[str])
     """Format files showing only the requested fields in a dynamic layout."""
     # Define field display configuration
     field_config = {
-        "id": {"header": "ID", "width": 30, "align": "<"},
+        "id": {"header": "ID", "width": 45, "align": "<"},
         "name": {"header": "Name", "width": 40, "align": "<"},
         "mimeType": {"header": "Type", "width": 25, "align": "<"},
         "size": {"header": "Size", "width": 10, "align": ">"},
