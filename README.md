@@ -12,6 +12,8 @@ A command-line interface tool for interacting with Google Drive, providing a sim
 - Beautiful, clean terminal output
 - **Token-based pagination** support for large datasets
 - Flexible field selection for customized output
+- **Export Google Workspace documents** with smart format defaults
+- **Format override options** for custom export preferences
 
 ## Installation
 
@@ -178,6 +180,58 @@ Example:
 quill get-file 1abc...xyz
 ```
 
+### Export Files
+
+Export Google Workspace documents with smart format defaults:
+
+```bash
+# Export with automatic format selection
+quill export <file_id>
+
+# Export with custom format
+quill export <file_id> --format pdf
+
+# Export to specific output path
+quill export <file_id> --output "my-document.pdf"
+
+# Export with verbose output
+quill export <file_id> --verbose
+```
+
+#### Smart Format Defaults
+
+Quill automatically selects the optimal export format based on file type:
+
+- **Google Docs** → HTML (ZIP file with embedded resources)
+- **Google Sheets** → XLSX (Excel format)
+- **Google Slides** → PDF
+- **Google Drawings** → PNG
+- **Google Forms** → ZIP (HTML export)
+
+#### Supported Formats
+
+Override the default format with these options:
+- `html`: HTML export (ZIP file for Google Docs)
+- `pdf`: PDF export
+- `xlsx`: Excel format (for spreadsheets)
+- `csv`: CSV format (for spreadsheets)
+
+#### Examples
+
+```bash
+# Export a Google Doc to HTML (default)
+quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+
+# Export a Google Sheet to Excel
+quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format xlsx
+
+# Export a presentation to PDF
+quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
+
+# Export to a specific filename
+quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --output "My Report.pdf"
+```
+
 ### Help
 
 Get help on available commands:
@@ -189,6 +243,7 @@ Get help on specific commands:
 ```bash
 quill list-files --help
 quill get-file --help
+quill export --help
 ```
 
 ## Architecture
@@ -243,7 +298,7 @@ Run tests with coverage (fails if coverage is less than 80%):
 pytest --cov=quill --cov-report=term-missing --cov-fail-under=80
 ```
 
-**Current test coverage: 82.72%** ✅ (exceeds 80% requirement)
+**Current test coverage: 95.51%** ✅ (exceeds 80% requirement)
 
 ### Code Quality Checks
 
@@ -300,7 +355,7 @@ pre-commit run --all-files
 
 ### Project Standards
 
-- **Test Coverage**: Minimum 80% (currently 82.72%)
+- **Test Coverage**: Minimum 80% (currently 95.51%)
 - **Type Safety**: Full type annotation coverage with `ty`
 - **Code Quality**: Enforced via `ruff` linting
 - **Commit Messages**: Follow conventional commit format

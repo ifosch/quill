@@ -10,6 +10,30 @@ from quill.drive.client import DriveClient
 from quill.drive.models import DriveFile
 
 
+@pytest.fixture
+def mock_google_drive_service():
+    """Mock Google Drive API service."""
+    with patch('quill.drive.client.DriveClient.get_service') as mock_get_service:
+        mock_service = MagicMock()
+        mock_get_service.return_value = mock_service
+        # Set up the service chain properly
+        mock_files = MagicMock()
+        mock_service.files.return_value = mock_files
+        yield mock_service
+
+
+@pytest.fixture
+def mock_google_file_metadata():
+    """Mock Google Drive file metadata retrieval."""
+    with patch('quill.drive.client.DriveClient.get_service') as mock_get_service:
+        mock_service = MagicMock()
+        mock_get_service.return_value = mock_service
+        mock_get_request = MagicMock()
+        mock_get_request.execute.return_value = {"name": "Test Document"}
+        mock_service.files.return_value.get.return_value = mock_get_request
+        yield mock_get_request.execute
+
+
 class TestDriveClientDownload:
     """Tests for DriveClient download functionality."""
 
@@ -17,34 +41,34 @@ class TestDriveClientDownload:
         """Test exporting a Google Doc to HTML format (ZIP file)."""
         # Test data
         file_id = "1test_google_doc_id"
-        mock_export_content = b"fake_html_zip_content"
+        mock_google_export_content = b"fake_html_zip_content"
         
         # Create a temporary directory for testing
         with tempfile.TemporaryDirectory() as temp_dir:
             output_path = Path(temp_dir) / "test_document.zip"
             
             # Mock the Google Drive API service
-            mock_service = MagicMock()
-            mock_export_request = MagicMock()
-            mock_export_request.execute.return_value = mock_export_content
-            mock_service.files().export.return_value = mock_export_request
+            mock_google_drive_service = MagicMock()
+            mock_google_export_request = MagicMock()
+            mock_google_export_request.execute.return_value = mock_google_export_content
+            mock_google_drive_service.files().export.return_value = mock_google_export_request
             
-            # Setup client with mocked service
+            # Setup client with mocked Google service
             client = DriveClient()
-            client.service = mock_service
+            client.service = mock_google_drive_service
             
             # This should fail initially - method doesn't exist yet
             client.export(file_id, str(output_path))
             
-            # Verify the API was called correctly
-            mock_service.files().export.assert_called_once_with(
+            # Verify the Google API was called correctly
+            mock_google_drive_service.files().export.assert_called_once_with(
                 fileId=file_id,
                 mimeType="application/zip"  # HTML export format for Google Docs
             )
             
             # Verify the file was saved
             assert output_path.exists()
-            assert output_path.read_bytes() == mock_export_content
+            assert output_path.read_bytes() == mock_google_export_content
 
     def test_export_google_doc_html_to_current_directory(self):
         """Test exporting Google Doc to HTML in current directory with auto-naming."""
@@ -65,21 +89,21 @@ class TestDriveClientDownload:
             
             try:
                 # Mock the Google Drive API service
-                mock_service = MagicMock()
+                mock_google_drive_service = MagicMock()
                 
-                # Mock get file metadata
-                mock_get_request = MagicMock()
-                mock_get_request.execute.return_value = mock_file_data
-                mock_service.files().get.return_value = mock_get_request
+                # Mock Google's get file metadata
+                mock_google_get_request = MagicMock()
+                mock_google_get_request.execute.return_value = mock_file_data
+                mock_google_drive_service.files().get.return_value = mock_google_get_request
                 
-                # Mock export request
-                mock_export_request = MagicMock()
-                mock_export_request.execute.return_value = mock_export_content
-                mock_service.files().export.return_value = mock_export_request
+                # Mock Google's export request
+                mock_google_export_request = MagicMock()
+                mock_google_export_request.execute.return_value = mock_export_content
+                mock_google_drive_service.files().export.return_value = mock_google_export_request
                 
-                # Setup client
+                # Setup client with mocked Google service
                 client = DriveClient()
-                client.service = mock_service
+                client.service = mock_google_drive_service
                 
                 # This should fail - method doesn't exist yet
                 result_path = client.export(file_id)
@@ -90,12 +114,19 @@ class TestDriveClientDownload:
                 assert expected_path.read_bytes() == mock_export_content
                 assert result_path == str(expected_path)
                 
-                # Verify API calls
-                mock_service.files().get.assert_called_once_with(
+                # Verify Google API calls - now we call get twice: once for mimeType (smart default), once for name
+                assert mock_google_drive_service.files().get.call_count == 2
+                # First call for mimeType (smart default)
+                mock_google_drive_service.files().get.assert_any_call(
+                    fileId=file_id,
+                    fields="mimeType"
+                )
+                # Second call for name
+                mock_google_drive_service.files().get.assert_any_call(
                     fileId=file_id,
                     fields="name"
                 )
-                mock_service.files().export.assert_called_once_with(
+                mock_google_drive_service.files().export.assert_called_once_with(
                     fileId=file_id,
                     mimeType="application/zip"
                 )
@@ -114,12 +145,12 @@ class TestDriveClientDownload:
         mock_error_response.status = 404
         mock_http_error = HttpError(mock_error_response, b"File not found")
         
-        # Mock service to raise error
-        mock_service = MagicMock()
-        mock_service.files().get.side_effect = mock_http_error
+        # Mock Google service to raise error
+        mock_google_drive_service = MagicMock()
+        mock_google_drive_service.files().get.side_effect = mock_http_error
         
         client = DriveClient()
-        client.service = mock_service
+        client.service = mock_google_drive_service
         
         # Should raise FileNotFoundError
         with pytest.raises(FileNotFoundError, match="File with ID nonexistent_file_id not found"):
@@ -136,15 +167,15 @@ class TestDriveClientDownload:
         mock_error_response.status = 403
         mock_http_error = HttpError(mock_error_response, b"Permission denied")
         
-        # Mock service to raise error on export
-        mock_service = MagicMock()
-        mock_get_request = MagicMock()
-        mock_get_request.execute.return_value = {"name": "Test Doc"}
-        mock_service.files().get.return_value = mock_get_request
-        mock_service.files().export.side_effect = mock_http_error
+        # Mock Google service to raise error on export
+        mock_google_drive_service = MagicMock()
+        mock_google_get_request = MagicMock()
+        mock_google_get_request.execute.return_value = {"name": "Test Doc", "mimeType": "application/vnd.google-apps.document"}
+        mock_google_drive_service.files().get.return_value = mock_google_get_request
+        mock_google_drive_service.files().export.side_effect = mock_http_error
         
         client = DriveClient()
-        client.service = mock_service
+        client.service = mock_google_drive_service
         
         # Should raise PermissionError
         with pytest.raises(PermissionError, match="Insufficient permissions"):
@@ -161,16 +192,151 @@ class TestDriveClientDownload:
         mock_error_response.status = 500
         mock_http_error = HttpError(mock_error_response, b"Internal server error")
         
-        # Mock service to raise error on export
-        mock_service = MagicMock()
-        mock_get_request = MagicMock()
-        mock_get_request.execute.return_value = {"name": "Test Doc"}
-        mock_service.files().get.return_value = mock_get_request
-        mock_service.files().export.side_effect = mock_http_error
+        # Mock Google service to raise error on export
+        mock_google_drive_service = MagicMock()
+        mock_google_get_request = MagicMock()
+        mock_google_get_request.execute.return_value = {"name": "Test Doc", "mimeType": "application/vnd.google-apps.document"}
+        mock_google_drive_service.files().get.return_value = mock_google_get_request
+        mock_google_drive_service.files().export.side_effect = mock_http_error
         
         client = DriveClient()
-        client.service = mock_service
+        client.service = mock_google_drive_service
         
         # Should raise RuntimeError for generic HTTP errors
         with pytest.raises(RuntimeError, match="Failed to export file"):
             client.export(file_id) 
+
+    def test_export_with_format_override(self):
+        """Test export with explicit format override."""
+        client = DriveClient()
+        
+        # Mock the Google Drive API service
+        mock_google_drive_service = MagicMock()
+        
+        # Mock Google's export request
+        mock_google_export_request = MagicMock()
+        mock_google_export_request.execute.return_value = b"exported content"
+        mock_google_drive_service.files().export.return_value = mock_google_export_request
+        
+        # Mock Google's file metadata call for output path
+        mock_google_get_request = MagicMock()
+        mock_google_get_request.execute.return_value = {"name": "Test Document"}
+        mock_google_drive_service.files().get.return_value = mock_google_get_request
+        
+        # Setup client with mocked Google service
+        client.service = mock_google_drive_service
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_path = os.path.join(temp_dir, "test.pdf")
+            result = client.export("test_id", output_path=output_path, format="pdf")
+            
+            # Verify the correct MIME type was used for PDF
+            mock_google_drive_service.files().export.assert_called_with(
+                fileId="test_id", mimeType="application/pdf"
+            )
+            assert result == output_path
+
+    def test_export_smart_default_for_google_doc(self):
+        """Test smart default format for Google Docs."""
+        client = DriveClient()
+        
+        # Mock the Google Drive API service
+        mock_google_drive_service = MagicMock()
+        
+        # Mock Google's export request
+        mock_google_export_request = MagicMock()
+        mock_google_export_request.execute.return_value = b"exported content"
+        mock_google_drive_service.files().export.return_value = mock_google_export_request
+        
+        # Mock Google's file metadata call for smart default format detection
+        mock_google_get_request = MagicMock()
+        mock_google_get_request.execute.return_value = {"mimeType": "application/vnd.google-apps.document"}
+        mock_google_drive_service.files().get.return_value = mock_google_get_request
+        
+        # Setup client with mocked Google service
+        client.service = mock_google_drive_service
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_path = os.path.join(temp_dir, "test.html")
+            result = client.export("test_id", output_path=output_path)
+            
+            # Verify HTML format was used as default for docs
+            mock_google_drive_service.files().export.assert_called_with(
+                fileId="test_id", mimeType="application/zip"
+            )
+            assert result == output_path
+
+    def test_export_smart_default_for_google_sheets(self):
+        """Test smart default format for Google Sheets."""
+        client = DriveClient()
+        
+        # Mock the Google Drive API service
+        mock_google_drive_service = MagicMock()
+        
+        # Mock Google's export request
+        mock_google_export_request = MagicMock()
+        mock_google_export_request.execute.return_value = b"exported content"
+        mock_google_drive_service.files().export.return_value = mock_google_export_request
+        
+        # Mock Google's file metadata call for smart default format detection
+        mock_google_get_request = MagicMock()
+        mock_google_get_request.execute.return_value = {"mimeType": "application/vnd.google-apps.spreadsheet"}
+        mock_google_drive_service.files().get.return_value = mock_google_get_request
+        
+        # Setup client with mocked Google service
+        client.service = mock_google_drive_service
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_path = os.path.join(temp_dir, "test.xlsx")
+            result = client.export("test_id", output_path=output_path)
+            
+            # Verify XLSX format was used as default for sheets
+            mock_google_drive_service.files().export.assert_called_with(
+                fileId="test_id", mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+            assert result == output_path
+
+    def test_export_invalid_format_raises_error(self):
+        """Test that invalid format raises ValueError."""
+        client = DriveClient()
+        
+        with pytest.raises(ValueError, match="Unsupported format: invalid_format"):
+            client.export("test_id", format="invalid_format")
+
+    @pytest.mark.parametrize("format_type", ["html", "pdf", "xlsx", "csv"])
+    def test_export_format_validation_valid_formats(self, format_type):
+        """Test format validation for valid formats."""
+        client = DriveClient()
+        # Should not raise an error
+        client._validate_format(format_type)
+
+    def test_export_format_validation_invalid_format(self):
+        """Test format validation for invalid format."""
+        client = DriveClient()
+        # Test invalid format
+        with pytest.raises(ValueError, match="Unsupported format: invalid"):
+            client._validate_format("invalid")
+
+    @pytest.mark.parametrize("mime_type,expected_format", [
+        ("application/vnd.google-apps.document", "html"),
+        ("application/vnd.google-apps.spreadsheet", "xlsx"),
+        ("application/vnd.google-apps.presentation", "pdf"),
+        ("application/vnd.google-apps.drawing", "png"),
+        ("application/vnd.google-apps.form", "zip"),
+        ("application/pdf", "pdf"),  # Non-native file
+    ])
+    def test_get_smart_default_format(self, mime_type, expected_format):
+        """Test smart default format detection for different MIME types."""
+        client = DriveClient()
+        
+        # Mock the Google Drive API service
+        mock_google_drive_service = MagicMock()
+        mock_google_get_request = MagicMock()
+        mock_google_get_request.execute.return_value = {"mimeType": mime_type}
+        mock_google_drive_service.files().get.return_value = mock_google_get_request
+        
+        # Setup client with mocked Google service
+        client.service = mock_google_drive_service
+        
+        result = client._get_smart_default_format("test_id")
+        assert result == expected_format 

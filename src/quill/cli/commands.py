@@ -102,19 +102,28 @@ def list_files(page_size, page_token, query, fields, no_interactive):
     help="Output path for the exported file. If not provided, saves to current directory with document name.",
 )
 @click.option(
+    "--format",
+    type=click.Choice(['html', 'pdf', 'xlsx', 'csv']),
+    help="Export format (auto-detected if not specified)",
+)
+@click.option(
     "--verbose",
     is_flag=True,
     help="Show detailed progress information",
 )
-def export(file_id, output, verbose):
+def export(file_id, output, format, verbose):
     """Export a file from Google Drive.
     
-    Currently supports Google Docs export to HTML format (ZIP file).
+    Supports Google Workspace documents (Docs, Sheets, Slides) with smart format defaults:
+    - Google Docs: HTML (ZIP file)
+    - Google Sheets: XLSX
+    - Google Slides: PDF
+    - Google Drawings: PNG
+    - Google Forms: ZIP
+    
+    Use --format to override the default format. Supported formats: html, pdf, xlsx, csv
     
     FILE_ID is the Google Drive file ID of the document to export.
-    
-    The exported file will be saved as a ZIP file containing the HTML representation
-    of the Google Doc, including embedded images and styling.
     """
     try:
         client = DriveClient()
@@ -122,7 +131,7 @@ def export(file_id, output, verbose):
         if verbose:
             click.echo(f"Exporting file with ID: {file_id}")
         
-        result_path = client.export(file_id, output)
+        result_path = client.export(file_id, output_path=output, format=format)
         
         click.echo(f"Successfully exported to: {result_path}")
         
@@ -132,6 +141,9 @@ def export(file_id, output, verbose):
     except PermissionError as e:
         click.echo(f"Error: {str(e)}", err=True)
         raise click.ClickException("Permission denied")
+    except ValueError as e:
+        click.echo(f"Error: {str(e)}", err=True)
+        raise click.ClickException("Invalid format")
     except Exception as e:
         click.echo(f"Error: {str(e)}", err=True)
         raise click.ClickException("Export failed")

@@ -4,8 +4,12 @@ Welcome to the Quill project documentation. This documentation provides comprehe
 
 ## Project Overview
 
-Quill is a Python project that follows modern development practices and tools. The project uses:
+Quill is a command-line interface tool for interacting with Google Drive, providing a simple and efficient way to manage your files and folders. The project follows modern development practices and tools:
 
+- **Interactive file browsing** with intuitive pagination controls
+- **Smart file export** with automatic format selection for Google Workspace documents
+- **Advanced search and filtering** capabilities
+- **Flexible field selection** for customized output
 - `ruff` for linting and formatting
 - `ty` for type checking
 - `pytest` for testing
@@ -19,6 +23,7 @@ Quill is a Python project that follows modern development practices and tools. T
 :caption: Contents:
 
 installation
+user-quickstart
 quickstart
 commands
 contributing
@@ -27,7 +32,9 @@ tdd-practices
 
 ## Getting Started
 
-To get started with Quill, please refer to the [Installation](installation.md) and [Quick Start](quickstart.md) guides.
+To get started with Quill, please refer to the [Installation](installation.md) and [User Quick Start](user-quickstart.md) guides.
+
+For developers, see the [Development Quick Start](quickstart.md) guide.
 
 ## Contributing
 

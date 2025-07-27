@@ -8,14 +8,20 @@ This document outlines the planned features and development goals for the Quill 
 - [x] List files with pagination
 - [x] Get file metadata
 - [x] Custom field selection for file listing (--fields option)
+- [x] Download files
+  - [x] Export Google Workspace documents (Docs, Sheets, Slides)
+  - [x] Smart default format selection based on file type
+  - [x] Format override option (--format html/pdf/xlsx/csv)
+  - [ ] Progress tracking
+  - [ ] Resume interrupted downloads
+  - [ ] Concurrent downloads
+  - [ ] Format compatibility matrix validation
+  - [ ] Non-native file handling (uploaded PDFs, Word docs, etc.)
+  - [ ] Advanced format options (page ranges, quality settings)
 - [ ] Upload files
   - Support for different file types
   - Progress tracking
   - Resume interrupted uploads
-- [ ] Download files
-  - Progress tracking
-  - Resume interrupted downloads
-  - Concurrent downloads
 - [ ] File operations
   - Move files
   - Copy files
