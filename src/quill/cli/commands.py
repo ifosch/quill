@@ -56,12 +56,15 @@ def list_files(page_size, page_token, query, fields, no_interactive):
     required_fields = {"name", "mimeType", "size"}
 
     if fields:
-        # Parse user-provided fields
-        user_fields = set(f.strip() for f in fields.split(",") if f.strip())
-        # Combine user fields with required fields
-        all_fields = list(required_fields | user_fields)
-        # Keep track of originally requested fields for display
-        requested_fields = list(user_fields)
+        # Parse user-provided fields while preserving order
+        user_fields = [f.strip() for f in fields.split(",") if f.strip()]
+        # Combine user fields with required fields, preserving user-specified order
+        all_fields = user_fields.copy()
+        for field in required_fields:
+            if field not in all_fields:
+                all_fields.append(field)
+        # Keep track of originally requested fields for display (preserving order)
+        requested_fields = user_fields
     else:
         # Use default fields if none specified
         all_fields = default_fields

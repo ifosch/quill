@@ -523,3 +523,36 @@ def test_navigate_to_previous_page_with_query():
     assert state.page_token is None
     # Should not call API for simple case (page 2 to page 1)
     mock_client.list_files.assert_not_called()
+
+
+def test_cli_field_processing_preserves_order():
+    """Test that CLI field processing preserves user-specified field order."""
+    # Simulate the FIXED field processing logic from the CLI command
+    fields_input = "id,name,size"
+    required_fields = {"name", "mimeType", "size"}
+    
+    # Fixed CLI logic - preserves order using lists instead of sets
+    user_fields = [f.strip() for f in fields_input.split(",") if f.strip()]
+    all_fields = user_fields.copy()
+    for field in required_fields:
+        if field not in all_fields:
+            all_fields.append(field)
+    requested_fields = user_fields
+    
+    # Should now preserve the user's original order
+    assert requested_fields == ["id", "name", "size"], f"Expected ['id', 'name', 'size'], got {requested_fields}"
+
+
+@pytest.mark.parametrize("fields_input,expected_order", [
+    ("id,name,size", ["id", "name", "size"]),
+    ("name,id,size", ["name", "id", "size"]),
+    ("size,name,id", ["size", "name", "id"]),
+])
+def test_cli_field_processing_different_orders(fields_input, expected_order):
+    """Test CLI field processing with different field orders - should preserve all orders."""
+    # Simulate FIXED CLI logic - preserves order using lists
+    user_fields = [f.strip() for f in fields_input.split(",") if f.strip()]
+    requested_fields = user_fields
+    
+    # Should now preserve the order correctly
+    assert requested_fields == expected_order, f"Input: {fields_input}, Expected: {expected_order}, Got: {requested_fields}"

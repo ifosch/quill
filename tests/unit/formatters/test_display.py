@@ -96,6 +96,50 @@ def test_format_file_list_with_custom_fields():
     assert "Size" not in lines[0]
 
 
+def test_format_file_list_respects_field_order():
+    """Test that column ordering respects the user-specified field order."""
+    file = DriveFile(
+        id="test123",
+        name="test.txt",
+        mime_type="text/plain",
+        size=100,
+    )
+    
+    # Test order: id, name, size
+    result1 = format_file_list([file], requested_fields=["id", "name", "size"])
+    lines1 = result1.split("\n")
+    header1 = lines1[0]
+    
+    # Test order: name, id, size  
+    result2 = format_file_list([file], requested_fields=["name", "id", "size"])
+    lines2 = result2.split("\n")
+    header2 = lines2[0]
+    
+    # Test order: size, name, id
+    result3 = format_file_list([file], requested_fields=["size", "name", "id"])
+    lines3 = result3.split("\n")
+    header3 = lines3[0]
+    
+    # The header order should match the requested field order
+    # For ["id", "name", "size"] -> "ID" should come before "Name" which should come before "Size"
+    id_pos1 = header1.find("ID")
+    name_pos1 = header1.find("Name")
+    size_pos1 = header1.find("Size")
+    assert id_pos1 < name_pos1 < size_pos1, f"Expected ID < Name < Size in header: '{header1}'"
+    
+    # For ["name", "id", "size"] -> "Name" should come before "ID" which should come before "Size"
+    id_pos2 = header2.find("ID")
+    name_pos2 = header2.find("Name")
+    size_pos2 = header2.find("Size")
+    assert name_pos2 < id_pos2 < size_pos2, f"Expected Name < ID < Size in header: '{header2}'"
+    
+    # For ["size", "name", "id"] -> "Size" should come before "Name" which should come before "ID"
+    id_pos3 = header3.find("ID")
+    name_pos3 = header3.find("Name")
+    size_pos3 = header3.find("Size")
+    assert size_pos3 < name_pos3 < id_pos3, f"Expected Size < Name < ID in header: '{header3}'"
+
+
 def test_format_file_list_with_complete_google_drive_id():
     """Test formatting with realistic Google Drive ID length (should not be truncated)."""
     # Realistic Google Drive ID (44 characters) - fake but same length as actual Google Drive IDs
