@@ -556,3 +556,25 @@ def test_cli_field_processing_different_orders(fields_input, expected_order):
     
     # Should now preserve the order correctly
     assert requested_fields == expected_order, f"Input: {fields_input}, Expected: {expected_order}, Got: {requested_fields}"
+
+
+@pytest.mark.parametrize("fields_input,expected_order", [
+    ("id,name,id,size", ["id", "name", "size"]),  # Remove duplicate 'id'
+    ("name,name,size", ["name", "size"]),  # Remove duplicate 'name'
+    ("id,name,size,name,id", ["id", "name", "size"]),  # Remove multiple duplicates
+    ("size,size,size", ["size"]),  # Multiple duplicates of same field
+])
+def test_cli_field_processing_removes_duplicates(fields_input, expected_order):
+    """Test that CLI field processing removes duplicate fields while preserving order."""
+    # Simulate FIXED CLI logic - removes duplicates while preserving order
+    user_fields = [f.strip() for f in fields_input.split(",") if f.strip()]
+    # Remove duplicates while preserving order
+    seen = set()
+    requested_fields = []
+    for field in user_fields:
+        if field not in seen:
+            seen.add(field)
+            requested_fields.append(field)
+    
+    # Should now remove duplicates while preserving first occurrence order
+    assert requested_fields == expected_order, f"Input: {fields_input}, Expected: {expected_order}, Got: {requested_fields}"

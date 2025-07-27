@@ -56,14 +56,22 @@ def list_files(page_size, page_token, query, fields, no_interactive):
     required_fields = {"name", "mimeType", "size"}
 
     if fields:
-        # Parse user-provided fields while preserving order
-        user_fields = [f.strip() for f in fields.split(",") if f.strip()]
+        # Parse user-provided fields while preserving order and removing duplicates
+        user_fields_raw = [f.strip() for f in fields.split(",") if f.strip()]
+        # Remove duplicates while preserving order of first occurrence
+        seen = set()
+        user_fields = []
+        for field in user_fields_raw:
+            if field not in seen:
+                seen.add(field)
+                user_fields.append(field)
+        
         # Combine user fields with required fields, preserving user-specified order
         all_fields = user_fields.copy()
         for field in required_fields:
             if field not in all_fields:
                 all_fields.append(field)
-        # Keep track of originally requested fields for display (preserving order)
+        # Keep track of originally requested fields for display (preserving order, no duplicates)
         requested_fields = user_fields
     else:
         # Use default fields if none specified
