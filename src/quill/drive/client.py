@@ -1,6 +1,7 @@
 """Google Drive API client implementation."""
 
 from typing import List, Optional, Dict, Any
+from pathlib import Path
 
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -126,3 +127,47 @@ class DriveClient:
                     "Insufficient permissions to access the file."
                 ) from error
             raise RuntimeError(f"Failed to get file: {error}") from error
+
+    def export_google_doc_html(self, file_id: str, output_path: Optional[str] = None) -> str:
+        """Export a Google Doc to HTML format (ZIP file).
+
+        Args:
+            file_id: The ID of the Google Doc to export.
+            output_path: Optional path where to save the file. If not provided,
+                        saves to current directory with the document name.
+
+        Returns:
+            String path where the file was saved.
+
+        Raises:
+            FileNotFoundError: If the file doesn't exist.
+            PermissionError: If the user doesn't have permission to export the file.
+            RuntimeError: For other API errors.
+        """
+        try:
+            service = self.get_service()
+            
+            # If no output path provided, get the file name and use current directory
+            if output_path is None:
+                file_metadata = service.files().get(fileId=file_id, fields="name").execute()
+                file_name = file_metadata["name"]
+                output_path = f"{file_name}.zip"
+            
+            # Export the document as HTML (ZIP format)
+            export_request = service.files().export(fileId=file_id, mimeType="application/zip")
+            export_content = export_request.execute()
+            
+            # Save the content to file
+            output_file = Path(output_path)
+            output_file.write_bytes(export_content)
+            
+            return str(output_file)
+
+        except HttpError as error:
+            if error.resp.status == 404:
+                raise FileNotFoundError(f"File with ID {file_id} not found.") from error
+            if error.resp.status in (401, 403):
+                raise PermissionError(
+                    "Insufficient permissions to export the file."
+                ) from error
+            raise RuntimeError(f"Failed to export file: {error}") from error
