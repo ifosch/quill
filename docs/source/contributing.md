@@ -36,6 +36,7 @@ Thank you for your interest in contributing to the Quill project! This guide wil
    - Maintain or improve test coverage
    - Use `pytest-cov` to measure coverage (minimum 80%)
    - Review coverage reports and address uncovered code
+   - Follow [TDD Practices](tdd-practices.md) for bug fixes and feature development
 
 4. **Documentation**
    - Update docstrings
@@ -111,4 +112,5 @@ Thank you for your interest in contributing to the Quill project! This guide wil
 
 - Read the [Installation Guide](installation.md)
 - Review the [Quick Start Guide](quickstart.md)
+- Check the [TDD Practices Guide](tdd-practices.md) for development workflow
 - Check the [API Documentation](../api/index.html) 

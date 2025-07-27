@@ -22,6 +22,7 @@ installation
 quickstart
 commands
 contributing
+tdd-practices
 ```
 
 ## Getting Started
