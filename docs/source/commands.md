@@ -8,6 +8,7 @@ This section contains detailed documentation for all Quill commands.
 :maxdepth: 1
 
 list-command
+get-file-command
 export-command
 ```
 

@@ -65,7 +65,7 @@ def list_files(page_size, page_token, query, fields, no_interactive):
             if field not in seen:
                 seen.add(field)
                 user_fields.append(field)
-        
+
         # Combine user fields with required fields, preserving user-specified order
         all_fields = user_fields.copy()
         for field in required_fields:
@@ -95,6 +95,81 @@ def list_files(page_size, page_token, query, fields, no_interactive):
 
 
 @click.command()
+@click.argument("file_id", required=True)
+@click.option(
+    "--fields",
+    default=None,
+    help="Comma-separated list of fields to retrieve for the file. "
+    "Defaults to: id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink. "
+    "Note: name, mimeType, and size are always included for proper display.",
+)
+def get_file(file_id, fields):
+    """Get detailed information about a specific file from Google Drive.
+
+    Retrieves and displays comprehensive metadata for a single file identified by its ID.
+    Use --fields to customize which information is displayed.
+    """
+    client = DriveClient()
+
+    # Define default fields (same as in DriveClient)
+    default_fields = [
+        "id",
+        "name",
+        "mimeType",
+        "size",
+        "createdTime",
+        "modifiedTime",
+        "description",
+        "owners",
+        "webViewLink",
+    ]
+
+    # Required fields for display formatter
+    required_fields = {"name", "mimeType", "size"}
+
+    if fields:
+        # Parse user-provided fields while preserving order and removing duplicates
+        user_fields_raw = [f.strip() for f in fields.split(",") if f.strip()]
+        # Remove duplicates while preserving order of first occurrence
+        seen = set()
+        user_fields = []
+        for field in user_fields_raw:
+            if field not in seen:
+                seen.add(field)
+                user_fields.append(field)
+
+        # Combine user fields with required fields, preserving user-specified order
+        all_fields = user_fields.copy()
+        for field in required_fields:
+            if field not in all_fields:
+                all_fields.append(field)
+        # Keep track of originally requested fields for display (preserving order, no duplicates)
+        requested_fields = user_fields
+    else:
+        # Use default fields if none specified
+        all_fields = default_fields
+        requested_fields = None
+
+    try:
+        # Get the file using the existing backend method
+        file = client.get_file(file_id)
+
+        # Display the file information using the existing formatter
+        # Pass as a single-item list since format_file_list expects a list
+        click.echo(format_file_list([file], requested_fields))
+
+    except FileNotFoundError as e:
+        click.echo(f"Error: {str(e)}", err=True)
+        raise click.ClickException("File not found")
+    except PermissionError as e:
+        click.echo(f"Error: {str(e)}", err=True)
+        raise click.ClickException("Permission denied")
+    except Exception as e:
+        click.echo(f"Error: {str(e)}", err=True)
+        raise click.ClickException("Failed to get file")
+
+
+@click.command()
 @click.argument("file_id", required=False)
 @click.option(
     "--query",
@@ -107,7 +182,7 @@ def list_files(page_size, page_token, query, fields, no_interactive):
 )
 @click.option(
     "--format",
-    type=click.Choice(['html', 'pdf', 'xlsx', 'csv']),
+    type=click.Choice(["html", "pdf", "xlsx", "csv"]),
     help="Export format (auto-detected if not specified)",
 )
 @click.option(
@@ -117,72 +192,76 @@ def list_files(page_size, page_token, query, fields, no_interactive):
 )
 def export(file_id, query, output, format, verbose):
     """Export a file from Google Drive.
-    
+
     Supports Google Workspace documents (Docs, Sheets, Slides) with smart format defaults:
     - Google Docs: HTML (ZIP file)
     - Google Sheets: XLSX
     - Google Slides: PDF
     - Google Drawings: PNG
     - Google Forms: ZIP
-    
+
     Use --format to override the default format. Supported formats: html, pdf, xlsx, csv
-    
+
     Either FILE_ID or --query must be provided. Use --query to search for files by name or other criteria.
     """
     # Validate that either file_id or query is provided
     if not file_id and not query:
         raise click.ClickException("Either FILE_ID or --query must be provided")
-    
+
     if file_id and query:
         raise click.ClickException("FILE_ID and --query are mutually exclusive")
-    
+
     try:
         client = DriveClient()
-        
+
         # Handle query-based export
         if query:
             if verbose:
                 click.echo(f"Searching for files with query: {query}")
-            
+
             # Search for files matching the query
             search_result = client.list_files(
                 page_size=100,  # Get more results to handle multiple matches
                 query=query,
-                fields=["id", "name", "mimeType"]
+                fields=["id", "name", "mimeType"],
             )
-            
+
             files = search_result["files"]
-            
+
             if not files:
                 click.echo("No files found matching the query.", err=True)
                 raise click.ClickException("No files found")
-            
+
             if len(files) > 1:
                 # Multiple matches - show the options
                 click.echo("Multiple files found matching the query:", err=True)
                 click.echo("", err=True)
                 for file in files:
-                    click.echo(f"  {file.id} - {file.name} ({file.mime_type})", err=True)
+                    click.echo(
+                        f"  {file.id} - {file.name} ({file.mime_type})", err=True
+                    )
                 click.echo("", err=True)
-                click.echo("Please use the file ID to export a specific file.", err=True)
+                click.echo(
+                    "Please use the file ID to export a specific file.", err=True
+                )
                 raise click.ClickException("Multiple files found")
-            
+
             # Single match - proceed with export
             file = files[0]
             if verbose:
                 click.echo(f"Found single match: {file.name} (ID: {file.id})")
-            
+
             result_path = client.export(file.id, output_path=output, format=format)
             click.echo(f"Successfully exported to: {result_path}")
-        
+
         # Handle file ID-based export (existing functionality)
         else:
             if verbose:
                 click.echo(f"Exporting file with ID: {file_id}")
-            
+
             result_path = client.export(file_id, output_path=output, format=format)
             click.echo(f"Successfully exported to: {result_path}")
-        
+
     except FileNotFoundError as e:
         click.echo(f"Error: {str(e)}", err=True)
         raise click.ClickException("File not found")

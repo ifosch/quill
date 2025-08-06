@@ -66,7 +66,14 @@ quill list-files --fields "id,name,mimeType,size,createdTime,modifiedTime,descri
 Get detailed information about a specific file:
 
 ```bash
+# Basic usage with default fields
 quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+
+# Customize which fields to display
+quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "name,size,createdTime"
+
+# Get complete metadata
+quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink"
 ```
 
 ### 5. Export Google Workspace Documents

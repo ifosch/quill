@@ -180,6 +180,38 @@ Example:
 quill get-file 1abc...xyz
 ```
 
+#### Customize Output Fields
+
+Choose exactly what information you want to see:
+
+```bash
+# Use default fields (comprehensive output)
+quill get-file <file_id>
+
+# Minimal output - just names and sizes
+quill get-file <file_id> --fields "name,size"
+
+# Detailed output with timestamps and owners
+quill get-file <file_id> --fields "name,size,modifiedTime,createdTime,owners"
+
+# Full metadata output (same as default)
+quill get-file <file_id> --fields "id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink"
+```
+
+#### Available Fields
+The `--fields` option accepts any combination of these Google Drive API fields:
+- `id`: File ID
+- `name`: File name  
+- `mimeType`: MIME type of the file
+- `size`: File size in bytes
+- `createdTime`: Creation timestamp
+- `modifiedTime`: Last modification timestamp
+- `description`: File description
+- `owners`: File owners information
+- `webViewLink`: Link to view the file in Google Drive
+
+**Note:** The fields `name`, `mimeType`, and `size` are always included to ensure proper display formatting.
+
 ### Export Files
 
 Export Google Workspace documents with smart format defaults. You can export files using either a file ID or a search query:

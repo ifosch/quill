@@ -4,7 +4,15 @@ This document outlines the planned features and development goals for the Quill 
 
 ## Recent Major Achievements
 
-### Query-Based Export Feature (Latest)
+### Get-File Command Implementation (Latest)
+- ✅ **get-file command** - Get detailed information about specific files from Google Drive
+- ✅ **Field customization** - Customize output fields with --fields option
+- ✅ **Comprehensive error handling** - File not found, permission errors, general errors
+- ✅ **Complete testing** - 21 new tests covering all scenarios (95.67% coverage)
+- ✅ **Full documentation** - New get-file-command.md, updated README and user guides
+- ✅ **Real-world validation** - Tested with actual Google Drive files
+
+### Query-Based Export Feature
 - ✅ **Query-based export** - Export files by searching for them instead of using file IDs
 - ✅ **Smart query handling** - Automatic export for single matches, helpful listing for multiple matches
 - ✅ **Full Google Drive API query support** - Complex queries with logical operators, date ranges, MIME types
@@ -165,7 +173,7 @@ This document outlines the planned features and development goals for the Quill 
 
 ### Code Quality
 - [x] Code coverage
-  - [x] Maintain >80% coverage (currently 95.78%)
+  - [x] Maintain >80% coverage (currently 95.67%)
   - [x] Critical path coverage
 - [x] Code style
   - [x] Consistent formatting (ruff)
@@ -190,7 +198,7 @@ This document outlines the planned features and development goals for the Quill 
 
 ## Project Health Summary
 
-- **Test Coverage:** 95.78% (exceeds 80% requirement)
+- **Test Coverage:** 95.67% (exceeds 80% requirement)
 - **Documentation:** Complete with Sphinx-generated API docs and comprehensive user guides
 - **Code Quality:** High standards maintained with ruff formatting, ty type checking, and Google-style docstrings
 - **Feature Completeness:** Core file management and export features fully implemented

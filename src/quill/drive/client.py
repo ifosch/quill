@@ -128,7 +128,12 @@ class DriveClient:
                 ) from error
             raise RuntimeError(f"Failed to get file: {error}") from error
 
-    def export(self, file_id: str, output_path: Optional[str] = None, format: Optional[str] = None) -> str:
+    def export(
+        self,
+        file_id: str,
+        output_path: Optional[str] = None,
+        format: Optional[str] = None,
+    ) -> str:
         """Export a file from Google Drive.
 
         Currently supports Google Docs export to HTML format (ZIP file).
@@ -151,31 +156,35 @@ class DriveClient:
         """
         try:
             service = self.get_service()
-            
+
             # Validate format if provided
             if format:
                 self._validate_format(format)
             else:
                 # Use smart default based on file type
                 format = self._get_smart_default_format(file_id)
-            
+
             # Get MIME type for the format
             mime_type = self._get_mime_type_for_format(format)
-            
+
             # If no output path provided, get the file name and use current directory
             if output_path is None:
-                file_metadata = service.files().get(fileId=file_id, fields="name").execute()
+                file_metadata = (
+                    service.files().get(fileId=file_id, fields="name").execute()
+                )
                 file_name = file_metadata["name"]
-                output_path = f"{file_name}.{self._get_file_extension_for_format(format)}"
-            
+                output_path = (
+                    f"{file_name}.{self._get_file_extension_for_format(format)}"
+                )
+
             # Export the document
             export_request = service.files().export(fileId=file_id, mimeType=mime_type)
             export_content = export_request.execute()
-            
+
             # Save the content to file
             output_file = Path(output_path)
             output_file.write_bytes(export_content)
-            
+
             return str(output_file)
 
         except HttpError as error:
@@ -189,10 +198,10 @@ class DriveClient:
 
     def _validate_format(self, format: str) -> None:
         """Validate that the specified format is supported.
-        
+
         Args:
             format: The format to validate.
-            
+
         Raises:
             ValueError: If the format is not supported.
         """
@@ -202,17 +211,17 @@ class DriveClient:
 
     def _get_smart_default_format(self, file_id: str) -> str:
         """Get the smart default format based on file type.
-        
+
         Args:
             file_id: The ID of the file to check.
-            
+
         Returns:
             The default format for the file type.
         """
         service = self.get_service()
         file_metadata = service.files().get(fileId=file_id, fields="mimeType").execute()
         mime_type = file_metadata["mimeType"]
-        
+
         # Smart defaults based on MIME type
         format_mapping = {
             "application/vnd.google-apps.document": "html",
@@ -221,22 +230,22 @@ class DriveClient:
             "application/vnd.google-apps.drawing": "png",
             "application/vnd.google-apps.form": "zip",
         }
-        
+
         # For non-native files, return the original format
         if mime_type not in format_mapping:
             # Extract format from MIME type (e.g., "application/pdf" -> "pdf")
             if "/" in mime_type:
                 return mime_type.split("/")[-1]
             return "zip"  # Default fallback
-        
+
         return format_mapping[mime_type]
 
     def _get_mime_type_for_format(self, format: str) -> str:
         """Get the MIME type for a given format.
-        
+
         Args:
             format: The format to get MIME type for.
-            
+
         Returns:
             The MIME type for the format.
         """
@@ -250,10 +259,10 @@ class DriveClient:
 
     def _get_file_extension_for_format(self, format: str) -> str:
         """Get the file extension for a given format.
-        
+
         Args:
             format: The format to get extension for.
-            
+
         Returns:
             The file extension for the format.
         """
