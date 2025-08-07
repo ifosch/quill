@@ -308,7 +308,7 @@ quill export --help
 
 ## Architecture
 
-Quill features a clean, modular architecture:
+Quill features a clean, modular architecture with both CLI and library interfaces:
 
 ```
 src/quill/
@@ -323,7 +323,10 @@ src/quill/
 ├── formatters/           # Output formatting
 │   └── display.py       # Terminal display formatters
 ├── auth.py              # Authentication handling
-└── config.py            # Configuration management
+├── config.py            # Configuration management
+├── client.py            # High-level library API (Quill class)
+├── exceptions.py        # Custom exception hierarchy
+└── utils.py             # Utility functions (FieldParser, etc.)
 ```
 
 This modular design ensures:
@@ -331,6 +334,62 @@ This modular design ensures:
 - **Easy testing** with focused unit tests
 - **Extensibility** for future features
 - **Clean interfaces** between components
+- **Dual interface support** - both CLI and library usage
+- **Backward compatibility** - CLI functionality preserved while adding library capabilities
+
+## Library Usage
+
+Quill is not just a CLI tool - it's also a powerful Python library for Google Drive operations. The CLI serves as a real-world example of how to use the library.
+
+### Basic Library Usage
+
+```python
+from quill import Quill
+
+# Initialize the library
+quill = Quill()
+
+# List files with pagination
+files, next_page_token = quill.list_files_with_pagination(page_size=10)
+
+# Get a specific file
+file_info = quill.get_file("file_id_here")
+
+# Export a file
+quill.export_file("file_id_here", format="pdf")
+
+# Search and export
+quill.search_and_export("name contains 'report'", format="pdf")
+```
+
+### Advanced Library Features
+
+```python
+from quill import Quill, MultipleFilesFoundError, NoFilesFoundError
+
+quill = Quill()
+
+# Custom field selection
+field_parser = quill.get_field_parser()
+all_fields, requested_fields = field_parser.parse_fields("id,name,size")
+
+# Error handling
+try:
+    quill.search_and_export("name = 'specific_file'")
+except MultipleFilesFoundError as e:
+    print(f"Multiple files found: {e}")
+except NoFilesFoundError as e:
+    print(f"No files found: {e}")
+```
+
+### Library Architecture
+
+The library provides:
+- **High-level API** - Simple interface for common operations
+- **Custom exceptions** - Specific error types for better error handling
+- **Utility functions** - Field parsing, file validation, and more
+- **Configuration management** - Environment variables and config files
+- **Backward compatibility** - All existing CLI functionality preserved
 
 ## Development
 
@@ -358,7 +417,7 @@ Run tests with coverage (fails if coverage is less than 80%):
 pytest --cov=quill --cov-report=term-missing --cov-fail-under=80
 ```
 
-**Current test coverage: 95.93%** ✅ (exceeds 80% requirement)
+**Current test coverage: 96%** ✅ (exceeds 80% requirement)
 
 ### Code Quality Checks
 

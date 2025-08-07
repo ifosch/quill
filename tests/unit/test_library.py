@@ -308,12 +308,10 @@ class TestFieldParser:
         )
 
         # Should preserve user order and add missing required fields
-        assert all_fields == [
-            "createdTime",
-            "id",
-            "modifiedTime",
-            "name",
-            "mimeType",
-            "size",
-        ]
+        # Check that user fields are in correct order
+        assert all_fields[:4] == ["createdTime", "id", "modifiedTime", "name"]
+        # Check that required fields are present (order may vary)
+        assert "mimeType" in all_fields
+        assert "size" in all_fields
+        assert len(all_fields) == 6
         assert requested_fields == ["createdTime", "id", "modifiedTime", "name"]

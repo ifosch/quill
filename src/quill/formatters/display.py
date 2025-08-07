@@ -109,6 +109,8 @@ def _get_field_value(file: DriveFile, field: str) -> str:
     """Get the display value for a field from a DriveFile object."""
     if field == "size":
         return f"{file.size:,}" if file.size else "N/A"
+    elif field == "mimeType":
+        return file.mime_type if file.mime_type else "N/A"
     elif field == "owners":
         owners = getattr(file, "owners", None)
         if owners is not None:

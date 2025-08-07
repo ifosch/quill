@@ -13,11 +13,19 @@ class TestListFiles:
     def test_basic_usage(self):
         """Test basic list-files command."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            # Mock the list_files response
+            # Mock the field parser
+            mock_field_parser = Mock()
+            mock_quill.get_field_parser.return_value = mock_field_parser
+            mock_field_parser.parse_fields.return_value = (
+                ["id", "name", "mimeType", "size", "createdTime", "modifiedTime"],
+                ["id", "name", "mimeType", "size", "createdTime", "modifiedTime"],
+            )
+
+            # Mock the list_files_with_pagination response
             mock_file = DriveFile(
                 id="test123",
                 name="test.txt",
@@ -26,7 +34,7 @@ class TestListFiles:
                 created_time=datetime(2024, 1, 1),
                 modified_time=datetime(2024, 1, 2),
             )
-            mock_client.list_files.return_value = {
+            mock_quill.list_files_with_pagination.return_value = {
                 "files": [mock_file],
                 "next_page_token": None,
             }
@@ -41,9 +49,17 @@ class TestListFiles:
     def test_with_query(self):
         """Test list-files with query parameter."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+
+            # Mock the field parser
+            mock_field_parser = Mock()
+            mock_quill.get_field_parser.return_value = mock_field_parser
+            mock_field_parser.parse_fields.return_value = (
+                ["id", "name", "mimeType", "size"],
+                ["id", "name", "mimeType", "size"],
+            )
 
             mock_file = DriveFile(
                 id="test123",
@@ -51,7 +67,7 @@ class TestListFiles:
                 mime_type="application/pdf",
                 size=2048,
             )
-            mock_client.list_files.return_value = {
+            mock_quill.list_files_with_pagination.return_value = {
                 "files": [mock_file],
                 "next_page_token": None,
             }
@@ -62,16 +78,24 @@ class TestListFiles:
             )
 
             assert result.exit_code == 0
-            mock_client.list_files.assert_called_once()
-            call_args = mock_client.list_files.call_args
+            mock_quill.list_files_with_pagination.assert_called_once()
+            call_args = mock_quill.list_files_with_pagination.call_args
             assert call_args[1]["query"] == "name contains 'report'"
 
     def test_with_custom_fields(self):
         """Test list-files with custom fields."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+
+            # Mock the field parser
+            mock_field_parser = Mock()
+            mock_quill.get_field_parser.return_value = mock_field_parser
+            mock_field_parser.parse_fields.return_value = (
+                ["name", "size", "createdTime", "mimeType"],
+                ["name", "size", "createdTime"],
+            )
 
             mock_file = DriveFile(
                 id="test123",
@@ -80,7 +104,7 @@ class TestListFiles:
                 size=1024,
                 created_time=datetime(2024, 1, 1),
             )
-            mock_client.list_files.return_value = {
+            mock_quill.list_files_with_pagination.return_value = {
                 "files": [mock_file],
                 "next_page_token": None,
             }
@@ -91,8 +115,8 @@ class TestListFiles:
             )
 
             assert result.exit_code == 0
-            mock_client.list_files.assert_called_once()
-            call_args = mock_client.list_files.call_args
+            mock_quill.list_files_with_pagination.assert_called_once()
+            call_args = mock_quill.list_files_with_pagination.call_args
             # Should include required fields (name, mimeType, size) plus requested fields
             expected_fields = ["name", "size", "createdTime", "mimeType"]
             assert all(field in call_args[1]["fields"] for field in expected_fields)
@@ -104,9 +128,37 @@ class TestGetFile:
     def test_basic_usage(self):
         """Test basic get-file command."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+
+            # Mock the field parser
+            mock_field_parser = Mock()
+            mock_quill.get_field_parser.return_value = mock_field_parser
+            mock_field_parser.parse_fields.return_value = (
+                [
+                    "id",
+                    "name",
+                    "mimeType",
+                    "size",
+                    "createdTime",
+                    "modifiedTime",
+                    "description",
+                    "owners",
+                    "webViewLink",
+                ],
+                [
+                    "id",
+                    "name",
+                    "mimeType",
+                    "size",
+                    "createdTime",
+                    "modifiedTime",
+                    "description",
+                    "owners",
+                    "webViewLink",
+                ],
+            )
 
             # Mock the get_file response
             mock_file = DriveFile(
@@ -120,7 +172,7 @@ class TestGetFile:
                 owners=[{"displayName": "Test User"}],
                 web_view_link="https://drive.google.com/file/d/test123/view",
             )
-            mock_client.get_file.return_value = mock_file
+            mock_quill.get_file.return_value = mock_file
 
             result = runner.invoke(cli, ["get-file", "test123"])
 
@@ -128,14 +180,22 @@ class TestGetFile:
             assert "test.txt" in result.output
             assert "text/plain" in result.output
             assert "1,024" in result.output
-            mock_client.get_file.assert_called_once_with("test123")
+            mock_quill.get_file.assert_called_once_with("test123")
 
     def test_with_custom_fields(self):
         """Test get-file with custom fields."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+
+            # Mock the field parser
+            mock_field_parser = Mock()
+            mock_quill.get_field_parser.return_value = mock_field_parser
+            mock_field_parser.parse_fields.return_value = (
+                ["name", "description", "createdTime", "mimeType"],
+                ["name", "description", "createdTime"],
+            )
 
             mock_file = DriveFile(
                 id="test123",
@@ -145,7 +205,7 @@ class TestGetFile:
                 created_time=datetime(2024, 1, 1),
                 description="Test file",
             )
-            mock_client.get_file.return_value = mock_file
+            mock_quill.get_file.return_value = mock_file
 
             result = runner.invoke(
                 cli, ["get-file", "test123", "--fields", "name,description,createdTime"]
@@ -154,16 +214,24 @@ class TestGetFile:
             assert result.exit_code == 0
             assert "test.txt" in result.output
             assert "Test file" in result.output
-            mock_client.get_file.assert_called_once_with("test123")
+            mock_quill.get_file.assert_called_once_with("test123")
 
     def test_file_not_found(self):
         """Test get-file with non-existent file."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            mock_client.get_file.side_effect = FileNotFoundError(
+            # Mock the field parser
+            mock_field_parser = Mock()
+            mock_quill.get_field_parser.return_value = mock_field_parser
+            mock_field_parser.parse_fields.return_value = (
+                ["id", "name", "mimeType", "size"],
+                ["id", "name", "mimeType", "size"],
+            )
+
+            mock_quill.get_file.side_effect = FileNotFoundError(
                 "File with ID test123 not found."
             )
 
@@ -176,11 +244,19 @@ class TestGetFile:
     def test_permission_error(self):
         """Test get-file with permission error."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            mock_client.get_file.side_effect = PermissionError(
+            # Mock the field parser
+            mock_field_parser = Mock()
+            mock_quill.get_field_parser.return_value = mock_field_parser
+            mock_field_parser.parse_fields.return_value = (
+                ["id", "name", "mimeType", "size"],
+                ["id", "name", "mimeType", "size"],
+            )
+
+            mock_quill.get_file.side_effect = PermissionError(
                 "Insufficient permissions to access the file."
             )
 
@@ -193,11 +269,19 @@ class TestGetFile:
     def test_general_error(self):
         """Test get-file with general error."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            mock_client.get_file.side_effect = Exception("Unexpected error")
+            # Mock the field parser
+            mock_field_parser = Mock()
+            mock_quill.get_field_parser.return_value = mock_field_parser
+            mock_field_parser.parse_fields.return_value = (
+                ["id", "name", "mimeType", "size"],
+                ["id", "name", "mimeType", "size"],
+            )
+
+            mock_quill.get_file.side_effect = Exception("Unexpected error")
 
             result = runner.invoke(cli, ["get-file", "test123"])
 
@@ -229,11 +313,11 @@ class TestExport:
     def test_basic_usage(self):
         """Test basic export command."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            mock_client.export.return_value = "/path/to/exported/file.pdf"
+            mock_quill.export_file.return_value = "/path/to/exported/file.pdf"
 
             result = runner.invoke(cli, ["export", "test123"])
 
@@ -241,59 +325,52 @@ class TestExport:
             assert (
                 "Successfully exported to: /path/to/exported/file.pdf" in result.output
             )
-            mock_client.export.assert_called_once_with(
+            mock_quill.export_file.assert_called_once_with(
                 "test123", output_path=None, format=None
             )
 
     def test_with_format(self):
         """Test export with specific format."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            mock_client.export.return_value = "/path/to/exported/file.pdf"
+            mock_quill.export_file.return_value = "/path/to/exported/file.pdf"
 
             result = runner.invoke(cli, ["export", "test123", "--format", "pdf"])
 
             assert result.exit_code == 0
-            mock_client.export.assert_called_once_with(
+            mock_quill.export_file.assert_called_once_with(
                 "test123", output_path=None, format="pdf"
             )
 
     def test_with_output_path(self):
         """Test export with output path."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            mock_client.export.return_value = "/custom/path/file.pdf"
+            mock_quill.export_file.return_value = "/custom/path/file.pdf"
 
             result = runner.invoke(
                 cli, ["export", "test123", "--output", "/custom/path/file.pdf"]
             )
 
             assert result.exit_code == 0
-            mock_client.export.assert_called_once_with(
+            mock_quill.export_file.assert_called_once_with(
                 "test123", output_path="/custom/path/file.pdf", format=None
             )
 
     def test_with_query_single_match(self):
         """Test export with query that finds single match."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            # Mock the search result
-            mock_file = DriveFile(
-                id="test123",
-                name="report.pdf",
-                mime_type="application/pdf",
-            )
-            mock_client.list_files.return_value = {"files": [mock_file]}
-            mock_client.export.return_value = "/path/to/exported/file.pdf"
+            mock_quill.search_and_export.return_value = "/path/to/exported/file.pdf"
 
             result = runner.invoke(cli, ["export", "--query", "name contains 'report'"])
 
@@ -301,26 +378,29 @@ class TestExport:
             assert (
                 "Successfully exported to: /path/to/exported/file.pdf" in result.output
             )
-            mock_client.list_files.assert_called_once()
-            mock_client.export.assert_called_once_with(
-                "test123", output_path=None, format=None
+            mock_quill.search_and_export.assert_called_once_with(
+                "name contains 'report'", output_path=None, format=None
             )
 
     def test_with_query_multiple_matches(self):
         """Test export with query that finds multiple matches."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            # Mock multiple search results
+            # Mock the MultipleFilesFoundError with files
             mock_file1 = DriveFile(
                 id="test123", name="report1.pdf", mime_type="application/pdf"
             )
             mock_file2 = DriveFile(
                 id="test456", name="report2.pdf", mime_type="application/pdf"
             )
-            mock_client.list_files.return_value = {"files": [mock_file1, mock_file2]}
+            from quill.exceptions import MultipleFilesFoundError
+
+            mock_quill.search_and_export.side_effect = MultipleFilesFoundError(
+                "Multiple files found", files=[mock_file1, mock_file2]
+            )
 
             result = runner.invoke(cli, ["export", "--query", "name contains 'report'"])
 
@@ -332,11 +412,15 @@ class TestExport:
     def test_with_query_no_matches(self):
         """Test export with query that finds no matches."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            mock_client.list_files.return_value = {"files": []}
+            from quill.exceptions import NoFilesFoundError
+
+            mock_quill.search_and_export.side_effect = NoFilesFoundError(
+                "No files found"
+            )
 
             result = runner.invoke(
                 cli, ["export", "--query", "name contains 'nonexistent'"]
@@ -366,11 +450,11 @@ class TestExport:
     def test_file_not_found(self):
         """Test export with non-existent file."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            mock_client.export.side_effect = FileNotFoundError("File not found")
+            mock_quill.export_file.side_effect = FileNotFoundError("File not found")
 
             result = runner.invoke(cli, ["export", "test123"])
 
@@ -380,11 +464,11 @@ class TestExport:
     def test_permission_error(self):
         """Test export with permission error."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            mock_client.export.side_effect = PermissionError("Permission denied")
+            mock_quill.export_file.side_effect = PermissionError("Permission denied")
 
             result = runner.invoke(cli, ["export", "test123"])
 
@@ -394,11 +478,11 @@ class TestExport:
     def test_invalid_format(self):
         """Test export with invalid format."""
         runner = CliRunner()
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            mock_client.export.side_effect = ValueError("Invalid format")
+            mock_quill.export_file.side_effect = ValueError("Invalid format")
 
             result = runner.invoke(cli, ["export", "test123"])
 

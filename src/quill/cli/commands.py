@@ -1,7 +1,8 @@
 """CLI command definitions."""
 
 import click
-from quill.drive.client import DriveClient
+from quill import Quill
+from quill.exceptions import MultipleFilesFoundError, NoFilesFoundError
 from quill.formatters.display import format_file_list
 from .navigation import interactive_pagination
 
@@ -37,50 +38,15 @@ from .navigation import interactive_pagination
 )
 def list_files(page_size, page_token, query, fields, no_interactive):
     """List files in your Google Drive with interactive pagination."""
-    client = DriveClient()
+    quill = Quill()
 
-    # Define default fields (same as in DriveClient)
-    default_fields = [
-        "id",
-        "name",
-        "mimeType",
-        "size",
-        "createdTime",
-        "modifiedTime",
-        "description",
-        "owners",
-        "webViewLink",
-    ]
-
-    # Required fields for display formatter
-    required_fields = {"name", "mimeType", "size"}
-
-    if fields:
-        # Parse user-provided fields while preserving order and removing duplicates
-        user_fields_raw = [f.strip() for f in fields.split(",") if f.strip()]
-        # Remove duplicates while preserving order of first occurrence
-        seen = set()
-        user_fields = []
-        for field in user_fields_raw:
-            if field not in seen:
-                seen.add(field)
-                user_fields.append(field)
-
-        # Combine user fields with required fields, preserving user-specified order
-        all_fields = user_fields.copy()
-        for field in required_fields:
-            if field not in all_fields:
-                all_fields.append(field)
-        # Keep track of originally requested fields for display (preserving order, no duplicates)
-        requested_fields = user_fields
-    else:
-        # Use default fields if none specified
-        all_fields = default_fields
-        requested_fields = None
+    # Use the library's field parser for consistent field handling
+    field_parser = quill.get_field_parser()
+    all_fields, requested_fields = field_parser.parse_fields(fields)
 
     # If page_token is provided or no-interactive is set, use single page mode
     if page_token is not None or no_interactive:
-        result = client.list_files(
+        result = quill.list_files_with_pagination(
             page_size=page_size, page_token=page_token, query=query, fields=all_fields
         )
         click.echo(format_file_list(result["files"], requested_fields))
@@ -91,7 +57,7 @@ def list_files(page_size, page_token, query, fields, no_interactive):
             click.echo("Use --page-token option to get the next page")
     else:
         # Use interactive pagination by default
-        interactive_pagination(client, page_size, query, all_fields, requested_fields)
+        interactive_pagination(quill, page_size, query, all_fields, requested_fields)
 
 
 @click.command()
@@ -109,50 +75,15 @@ def get_file(file_id, fields):
     Retrieves and displays comprehensive metadata for a single file identified by its ID.
     Use --fields to customize which information is displayed.
     """
-    client = DriveClient()
+    quill = Quill()
 
-    # Define default fields (same as in DriveClient)
-    default_fields = [
-        "id",
-        "name",
-        "mimeType",
-        "size",
-        "createdTime",
-        "modifiedTime",
-        "description",
-        "owners",
-        "webViewLink",
-    ]
-
-    # Required fields for display formatter
-    required_fields = {"name", "mimeType", "size"}
-
-    if fields:
-        # Parse user-provided fields while preserving order and removing duplicates
-        user_fields_raw = [f.strip() for f in fields.split(",") if f.strip()]
-        # Remove duplicates while preserving order of first occurrence
-        seen = set()
-        user_fields = []
-        for field in user_fields_raw:
-            if field not in seen:
-                seen.add(field)
-                user_fields.append(field)
-
-        # Combine user fields with required fields, preserving user-specified order
-        all_fields = user_fields.copy()
-        for field in required_fields:
-            if field not in all_fields:
-                all_fields.append(field)
-        # Keep track of originally requested fields for display (preserving order, no duplicates)
-        requested_fields = user_fields
-    else:
-        # Use default fields if none specified
-        all_fields = default_fields
-        requested_fields = None
+    # Use the library's field parser for consistent field handling
+    field_parser = quill.get_field_parser()
+    all_fields, requested_fields = field_parser.parse_fields(fields)
 
     try:
-        # Get the file using the existing backend method
-        file = client.get_file(file_id)
+        # Get the file using the library interface
+        file = quill.get_file(file_id)
 
         # Display the file information using the existing formatter
         # Pass as a single-item list since format_file_list expects a list
@@ -212,31 +143,23 @@ def export(file_id, query, output, format, verbose):
         raise click.ClickException("FILE_ID and --query are mutually exclusive")
 
     try:
-        client = DriveClient()
+        quill = Quill()
 
-        # Handle query-based export
+        # Handle query-based export using the library's search_and_export method
         if query:
             if verbose:
                 click.echo(f"Searching for files with query: {query}")
 
-            # Search for files matching the query
-            search_result = client.list_files(
-                page_size=100,  # Get more results to handle multiple matches
-                query=query,
-                fields=["id", "name", "mimeType"],
-            )
-
-            files = search_result["files"]
-
-            if not files:
-                click.echo("No files found matching the query.", err=True)
-                raise click.ClickException("No files found")
-
-            if len(files) > 1:
+            try:
+                result_path = quill.search_and_export(
+                    query, output_path=output, format=format
+                )
+                click.echo(f"Successfully exported to: {result_path}")
+            except MultipleFilesFoundError as e:
                 # Multiple matches - show the options
                 click.echo("Multiple files found matching the query:", err=True)
                 click.echo("", err=True)
-                for file in files:
+                for file in e.files:
                     click.echo(
                         f"  {file.id} - {file.name} ({file.mime_type})", err=True
                     )
@@ -245,21 +168,16 @@ def export(file_id, query, output, format, verbose):
                     "Please use the file ID to export a specific file.", err=True
                 )
                 raise click.ClickException("Multiple files found")
-
-            # Single match - proceed with export
-            file = files[0]
-            if verbose:
-                click.echo(f"Found single match: {file.name} (ID: {file.id})")
-
-            result_path = client.export(file.id, output_path=output, format=format)
-            click.echo(f"Successfully exported to: {result_path}")
+            except NoFilesFoundError:
+                click.echo("No files found matching the query.", err=True)
+                raise click.ClickException("No files found")
 
         # Handle file ID-based export (existing functionality)
         else:
             if verbose:
                 click.echo(f"Exporting file with ID: {file_id}")
 
-            result_path = client.export(file_id, output_path=output, format=format)
+            result_path = quill.export_file(file_id, output_path=output, format=format)
             click.echo(f"Successfully exported to: {result_path}")
 
     except FileNotFoundError as e:

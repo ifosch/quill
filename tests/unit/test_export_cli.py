@@ -15,11 +15,11 @@ class TestExportCommand:
         """Test export command with only file ID (auto-naming)."""
         runner = CliRunner()
 
-        # Mock the DriveClient.export method
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
-            mock_client.export.return_value = "My Document.zip"
+        # Mock the Quill.export_file method
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+            mock_quill.export_file.return_value = "My Document.zip"
 
             result = runner.invoke(cli, ["export", "1abc123"])
 
@@ -28,8 +28,8 @@ class TestExportCommand:
             assert "Successfully exported" in result.output
             assert "My Document.zip" in result.output
 
-            # Verify DriveClient was called correctly
-            mock_client.export.assert_called_once_with(
+            # Verify Quill was called correctly
+            mock_quill.export_file.assert_called_once_with(
                 "1abc123", output_path=None, format=None
             )
 
@@ -40,10 +40,10 @@ class TestExportCommand:
         with tempfile.TemporaryDirectory() as temp_dir:
             output_path = os.path.join(temp_dir, "custom_name.zip")
 
-            with patch("quill.cli.commands.DriveClient") as mock_client_class:
-                mock_client = Mock()
-                mock_client_class.return_value = mock_client
-                mock_client.export.return_value = output_path
+            with patch("quill.cli.commands.Quill") as mock_quill_class:
+                mock_quill = Mock()
+                mock_quill_class.return_value = mock_quill
+                mock_quill.export_file.return_value = output_path
 
                 result = runner.invoke(
                     cli, ["export", "1abc123", "--output", output_path]
@@ -53,8 +53,8 @@ class TestExportCommand:
                 assert "Successfully exported" in result.output
                 assert "custom_name.zip" in result.output
 
-                # Verify DriveClient was called with output path
-                mock_client.export.assert_called_once_with(
+                # Verify Quill was called with output path
+                mock_quill.export_file.assert_called_once_with(
                     "1abc123", output_path=output_path, format=None
                 )
 
@@ -62,10 +62,10 @@ class TestExportCommand:
         """Test export command when file doesn't exist."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
-            mock_client.export.side_effect = FileNotFoundError("File not found")
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+            mock_quill.export_file.side_effect = FileNotFoundError("File not found")
 
             result = runner.invoke(cli, ["export", "nonexistent123"])
 
@@ -76,10 +76,10 @@ class TestExportCommand:
         """Test export command when user lacks permission."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
-            mock_client.export.side_effect = PermissionError("Permission denied")
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+            mock_quill.export_file.side_effect = PermissionError("Permission denied")
 
             result = runner.invoke(cli, ["export", "restricted123"])
 
@@ -90,10 +90,10 @@ class TestExportCommand:
         """Test export command when a generic error occurs."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
-            mock_client.export.side_effect = RuntimeError("API connection failed")
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+            mock_quill.export_file.side_effect = RuntimeError("API connection failed")
 
             result = runner.invoke(cli, ["export", "1abc123"])
 
@@ -123,10 +123,10 @@ class TestExportCommand:
         """Test export command with verbose flag."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
-            mock_client.export.return_value = "My Document.zip"
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+            mock_quill.export_file.return_value = "My Document.zip"
 
             result = runner.invoke(cli, ["export", "1abc123", "--verbose"])
 
@@ -138,18 +138,18 @@ class TestExportCommand:
         """Test export command with format option."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
-            mock_client.export.return_value = "My Document.pdf"
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+            mock_quill.export_file.return_value = "My Document.pdf"
 
             result = runner.invoke(cli, ["export", "1abc123", "--format", "pdf"])
 
             assert result.exit_code == 0
             assert "Successfully exported" in result.output
 
-            # Verify DriveClient was called with format
-            mock_client.export.assert_called_once_with(
+            # Verify Quill was called with format
+            mock_quill.export_file.assert_called_once_with(
                 "1abc123", output_path=None, format="pdf"
             )
 
@@ -175,16 +175,16 @@ class TestExportCommand:
         """Test export command uses smart defaults when no format specified."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
-            mock_client.export.return_value = "My Document.zip"
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+            mock_quill.export_file.return_value = "My Document.zip"
 
             result = runner.invoke(cli, ["export", "1abc123"])
 
             assert result.exit_code == 0
-            # Verify DriveClient was called with format=None (smart default)
-            mock_client.export.assert_called_once_with(
+            # Verify Quill was called with format=None (smart default)
+            mock_quill.export_file.assert_called_once_with(
                 "1abc123", output_path=None, format=None
             )
 
@@ -193,19 +193,11 @@ class TestExportCommand:
         """Test export command with query that returns single match."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            # Create a mock DriveFile object
-            mock_file = Mock()
-            mock_file.id = "1abc123def456ghi789jkl012mno345pqr678stu901vwx"
-            mock_file.name = "My Document"
-            mock_file.mime_type = "application/vnd.google-apps.document"
-
-            # Mock list_files to return single match
-            mock_client.list_files.return_value = {"files": [mock_file]}
-            mock_client.export.return_value = "My Document.zip"
+            mock_quill.search_and_export.return_value = "My Document.zip"
 
             result = runner.invoke(
                 cli, ["export", "--query", 'name contains "My Document"']
@@ -215,28 +207,20 @@ class TestExportCommand:
             assert "Successfully exported" in result.output
             assert "My Document.zip" in result.output
 
-            # Verify list_files was called with query
-            mock_client.list_files.assert_called_once_with(
-                page_size=100,
-                query='name contains "My Document"',
-                fields=["id", "name", "mimeType"],
-            )
-            # Verify export was called with the found file ID
-            mock_client.export.assert_called_once_with(
-                "1abc123def456ghi789jkl012mno345pqr678stu901vwx",
-                output_path=None,
-                format=None,
+            # Verify search_and_export was called with query
+            mock_quill.search_and_export.assert_called_once_with(
+                'name contains "My Document"', output_path=None, format=None
             )
 
     def test_export_with_query_multiple_matches(self):
         """Test export command with query that returns multiple matches."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            # Create mock DriveFile objects
+            # Create mock DriveFile objects for the exception
             mock_file1 = Mock()
             mock_file1.id = "1abc123def456ghi789jkl012mno345pqr678stu901vwx"
             mock_file1.name = "My Document 1"
@@ -247,8 +231,12 @@ class TestExportCommand:
             mock_file2.name = "My Document 2"
             mock_file2.mime_type = "application/vnd.google-apps.document"
 
-            # Mock list_files to return multiple matches
-            mock_client.list_files.return_value = {"files": [mock_file1, mock_file2]}
+            # Mock search_and_export to raise MultipleFilesFoundError
+            from quill.exceptions import MultipleFilesFoundError
+
+            mock_quill.search_and_export.side_effect = MultipleFilesFoundError(
+                "Multiple files found", files=[mock_file1, mock_file2]
+            )
 
             result = runner.invoke(
                 cli, ["export", "--query", 'name contains "Document"']
@@ -261,24 +249,20 @@ class TestExportCommand:
             assert "1abc123def456ghi789jkl012mno345pqr678stu901vwx" in result.output
             assert "2def456ghi789jkl012mno345pqr678stu901vwx" in result.output
 
-            # Verify list_files was called but export was not
-            mock_client.list_files.assert_called_once_with(
-                page_size=100,
-                query='name contains "Document"',
-                fields=["id", "name", "mimeType"],
-            )
-            mock_client.export.assert_not_called()
-
     def test_export_with_query_no_matches(self):
         """Test export command with query that returns no matches."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            # Mock list_files to return no matches
-            mock_client.list_files.return_value = {"files": []}
+            # Mock search_and_export to raise NoFilesFoundError
+            from quill.exceptions import NoFilesFoundError
+
+            mock_quill.search_and_export.side_effect = NoFilesFoundError(
+                "No files found"
+            )
 
             result = runner.invoke(
                 cli, ["export", "--query", 'name contains "Nonexistent"']
@@ -287,13 +271,10 @@ class TestExportCommand:
             assert result.exit_code == 1
             assert "No files found" in result.output
 
-            # Verify list_files was called but export was not
-            mock_client.list_files.assert_called_once_with(
-                page_size=100,
-                query='name contains "Nonexistent"',
-                fields=["id", "name", "mimeType"],
+            # Verify search_and_export was called
+            mock_quill.search_and_export.assert_called_once_with(
+                'name contains "Nonexistent"', output_path=None, format=None
             )
-            mock_client.export.assert_not_called()
 
     def test_export_mutually_exclusive_file_id_and_query(self):
         """Test that file ID and query options are mutually exclusive."""
@@ -320,19 +301,11 @@ class TestExportCommand:
         """Test export command with query and verbose flag for single match."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
 
-            # Create mock DriveFile object
-            mock_file = Mock()
-            mock_file.id = "1abc123def456ghi789jkl012mno345pqr678stu901vwx"
-            mock_file.name = "My Document"
-            mock_file.mime_type = "application/vnd.google-apps.document"
-
-            # Mock list_files to return single match
-            mock_client.list_files.return_value = {"files": [mock_file]}
-            mock_client.export.return_value = "My Document.zip"
+            mock_quill.search_and_export.return_value = "My Document.zip"
 
             result = runner.invoke(
                 cli, ["export", "--query", 'name contains "My Document"', "--verbose"]
@@ -340,17 +313,16 @@ class TestExportCommand:
 
             assert result.exit_code == 0
             assert "Searching for files with query" in result.output
-            assert "Found single match: My Document" in result.output
             assert "Successfully exported" in result.output
 
     def test_export_verbose_file_id(self):
         """Test export command with file ID and verbose flag."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
-            mock_client.export.return_value = "My Document.zip"
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
+            mock_quill.export_file.return_value = "My Document.zip"
 
             result = runner.invoke(cli, ["export", "1abc123", "--verbose"])
 
@@ -362,11 +334,11 @@ class TestExportCommand:
         """Test export command handles generic exceptions."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.DriveClient") as mock_client_class:
-            mock_client = Mock()
-            mock_client_class.return_value = mock_client
+        with patch("quill.cli.commands.Quill") as mock_quill_class:
+            mock_quill = Mock()
+            mock_quill_class.return_value = mock_quill
             # Raise a generic exception that's not FileNotFoundError, PermissionError, or ValueError
-            mock_client.export.side_effect = ConnectionError("Network error")
+            mock_quill.export_file.side_effect = ConnectionError("Network error")
 
             result = runner.invoke(cli, ["export", "1abc123"])
 

@@ -11,7 +11,7 @@ from quill.cli.navigation import (
     interactive_pagination,
 )
 from quill.cli.pagination import PaginationState
-from quill.drive.client import DriveClient
+from quill import Quill
 from quill.drive.models import DriveFile
 
 
@@ -19,21 +19,21 @@ class TestFetchPage:
     """Tests for fetch_page function."""
 
     def test_fetch_page_calls_client_with_correct_parameters(self):
-        """Test that fetch_page calls client.list_files with correct parameters."""
-        mock_client = Mock(spec=DriveClient)
+        """Test that fetch_page calls client.list_files_with_pagination with correct parameters."""
+        mock_quill = Mock(spec=Quill)
         expected_result = {
             "files": [{"id": "123", "name": "test.txt"}],
             "next_page_token": "token123",
         }
-        mock_client.list_files.return_value = expected_result
+        mock_quill.list_files_with_pagination.return_value = expected_result
 
         state = PaginationState(20, "query test")
         state.page_token = "current_token"
         fields = ["id", "name", "size"]
 
-        result = fetch_page(mock_client, state, fields)
+        result = fetch_page(mock_quill, state, fields)
 
-        mock_client.list_files.assert_called_once_with(
+        mock_quill.list_files_with_pagination.assert_called_once_with(
             page_size=20, page_token="current_token", query="query test", fields=fields
         )
         assert result == expected_result
@@ -41,16 +41,16 @@ class TestFetchPage:
 
     def test_fetch_page_with_no_query(self):
         """Test fetch_page when no query is provided."""
-        mock_client = Mock(spec=DriveClient)
+        mock_quill = Mock(spec=Quill)
         expected_result = {"files": [], "next_page_token": None}
-        mock_client.list_files.return_value = expected_result
+        mock_quill.list_files_with_pagination.return_value = expected_result
 
         state = PaginationState(10, None)
         fields = ["id", "name"]
 
-        result = fetch_page(mock_client, state, fields)
+        result = fetch_page(mock_quill, state, fields)
 
-        mock_client.list_files.assert_called_once_with(
+        mock_quill.list_files_with_pagination.assert_called_once_with(
             page_size=10, page_token=None, query=None, fields=fields
         )
         assert result == expected_result
@@ -196,12 +196,12 @@ class TestInteractivePagination:
         self, mock_echo, mock_fetch, mock_display, mock_handle
     ):
         """Test interactive_pagination when user quits immediately."""
-        mock_client = Mock(spec=DriveClient)
+        mock_quill = Mock(spec=Quill)
         mock_fetch.return_value = {"files": [], "next_page_token": None}
         mock_handle.return_value = "quit"
 
         interactive_pagination(
-            client=mock_client,
+            quill=mock_quill,
             page_size=10,
             query=None,
             all_fields=["id", "name"],
@@ -221,12 +221,12 @@ class TestInteractivePagination:
         self, mock_echo, mock_fetch, mock_display, mock_handle
     ):
         """Test interactive_pagination with next navigation then quit."""
-        mock_client = Mock(spec=DriveClient)
+        mock_quill = Mock(spec=Quill)
         mock_fetch.return_value = {"files": [], "next_page_token": "token123"}
         mock_handle.side_effect = ["next", "quit"]  # Go next, then quit
 
         interactive_pagination(
-            client=mock_client,
+            quill=mock_quill,
             page_size=10,
             query=None,
             all_fields=["id", "name"],
@@ -247,12 +247,12 @@ class TestInteractivePagination:
         self, mock_echo, mock_fetch, mock_display, mock_handle, mock_navigate
     ):
         """Test interactive_pagination with previous navigation then quit."""
-        mock_client = Mock(spec=DriveClient)
+        mock_quill = Mock(spec=Quill)
         mock_fetch.return_value = {"files": [], "next_page_token": None}
         mock_handle.side_effect = ["previous", "quit"]  # Go previous, then quit
 
         interactive_pagination(
-            client=mock_client,
+            quill=mock_quill,
             page_size=10,
             query="test query",
             all_fields=["id", "name", "size"],
@@ -273,11 +273,11 @@ class TestInteractivePagination:
         self, mock_echo, mock_fetch, mock_display, mock_handle
     ):
         """Test interactive_pagination when KeyboardInterrupt is raised."""
-        mock_client = Mock(spec=DriveClient)
+        mock_quill = Mock(spec=Quill)
         mock_fetch.side_effect = KeyboardInterrupt()
 
         interactive_pagination(
-            client=mock_client,
+            quill=mock_quill,
             page_size=10,
             query=None,
             all_fields=["id", "name"],
@@ -292,24 +292,24 @@ class TestNavigateToPreviousPage:
 
     def test_navigate_to_previous_page_from_page_2(self):
         """Test navigate_to_previous_page simple case from page 2 to page 1."""
-        mock_client = Mock(spec=DriveClient)
+        mock_quill = Mock(spec=Quill)
         state = PaginationState(10, "test query")
         state.page_number = 2
         state.page_token = "current_token"
         fields = ["id", "name"]
 
-        navigate_to_previous_page(mock_client, state, fields)
+        navigate_to_previous_page(mock_quill, state, fields)
 
         # Should reset to first page without calling client.list_files
         assert state.page_number == 1
         assert state.page_token is None
-        mock_client.list_files.assert_not_called()
+        mock_quill.list_files_with_pagination.assert_not_called()
 
     def test_navigate_to_previous_page_from_page_3_complex_case(self):
         """Test navigate_to_previous_page complex case from page 3+ by rebuilding path."""
-        mock_client = Mock(spec=DriveClient)
+        mock_quill = Mock(spec=Quill)
         # Mock client to return successive page tokens for path reconstruction
-        mock_client.list_files.side_effect = [
+        mock_quill.list_files_with_pagination.side_effect = [
             {"files": [], "next_page_token": "token_to_page_2"},
             {"files": [], "next_page_token": "token_to_page_3"},
         ]
@@ -319,10 +319,10 @@ class TestNavigateToPreviousPage:
         state.page_token = "current_token_page_4"
         fields = ["id", "name", "size"]
 
-        navigate_to_previous_page(mock_client, state, fields)
+        navigate_to_previous_page(mock_quill, state, fields)
 
         # Should make 2 calls to rebuild path to page 3 (target_page - 1 = 3 - 1 = 2 calls)
-        assert mock_client.list_files.call_count == 2
+        assert mock_quill.list_files_with_pagination.call_count == 2
         # Verify calls were made correctly for path reconstruction
         expected_calls = [
             call(page_size=10, page_token=None, query="test query", fields=fields),
@@ -333,7 +333,7 @@ class TestNavigateToPreviousPage:
                 fields=fields,
             ),
         ]
-        mock_client.list_files.assert_has_calls(expected_calls)
+        mock_quill.list_files_with_pagination.assert_has_calls(expected_calls)
 
         # Should end up on page 3 with the correct token
         assert state.page_number == 3
@@ -341,9 +341,9 @@ class TestNavigateToPreviousPage:
 
     def test_navigate_to_previous_page_with_early_break(self):
         """Test navigate_to_previous_page when next_page_token becomes None during reconstruction."""
-        mock_client = Mock(spec=DriveClient)
+        mock_quill = Mock(spec=Quill)
         # First call returns token, second call returns None (end of results)
-        mock_client.list_files.side_effect = [
+        mock_quill.list_files_with_pagination.side_effect = [
             {"files": [], "next_page_token": "token_to_page_2"},
             {"files": [], "next_page_token": None},  # No more pages
         ]
@@ -352,10 +352,10 @@ class TestNavigateToPreviousPage:
         state.page_number = 5  # Try to navigate from page 5 to page 4
         fields = ["id", "name"]
 
-        navigate_to_previous_page(mock_client, state, fields)
+        navigate_to_previous_page(mock_quill, state, fields)
 
         # Should make 2 calls but break early when next_page_token is None
-        assert mock_client.list_files.call_count == 2
+        assert mock_quill.list_files_with_pagination.call_count == 2
         assert state.page_number == 4  # Target page
         assert state.page_token is None  # Should be None due to early break
 
