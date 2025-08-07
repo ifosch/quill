@@ -4,6 +4,7 @@ from typing import List, Optional, Dict, Any
 
 from .drive.client import DriveClient
 from .drive.models import DriveFile
+from .utils import FieldParser
 
 
 class Quill:
@@ -173,55 +174,3 @@ class Quill:
             FieldParser instance for handling field options
         """
         return FieldParser()
-
-
-class FieldParser:
-    """Helper for parsing and validating field options."""
-
-    def __init__(self):
-        self.required_fields = {"name", "mimeType", "size"}
-        self.default_fields = [
-            "id",
-            "name",
-            "mimeType",
-            "size",
-            "createdTime",
-            "modifiedTime",
-            "description",
-            "owners",
-            "webViewLink",
-        ]
-
-    def parse_fields(
-        self, fields_str: Optional[str]
-    ) -> tuple[List[str], Optional[List[str]]]:
-        """Parse fields string and return (all_fields, requested_fields).
-
-        Args:
-            fields_str: Comma-separated string of field names
-
-        Returns:
-            Tuple of (all_fields, requested_fields) where:
-                - all_fields: Complete list including required fields
-                - requested_fields: Original user-requested fields (for display)
-        """
-        if not fields_str:
-            return self.default_fields, None
-
-        user_fields = [f.strip() for f in fields_str.split(",") if f.strip()]
-
-        # Remove duplicates while preserving order
-        seen = set()
-        unique_fields = []
-        for field in user_fields:
-            if field not in seen:
-                seen.add(field)
-                unique_fields.append(field)
-
-        # Combine with required fields
-        all_fields = unique_fields.copy()
-        for field in self.required_fields:
-            if field not in all_fields:
-                all_fields.append(field)
-
-        return all_fields, unique_fields
