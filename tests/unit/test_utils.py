@@ -96,8 +96,8 @@ class TestFieldParser:
             "id",
             "modifiedTime",
             "name",
-            "size",
             "mimeType",
+            "size",
         ]
         assert requested_fields == ["createdTime", "id", "modifiedTime", "name"]
 

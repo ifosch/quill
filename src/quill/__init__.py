@@ -8,6 +8,7 @@ from .drive.client import DriveClient
 from .drive.models import DriveFile
 from .auth import Auth
 from .utils import FieldParser, validate_file_id, sanitize_filename, format_file_size
+from .config import Config, QuillConfig
 from .exceptions import (
     QuillError,
     AuthenticationError,
@@ -30,6 +31,9 @@ __all__ = [
     "validate_file_id",
     "sanitize_filename",
     "format_file_size",
+    # Configuration
+    "Config",
+    "QuillConfig",
     # Core components (existing)
     "DriveClient",
     "DriveFile",

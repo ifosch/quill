@@ -358,7 +358,7 @@ Run tests with coverage (fails if coverage is less than 80%):
 pytest --cov=quill --cov-report=term-missing --cov-fail-under=80
 ```
 
-**Current test coverage: 95.78%** ✅ (exceeds 80% requirement)
+**Current test coverage: 95.93%** ✅ (exceeds 80% requirement)
 
 ### Code Quality Checks
 
@@ -415,7 +415,7 @@ pre-commit run --all-files
 
 ### Project Standards
 
-- **Test Coverage**: Minimum 80% (currently 95.78%)
+- **Test Coverage**: Minimum 80% (currently 95.93%)
 - **Type Safety**: Full type annotation coverage with `ty`
 - **Code Quality**: Enforced via `ruff` linting
 - **Commit Messages**: Follow conventional commit format
