@@ -39,4 +39,4 @@ To verify your installation, run:
 quill --version
 ```
 
-You should see the current version of Quill displayed. 
+You should see the current version of Quill displayed.

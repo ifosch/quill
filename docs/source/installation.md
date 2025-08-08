@@ -91,4 +91,4 @@ After installation, verify that everything is working:
 
 - Read the [Quick Start Guide](quickstart.md)
 - Review the [Contributing Guidelines](contributing.md)
-- Check the [API Documentation](../api/index.html) 
+- Check the [API Documentation](../api/index.html)

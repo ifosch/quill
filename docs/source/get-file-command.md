@@ -28,7 +28,7 @@ When no `--fields` option is specified, the following fields are retrieved by de
 
 The `--fields` option accepts any combination of these Google Drive API fields:
 - `id`: File ID
-- `name`: File name  
+- `name`: File name
 - `mimeType`: MIME type of the file
 - `size`: File size in bytes
 - `createdTime`: Creation timestamp
@@ -105,4 +105,4 @@ quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "name,cre
 
 - `quill list-files` - List multiple files with pagination
 - `quill export` - Export Google Workspace documents
-- `quill --help` - Show general help information 
+- `quill --help` - Show general help information

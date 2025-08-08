@@ -1,6 +1,6 @@
 """Utility functions and classes for the Quill library."""
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 
 class FieldParser:
@@ -55,7 +55,7 @@ class FieldParser:
         return all_fields, unique_fields
 
 
-def validate_file_id(file_id: str) -> bool:
+def validate_file_id(file_id: Any) -> bool:
     """Validate if a string looks like a valid Google Drive file ID.
 
     Args:

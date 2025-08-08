@@ -1,6 +1,6 @@
 # User Quick Start Guide
 
-This guide will help you get started with Quill for common Google Drive tasks.
+This guide will help you get started with Quill CLI for common Google Drive tasks. The CLI provides a user-friendly interface to the underlying Quill library.
 
 ## Prerequisites
 
@@ -98,6 +98,33 @@ quill export --query "name contains 'report'" --verbose
 ```
 
 ## Common Workflows
+
+## Beyond the CLI
+
+While this guide focuses on CLI usage, Quill also provides a powerful Python library for integration into your applications. The CLI commands you've learned demonstrate how the library works in practice.
+
+### Library Usage Example
+
+```python
+from quill import Quill
+
+# Initialize the library (same as CLI)
+quill = Quill()
+
+# List files (same as quill list-files)
+files, next_token = quill.list_files_with_pagination(
+    query="name contains 'report'",
+    page_size=10
+)
+
+# Export file (same as quill export)
+output_path = quill.export_file(
+    "file_id_here",
+    format="pdf"
+)
+```
+
+For comprehensive library documentation, see the [Library API](library.md) guide.
 
 ### Workflow 1: Find and Export a Document
 
@@ -265,4 +292,4 @@ quill get-file --help
 
 - Read the [Commands Reference](commands.md) for detailed command documentation
 - Check the [Installation Guide](installation.md) for setup instructions
-- Review the [Contributing Guidelines](contributing.md) if you want to contribute 
+- Review the [Contributing Guidelines](contributing.md) if you want to contribute

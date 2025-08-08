@@ -26,4 +26,4 @@ rationale: |
   - Extensive rule set covering style, complexity, and potential bugs
   - Built-in auto-fixing capabilities
 
-  Using Ruff ensures consistent code style and quality across the project while improving development workflow efficiency. 
+  Using Ruff ensures consistent code style and quality across the project while improving development workflow efficiency.

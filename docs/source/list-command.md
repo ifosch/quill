@@ -24,7 +24,7 @@ When no `--fields` option is specified, the following fields are retrieved by de
 
 The `--fields` option accepts any combination of these Google Drive API fields:
 - `id`: File ID
-- `name`: File name  
+- `name`: File name
 - `mimeType`: MIME type of the file
 - `size`: File size in bytes
 - `createdTime`: Creation timestamp
@@ -98,7 +98,7 @@ quill list-files --page-size 50 --query "name contains 'project'"
 
 The command displays files in a table format with the following columns:
 - **Name**: The name of the file
-- **Type**: The MIME type of the file  
+- **Type**: The MIME type of the file
 - **Size**: The size of the file in bytes (if available, otherwise "N/A")
 
 ## Google Drive Query Syntax
@@ -110,4 +110,4 @@ The `--query` option supports Google Drive's query syntax:
 - `parents in 'folder_id'`: Files in specific folder
 - `trashed = false`: Non-deleted files (default)
 
-For more query options, see the [Google Drive API Query documentation](https://developers.google.com/drive/api/guides/search-files). 
+For more query options, see the [Google Drive API Query documentation](https://developers.google.com/drive/api/guides/search-files).

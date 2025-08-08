@@ -62,9 +62,9 @@ def test_drive_file_creation(kwargs, expected):
         kwargs: Dictionary of arguments to pass to DriveFile constructor
         expected: Dictionary of expected attribute values
     """
-    assert all(k in kwargs for k in ["id", "name", "mime_type"]), (
-        "Missing required fields in kwargs"
-    )
+    assert all(
+        k in kwargs for k in ["id", "name", "mime_type"]
+    ), "Missing required fields in kwargs"
     file = DriveFile(**kwargs)  # ty: ignore
 
     for attr, value in expected.items():

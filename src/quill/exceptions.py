@@ -1,10 +1,12 @@
 """Custom exceptions for the Quill library."""
 
+from typing import Optional
+
 
 class QuillError(Exception):
     """Base exception for all Quill library errors."""
 
-    def __init__(self, message: str, original_error: Exception = None):
+    def __init__(self, message: str, original_error: Optional[Exception] = None):
         """Initialize the exception.
 
         Args:
@@ -121,7 +123,7 @@ class MultipleFilesFoundError(QuillError):
     - Export with query finds multiple matches
     """
 
-    def __init__(self, message: str, files: list = None):
+    def __init__(self, message: str, files: Optional[list] = None):
         """Initialize the exception.
 
         Args:

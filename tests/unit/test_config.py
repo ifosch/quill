@@ -525,12 +525,13 @@ class TestConfigSaving:
             save_path = f.name
 
         try:
-            # Test that it raises ConfigurationError when tomli_w is not available
-            with pytest.raises(
-                ConfigurationError,
-                match="tomli-w is required for TOML configuration files",
-            ):
-                config.save_config(save_path)
+            # Test successful TOML saving (dependencies are now available)
+            config.save_config(save_path)
+
+            # Verify the file was created and contains correct data
+            # We can't easily parse TOML in the test, but we can check the file exists
+            assert os.path.exists(save_path)
+            assert os.path.getsize(save_path) > 0
         finally:
             os.unlink(save_path)
 

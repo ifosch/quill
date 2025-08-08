@@ -126,16 +126,11 @@ class Config:
 
     def _load_toml_config(self):
         """Load configuration from TOML file."""
-        try:
-            import tomllib
+        import tomllib
 
-            with open(self.config_file, "rb") as f:
-                config_data = tomllib.load(f)
-                self._update_config_from_dict(config_data)
-        except ImportError:
-            raise ConfigurationError(
-                "tomllib is required for TOML configuration files (Python 3.11+)"
-            )
+        with open(self.config_file, "rb") as f:
+            config_data = tomllib.load(f)
+            self._update_config_from_dict(config_data)
 
     def _load_json_config(self):
         """Load configuration from JSON file."""
@@ -320,13 +315,10 @@ class Config:
 
     def _save_toml_config(self, config_dict: Dict[str, Any], file_path: Path):
         """Save configuration to TOML file."""
-        try:
-            import tomli_w
+        import tomli_w
 
-            with open(file_path, "wb") as f:
-                tomli_w.dump(config_dict, f)
-        except ImportError:
-            raise ConfigurationError("tomli-w is required for TOML configuration files")
+        with open(file_path, "wb") as f:
+            tomli_w.dump(config_dict, f)
 
     def _save_json_config(self, config_dict: Dict[str, Any], file_path: Path):
         """Save configuration to JSON file."""

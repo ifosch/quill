@@ -37,7 +37,7 @@ Test-Driven Development follows a simple but powerful cycle: **RED → GREEN →
    ```bash
    # Run the specific test
    uv run pytest tests/unit/test_module.py::test_new_feature -v
-   
+
    # Run related tests to check for regressions
    uv run pytest tests/unit/test_module.py -v
    ```
@@ -48,7 +48,7 @@ Test-Driven Development follows a simple but powerful cycle: **RED → GREEN →
    ```bash
    # Run comprehensive test suite
    uv run pytest tests/unit/ -v
-   
+
    # Check test coverage
    uv run pytest --cov=quill --cov-report=term-missing
    ```
@@ -75,7 +75,7 @@ def test_format_file_list_with_complete_google_drive_id():
     full_drive_id = "1ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqr"  # 44 chars
     file = DriveFile(id=full_drive_id, name="test.txt", mime_type="text/plain", size=100)
     result = format_file_list([file], requested_fields=["id", "name"])
-    
+
     # This should fail initially
     assert full_drive_id in result
     assert "..." not in result  # No truncation indicator
@@ -109,7 +109,7 @@ def test_cli_field_processing_removes_duplicates(fields_input, expected_order):
     # Test the current buggy logic (should fail)
     user_fields = [f.strip() for f in fields_input.split(",") if f.strip()]
     requested_fields = user_fields  # This preserves duplicates (buggy)
-    
+
     assert requested_fields == expected_order  # This will fail
 ```
 
@@ -277,7 +277,7 @@ Follow conventional commits when fixing bugs with TDD:
 fix(scope): brief description of what was fixed
 
 - Implement failing test for the identified bug
-- Add minimal fix to make the test pass  
+- Add minimal fix to make the test pass
 - Refactor and ensure no regressions
 - Include comprehensive test coverage for edge cases
 
@@ -325,4 +325,4 @@ From applying TDD to real bugs in this project:
 
 ---
 
-*This guide was developed through practical application of TDD to real bugs in the Quill project. It captures patterns and practices that proved effective for maintaining code quality while delivering reliable features.* 
+*This guide was developed through practical application of TDD to real bugs in the Quill project. It captures patterns and practices that proved effective for maintaining code quality while delivering reliable features.*

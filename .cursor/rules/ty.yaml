@@ -20,4 +20,4 @@ rationale: |
   - Compatibility with type annotations and gradual typing
   - Easy integration with modern Python workflows
 
-  Using Ty ensures type safety, reduces bugs, and improves code maintainability throughout the project. 
+  Using Ty ensures type safety, reduces bugs, and improves code maintainability throughout the project.

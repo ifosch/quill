@@ -5,12 +5,9 @@ description: |
 
 rules:
   - Write all tests using pytest.
-  - Always activate the virtual environment before running tests:
-    ```bash
-    source .venv/bin/activate  # On Unix/macOS
-    # or
-    .venv\Scripts\activate     # On Windows
-    ```
+  - Always activate the virtual environment before running tests
+  - Use "source .venv/bin/activate" on Unix/macOS
+  - Use ".venv\\Scripts\\activate" on Windows
   - Run tests with `pytest` before committing changes.
   - Fix all test failures before proceeding.
   - Configure pytest settings in pyproject.toml if needed.
@@ -38,4 +35,4 @@ rationale: |
 
   Using pytest and pytest-cov ensures consistent, maintainable, and comprehensive test coverage throughout the project. Coverage enforcement helps catch untested code and maintain high quality as the codebase evolves.
 
-  The virtual environment ensures that tests run in an isolated environment with the correct dependencies, preventing conflicts with system packages and ensuring consistent test results across different development environments. 
+  The virtual environment ensures that tests run in an isolated environment with the correct dependencies, preventing conflicts with system packages and ensuring consistent test results across different development environments.

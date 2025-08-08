@@ -101,4 +101,4 @@ This guide will help you get started with the Quill project quickly.
 
 - Read the [Installation Guide](installation.md) for detailed setup instructions
 - Review the [Contributing Guidelines](contributing.md) for project standards
-- Check the [API Documentation](../api/index.html) for detailed API reference 
+- Check the [API Documentation](../api/index.html) for detailed API reference

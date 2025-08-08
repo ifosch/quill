@@ -32,4 +32,4 @@ rationale: |
   - Use `uv publish` with appropriate options
   - Ensure package metadata in pyproject.toml is complete and accurate
   - Test the package locally before publishing
-  - Follow semantic versioning for releases 
+  - Follow semantic versioning for releases

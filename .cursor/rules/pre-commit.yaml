@@ -42,4 +42,4 @@ rationale: |
   - Reduced code review overhead
   - Early detection of issues
 
-  Using pre-commit helps maintain high code quality and consistency while improving the development experience. 
+  Using pre-commit helps maintain high code quality and consistency while improving the development experience.

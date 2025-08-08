@@ -113,4 +113,4 @@ Thank you for your interest in contributing to the Quill project! This guide wil
 - Read the [Installation Guide](installation.md)
 - Review the [Quick Start Guide](quickstart.md)
 - Check the [TDD Practices Guide](tdd-practices.md) for development workflow
-- Check the [API Documentation](../api/index.html) 
+- Check the [API Documentation](../api/index.html)

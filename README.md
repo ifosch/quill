@@ -62,10 +62,10 @@ You can provide your Google Drive API credentials in two ways:
    ```bash
    # Linux/macOS
    export GOOGLE_DRIVE_CREDENTIALS="/path/to/your/credentials.json"
-   
+
    # Windows (PowerShell)
    $env:GOOGLE_DRIVE_CREDENTIALS="C:\path\to\your\credentials.json"
-   
+
    # Windows (Command Prompt)
    set GOOGLE_DRIVE_CREDENTIALS=C:\path\to\your\credentials.json
    ```
@@ -90,7 +90,7 @@ Project Report.docx (856 KB) - Word - Modified: 2024-01-14
 
 **Navigation:**
 - **N** or **n**: Go to next page
-- **P** or **p**: Go to previous page  
+- **P** or **p**: Go to previous page
 - **Q** or **q**: Quit and return to command line
 
 ### Non-Interactive Mode
@@ -156,7 +156,7 @@ quill list-files --fields "id,name,mimeType,size,createdTime,modifiedTime,descri
 #### Available Fields
 The `--fields` option accepts any combination of these Google Drive API fields:
 - `id`: File ID
-- `name`: File name  
+- `name`: File name
 - `mimeType`: MIME type of the file
 - `size`: File size in bytes
 - `createdTime`: Creation timestamp
@@ -201,7 +201,7 @@ quill get-file <file_id> --fields "id,name,mimeType,size,createdTime,modifiedTim
 #### Available Fields
 The `--fields` option accepts any combination of these Google Drive API fields:
 - `id`: File ID
-- `name`: File name  
+- `name`: File name
 - `mimeType`: MIME type of the file
 - `size`: File size in bytes
 - `createdTime`: Creation timestamp
@@ -306,6 +306,11 @@ quill get-file --help
 quill export --help
 ```
 
+For detailed command documentation, see:
+- [List Files Command](docs/source/list-command.md)
+- [Get File Command](docs/source/get-file-command.md)
+- [Export Command](docs/source/export-command.md)
+
 ## Architecture
 
 Quill features a clean, modular architecture with both CLI and library interfaces:
@@ -314,7 +319,7 @@ Quill features a clean, modular architecture with both CLI and library interface
 src/quill/
 ├── cli/                    # Command-line interface
 │   ├── __init__.py        # CLI registration and main entry
-│   ├── commands.py        # Click command definitions  
+│   ├── commands.py        # Click command definitions
 │   ├── pagination.py      # Pagination state management
 │   └── navigation.py      # Interactive navigation logic
 ├── drive/                 # Google Drive integration
@@ -427,7 +432,7 @@ Run the complete verification suite:
 # Format code
 ruff format .
 
-# Lint and auto-fix issues  
+# Lint and auto-fix issues
 ruff check . --fix
 
 # Type checking
@@ -510,4 +515,4 @@ pre-commit run --all-files
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

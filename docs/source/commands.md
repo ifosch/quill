@@ -1,6 +1,6 @@
 # Commands Reference
 
-This section contains detailed documentation for all Quill commands.
+This section contains detailed documentation for all Quill CLI commands. The CLI serves as a real-world example of how to use the underlying Quill library.
 
 ## Available Commands
 
@@ -14,7 +14,16 @@ export-command
 
 ## Quick Reference
 
-- `quill list-files` - List files in your Google Drive with various options
-- `quill get-file <file_id>` - Get detailed information about a specific file
-- `quill export <file_id>` - Export Google Workspace documents with smart defaults
-- `quill --help` - Show general help information 
+- [`quill list-files`](list-command.md) - List files in your Google Drive with various options
+- [`quill get-file <file_id>`](get-file-command.md) - Get detailed information about a specific file
+- [`quill export <file_id>`](export-command.md) - Export Google Workspace documents with smart defaults
+- `quill --help` - Show general help information
+
+## CLI vs Library
+
+The CLI commands are built on top of the Quill library, demonstrating how to use the library in practice:
+
+- **CLI**: User-friendly command-line interface with interactive features
+- **Library**: Programmatic interface for integration into Python applications
+
+For library usage, see the [Library API](library.md) documentation.

@@ -154,4 +154,4 @@ The following operations can be performed autonomously:
 
 ## Support
 
-For questions or clarifications about these rules, please open an issue in the project repository. 
+For questions or clarifications about these rules, please open an issue in the project repository.

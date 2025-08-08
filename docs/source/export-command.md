@@ -76,10 +76,10 @@ The export command handles query results in different ways:
 - Example output:
   ```
   Multiple files found matching the query:
-  
+
     1abc123def456ghi789jkl012mno345pqr678stu901vwx - Report 2024 (application/vnd.google-apps.document)
     2def456ghi789jkl012mno345pqr678stu901vwx - Report 2023 (application/vnd.google-apps.document)
-  
+
   Please use the file ID to export a specific file.
   ```
 
@@ -251,4 +251,4 @@ Not all formats are compatible with all file types. The smart defaults ensure op
 
 - `quill list-files` - List files to find file IDs
 - `quill get-file` - Get detailed information about a specific file
-- `quill --help` - Show general help information 
+- `quill --help` - Show general help information
