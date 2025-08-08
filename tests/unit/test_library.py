@@ -20,6 +20,19 @@ class TestQuill:
             assert quill._client is not None
             assert isinstance(quill._client, Mock)
 
+    def test_quill_initialization_with_credentials_path(self):
+        """Test Quill client initialization with custom credentials path."""
+        with patch("quill.client.DriveClient") as mock_client_class:
+            mock_client = Mock()
+            mock_client_class.return_value = mock_client
+
+            credentials_path = "/custom/path/credentials.json"
+            quill = Quill(credentials_path=credentials_path)
+
+            assert quill._client is not None
+            assert isinstance(quill._client, Mock)
+            mock_client_class.assert_called_once_with(credentials_path=credentials_path)
+
     def test_list_files_basic(self):
         """Test basic list_files functionality."""
         with patch("quill.client.DriveClient") as mock_client_class:

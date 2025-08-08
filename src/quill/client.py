@@ -37,8 +37,7 @@ class Quill:
             credentials_path: Optional path to credentials file. If not provided,
                 uses default authentication configuration.
         """
-        self._client = DriveClient()
-        # TODO: Add credentials_path support when DriveClient supports it
+        self._client = DriveClient(credentials_path=credentials_path)
 
     def list_files(
         self,

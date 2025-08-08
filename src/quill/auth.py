@@ -2,6 +2,7 @@
 
 import os
 import json
+from typing import Optional
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -14,8 +15,10 @@ class Auth:
 
     SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
-    def __init__(self):
+    def __init__(self, credentials_path: Optional[str] = None):
         self.config = Config()
+        if credentials_path:
+            self.config.set("credentials_path", credentials_path)
         self.credentials = None
 
     def get_credentials(self):

@@ -321,8 +321,13 @@ class TestDriveClientDownload:
         """Test that invalid format raises ValueError."""
         client = DriveClient()
 
-        with pytest.raises(ValueError, match="Unsupported format: invalid_format"):
-            client.export("test_id", format="invalid_format")
+        # Mock the service to avoid authentication
+        with patch.object(client, "get_service") as mock_get_service:
+            mock_service = MagicMock()
+            mock_get_service.return_value = mock_service
+
+            with pytest.raises(ValueError, match="Unsupported format: invalid_format"):
+                client.export("test_id", format="invalid_format")
 
     @pytest.mark.parametrize("format_type", ["html", "pdf", "xlsx", "csv"])
     def test_export_format_validation_valid_formats(self, format_type):

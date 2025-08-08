@@ -13,8 +13,8 @@ from .models import DriveFile
 class DriveClient:
     """Google Drive API client."""
 
-    def __init__(self):
-        self.auth = Auth()
+    def __init__(self, credentials_path: Optional[str] = None):
+        self.auth = Auth(credentials_path=credentials_path)
         self.service = None
 
     def get_service(self):
