@@ -20,6 +20,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Load versions from .env file
+      run: |
+        source .github/versions.env
+        echo "UV_VERSION=$UV_VERSION" >> $GITHUB_ENV
+        echo "RUFF_VERSION=$RUFF_VERSION" >> $GITHUB_ENV
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -28,7 +34,7 @@ jobs:
     - name: Install uv
       uses: astral-sh/setup-uv@v3
       with:
-        version: ${{ matrix.uv-version }}
+        version: ${{ env.UV_VERSION || matrix.uv-version }}
 
     - name: Cache uv dependencies
       uses: actions/cache@v3
@@ -44,7 +50,7 @@ jobs:
       run: |
         uv sync --dev
         uv run pip install pytest-cov
-        uv run pip install ruff==0.11.13
+        uv run pip install ruff==${{ env.RUFF_VERSION || '0.11.13' }}
 
     - name: Run linting with ruff
       run: uv run ruff check .
@@ -76,6 +82,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Load versions from .env file
+      run: |
+        source .github/versions.env
+        echo "UV_VERSION=$UV_VERSION" >> $GITHUB_ENV
+        echo "RUFF_VERSION=$RUFF_VERSION" >> $GITHUB_ENV
+
     - name: Set up Python 3.13
       uses: actions/setup-python@v4
       with:
@@ -84,7 +96,7 @@ jobs:
     - name: Install uv
       uses: astral-sh/setup-uv@v3
       with:
-        version: "0.8.6"
+        version: ${{ env.UV_VERSION || '0.8.6' }}
 
     - name: Install dependencies
       run: uv sync --dev
