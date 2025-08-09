@@ -5,7 +5,7 @@ The `export` command allows you to download and export Google Workspace document
 ## Overview
 
 ```bash
-quill export [<file_id>] [OPTIONS]
+zenodotos export [<file_id>] [OPTIONS]
 ```
 
 The export command supports Google Workspace documents (Docs, Sheets, Slides, Drawings, Forms) and automatically selects the optimal export format based on the file type. You can override the default format using the `--format` option.
@@ -26,7 +26,7 @@ You can export files using either a file ID or a search query. File ID and query
 
 ## Smart Format Defaults
 
-Quill automatically selects the optimal export format based on the file's MIME type:
+Zenodotos automatically selects the optimal export format based on the file's MIME type:
 
 | File Type | Default Format | Description |
 |-----------|----------------|-------------|
@@ -44,22 +44,22 @@ Instead of using a file ID, you can export files by searching for them using Goo
 
 ```bash
 # Export a file by exact name
-quill export --query "name = 'My Important Document'"
+zenodotos export --query "name = 'My Important Document'"
 
 # Export files containing specific text in the name
-quill export --query "name contains 'report'"
+zenodotos export --query "name contains 'report'"
 
 # Export files by MIME type
-quill export --query "mimeType = 'application/vnd.google-apps.document'"
+zenodotos export --query "mimeType = 'application/vnd.google-apps.document'"
 
 # Export files modified recently
-quill export --query "modifiedTime > '2024-01-01'"
+zenodotos export --query "modifiedTime > '2024-01-01'"
 
 # Export files by owner
-quill export --query "'me' in owners"
+zenodotos export --query "'me' in owners"
 
 # Complex queries with multiple conditions
-quill export --query "name contains 'report' and mimeType = 'application/vnd.google-apps.document'"
+zenodotos export --query "name contains 'report' and mimeType = 'application/vnd.google-apps.document'"
 ```
 
 ### Query Behavior
@@ -89,7 +89,7 @@ The export command handles query results in different ways:
 
 ### Query Syntax
 
-Quill supports the full Google Drive API query syntax, including:
+Zenodotos supports the full Google Drive API query syntax, including:
 
 - **String matching**: `name = 'exact name'`, `name contains 'text'`
 - **Date comparisons**: `modifiedTime > '2024-01-01'`, `createdTime < '2023-12-31'`
@@ -115,13 +115,13 @@ Export a document using the smart default format:
 
 ```bash
 # Export a Google Doc to HTML (default)
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
 
 # Export a Google Sheet to Excel (default)
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
 
 # Export a Google Slides presentation to PDF (default)
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
 ```
 
 ### Query-Based Export
@@ -130,19 +130,19 @@ Export files by searching for them instead of using file IDs:
 
 ```bash
 # Export a file by exact name
-quill export --query "name = 'My Important Document'"
+zenodotos export --query "name = 'My Important Document'"
 
 # Export files containing specific text
-quill export --query "name contains 'report'"
+zenodotos export --query "name contains 'report'"
 
 # Export files by MIME type
-quill export --query "mimeType = 'application/vnd.google-apps.document'"
+zenodotos export --query "mimeType = 'application/vnd.google-apps.document'"
 
 # Export files modified recently
-quill export --query "modifiedTime > '2024-01-01'"
+zenodotos export --query "modifiedTime > '2024-01-01'"
 
 # Export with verbose output to see search details
-quill export --query "name contains 'report'" --verbose
+zenodotos export --query "name contains 'report'" --verbose
 ```
 
 ### Custom Format Export
@@ -151,13 +151,13 @@ Override the default format:
 
 ```bash
 # Export a Google Doc to PDF instead of HTML
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
 
 # Export a Google Sheet to CSV instead of XLSX
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format csv
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format csv
 
 # Export a presentation to HTML instead of PDF
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format html
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format html
 ```
 
 ### Custom Output Path
@@ -166,13 +166,13 @@ Specify where to save the exported file:
 
 ```bash
 # Export to a specific filename
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --output "My Report.pdf"
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --output "My Report.pdf"
 
 # Export to a specific directory
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --output "/path/to/exports/document.pdf"
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --output "/path/to/exports/document.pdf"
 
 # Export with custom name and format
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format xlsx --output "Data Analysis.xlsx"
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format xlsx --output "Data Analysis.xlsx"
 ```
 
 ### Verbose Output
@@ -180,7 +180,7 @@ quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format xlsx --outp
 Get detailed information about the export process:
 
 ```bash
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --verbose
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --verbose
 ```
 
 This will show:
@@ -227,7 +227,7 @@ The export command uses the Google Drive API's `files.export` endpoint for Googl
 
 ### File Naming
 
-When no output path is specified, Quill automatically generates a filename based on:
+When no output path is specified, Zenodotos automatically generates a filename based on:
 
 1. The original document name from Google Drive
 2. The appropriate file extension for the export format
@@ -249,6 +249,6 @@ Not all formats are compatible with all file types. The smart defaults ensure op
 
 ## Related Commands
 
-- `quill list-files` - List files to find file IDs
-- `quill get-file` - Get detailed information about a specific file
-- `quill --help` - Show general help information
+- `zenodotos list-files` - List files to find file IDs
+- `zenodotos get-file` - Get detailed information about a specific file
+- `zenodotos --help` - Show general help information

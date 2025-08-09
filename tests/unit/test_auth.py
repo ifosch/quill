@@ -7,7 +7,7 @@ import pytest
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-from quill.auth import Auth
+from zenodotos.auth import Auth
 
 
 @pytest.fixture
@@ -52,7 +52,7 @@ def test_get_credentials_from_token_file(mock_config, mock_credentials):
 
     with patch("os.path.exists") as mock_exists, patch(
         "builtins.open", mock_open(read_data=json.dumps(token_data))
-    ), patch("quill.auth.Credentials.from_authorized_user_info") as mock_from_info:
+    ), patch("zenodotos.auth.Credentials.from_authorized_user_info") as mock_from_info:
         mock_exists.return_value = True
         mock_from_info.return_value = mock_credentials
 
@@ -73,8 +73,8 @@ def test_get_credentials_refresh_token(mock_config, mock_credentials):
     with patch("os.path.exists") as mock_exists, patch(
         "builtins.open", mock_open(read_data='{"token": "old_token"}')
     ), patch(
-        "quill.auth.Credentials.from_authorized_user_info"
-    ) as mock_from_info, patch("quill.auth.Request") as mock_request:
+        "zenodotos.auth.Credentials.from_authorized_user_info"
+    ) as mock_from_info, patch("zenodotos.auth.Request") as mock_request:
         mock_exists.return_value = True
         mock_from_info.return_value = mock_credentials
 
@@ -89,7 +89,7 @@ def test_get_credentials_refresh_token(mock_config, mock_credentials):
 def test_get_credentials_new_oauth_flow(mock_config, mock_flow, mock_credentials):
     """Test starting new OAuth flow when no token exists."""
     with patch("os.path.exists") as mock_exists, patch(
-        "quill.auth.InstalledAppFlow.from_client_secrets_file"
+        "zenodotos.auth.InstalledAppFlow.from_client_secrets_file"
     ) as mock_flow_class, patch("builtins.open", mock_open()):
         mock_exists.return_value = False
         mock_flow_class.return_value = mock_flow

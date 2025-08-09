@@ -2,8 +2,8 @@
 
 from datetime import datetime
 
-from quill.formatters.display import format_file_list
-from quill.drive.models import DriveFile
+from zenodotos.formatters.display import format_file_list
+from zenodotos.drive.models import DriveFile
 
 
 def test_format_file_list_empty():

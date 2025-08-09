@@ -1,8 +1,8 @@
 """Test configuration and fixtures."""
 
 import pytest
-from quill.config import Config
-from quill.drive.client import DriveClient
+from zenodotos.config import Config
+from zenodotos.drive.client import DriveClient
 
 
 @pytest.fixture

@@ -1,4 +1,4 @@
-"""Enhanced configuration management for Quill."""
+"""Enhanced configuration management for Zenodotos."""
 
 import os
 import json
@@ -10,8 +10,8 @@ from .exceptions import ConfigurationError
 
 
 @dataclass
-class QuillConfig:
-    """Configuration settings for Quill library and CLI."""
+class ZenodotosConfig:
+    """Configuration settings for Zenodotos library and CLI."""
 
     # Authentication settings
     credentials_path: Optional[str] = None
@@ -53,7 +53,7 @@ class QuillConfig:
 
 
 class Config:
-    """Enhanced configuration management for Quill."""
+    """Enhanced configuration management for Zenodotos."""
 
     def __init__(self, config_file: Optional[str] = None):
         """Initialize configuration with optional config file path.
@@ -61,13 +61,13 @@ class Config:
         Args:
             config_file: Optional path to configuration file (YAML/TOML/JSON)
         """
-        self.config_dir = Path.home() / ".config" / "quill"
+        self.config_dir = Path.home() / ".config" / "zenodotos"
         self.config_file = (
             Path(config_file) if config_file else self.config_dir / "config.yaml"
         )
 
         # Initialize with defaults
-        self._config = QuillConfig()
+        self._config = ZenodotosConfig()
 
         # Load configuration from various sources (in order of precedence)
         self._load_configuration()
@@ -141,20 +141,20 @@ class Config:
     def _load_from_environment(self):
         """Load configuration from environment variables."""
         env_mappings = {
-            "QUILL_CREDENTIALS_PATH": "credentials_path",
-            "QUILL_TOKEN_PATH": "token_path",
-            "QUILL_PAGE_SIZE": "page_size",
-            "QUILL_MAX_RETRIES": "max_retries",
-            "QUILL_TIMEOUT_SECONDS": "timeout_seconds",
-            "QUILL_DEFAULT_EXPORT_FORMAT": "default_export_format",
-            "QUILL_EXPORT_DIRECTORY": "export_directory",
-            "QUILL_MAX_DISPLAY_WIDTH": "max_display_width",
-            "QUILL_ENABLE_CACHE": "enable_cache",
-            "QUILL_CACHE_TTL_SECONDS": "cache_ttl_seconds",
-            "QUILL_LOG_LEVEL": "log_level",
-            "QUILL_LOG_FILE": "log_file",
-            "QUILL_DEBUG_MODE": "debug_mode",
-            "QUILL_VERBOSE_OUTPUT": "verbose_output",
+            "ZENODOTOS_CREDENTIALS_PATH": "credentials_path",
+            "ZENODOTOS_TOKEN_PATH": "token_path",
+            "ZENODOTOS_PAGE_SIZE": "page_size",
+            "ZENODOTOS_MAX_RETRIES": "max_retries",
+            "ZENODOTOS_TIMEOUT_SECONDS": "timeout_seconds",
+            "ZENODOTOS_DEFAULT_EXPORT_FORMAT": "default_export_format",
+            "ZENODOTOS_EXPORT_DIRECTORY": "export_directory",
+            "ZENODOTOS_MAX_DISPLAY_WIDTH": "max_display_width",
+            "ZENODOTOS_ENABLE_CACHE": "enable_cache",
+            "ZENODOTOS_CACHE_TTL_SECONDS": "cache_ttl_seconds",
+            "ZENODOTOS_LOG_LEVEL": "log_level",
+            "ZENODOTOS_LOG_FILE": "log_file",
+            "ZENODOTOS_DEBUG_MODE": "debug_mode",
+            "ZENODOTOS_VERBOSE_OUTPUT": "verbose_output",
         }
 
         for env_var, config_attr in env_mappings.items():

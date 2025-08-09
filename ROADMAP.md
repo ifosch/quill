@@ -1,12 +1,12 @@
-# Quill Development Roadmap
+# Zenodotos Development Roadmap
 
-This document outlines the planned features and development goals for the Quill project.
+This document outlines the planned features and development goals for the Zenodotos project.
 
 ## Recent Major Achievements
 
 ### Library Transformation - CORE COMPLETED (Latest)
-- ✅ **Complete Library Transformation** - Successfully transformed Quill from CLI-only to dual-interface tool
-- ✅ **High-level Library API** - Created `Quill` class with comprehensive Google Drive operations
+- ✅ **Complete Library Transformation** - Successfully transformed Zenodotos from CLI-only to dual-interface tool
+- ✅ **High-level Library API** - Created `Zenodotos` class with comprehensive Google Drive operations
 - ✅ **CLI Refactoring** - All CLI commands now use the library interface while maintaining 100% compatibility
 - ✅ **Custom Exception Hierarchy** - Robust error handling with specific exception types
 - ✅ **Utility Functions** - FieldParser, validation, and helper functions for common tasks
@@ -16,7 +16,7 @@ This document outlines the planned features and development goals for the Quill 
 - ✅ **Documentation** - Complete library usage examples and API documentation
 
 ### Library Transformation Phase 1 (Completed)
-- ✅ **High-level library API** - Created `Quill` class with simplified interface for common operations
+- ✅ **High-level library API** - Created `Zenodotos` class with simplified interface for common operations
 - ✅ **Custom exception hierarchy** - Implemented comprehensive error handling with specific exception types
 - ✅ **Enhanced module structure** - Created `client.py`, `exceptions.py`, `utils.py`, and updated `__init__.py`
 - ✅ **Utility functions** - Added `validate_file_id`, `sanitize_filename`, `format_file_size` utilities
@@ -57,7 +57,7 @@ This document outlines the planned features and development goals for the Quill 
 ## Library Transformation (Major Initiative) ✅ **CORE TRANSFORMATION COMPLETE**
 
 ### Overview
-Transform Quill from a CLI-only tool to a comprehensive library that other developers can use, while maintaining full CLI functionality. This will make Quill a powerful, flexible library for Google Drive operations.
+Transform Zenodotos from a CLI-only tool to a comprehensive library that other developers can use, while maintaining full CLI functionality. This will make Zenodotos a powerful, flexible library for Google Drive operations.
 
 ### ✅ **Core Transformation Status: COMPLETE**
 The essential library transformation has been successfully completed:
@@ -65,7 +65,7 @@ The essential library transformation has been successfully completed:
 - **Phase 2**: CLI Refactoring ✅ **COMPLETED**
 
 The library now provides:
-- High-level `Quill` class for easy Google Drive operations
+- High-level `Zenodotos` class for easy Google Drive operations
 - Custom exception hierarchy for robust error handling
 - Utility functions for common tasks (FieldParser, validation, etc.)
 - Configuration management with environment variables and config files
@@ -73,19 +73,19 @@ The library now provides:
 - 96% test coverage with comprehensive testing
 - Full backward compatibility maintained
 
-**Result**: Quill is now a dual-interface tool - both a powerful CLI and a reusable Python library!
+**Result**: Zenodotos is now a dual-interface tool - both a powerful CLI and a reusable Python library!
 
 ### Phase 1: Library Foundation (Week 1-2)
 - [x] **High-level library API** ✅ **COMPLETED**
-  - [x] Create `Quill` class as main entry point
+  - [x] Create `Zenodotos` class as main entry point
   - [x] Implement simplified interface for common operations
   - [x] Add advanced methods for CLI-specific needs
   - [x] Design consistent error handling with custom exceptions
 - [x] **Enhanced module structure** ✅ **COMPLETED**
-  - [x] Create `src/quill/client.py` for high-level interface
-  - [x] Create `src/quill/exceptions.py` for custom exception hierarchy
-  - [x] Create `src/quill/utils.py` for utility functions (FieldParser, etc.)
-  - [x] Update `src/quill/__init__.py` with library exports
+  - [x] Create `src/zenodotos/client.py` for high-level interface
+- [x] Create `src/zenodotos/exceptions.py` for custom exception hierarchy
+- [x] Create `src/zenodotos/utils.py` for utility functions (FieldParser, etc.)
+- [x] Update `src/zenodotos/__init__.py` with library exports
 - [x] **Configuration management** ✅ **COMPLETED**
   - [x] Environment variable support
   - [x] Configuration file support (YAML/TOML)
@@ -94,14 +94,14 @@ The library now provides:
 
 ### Phase 2: CLI Refactoring (Week 3-4) ✅ **COMPLETED**
 - [x] **Refactor CLI to use library** ✅ **COMPLETED**
-  - [x] Update `list_files` command to use `Quill` library
-  - [x] Update `get_file` command to use `Quill` library
-  - [x] Update `export` command to use `Quill` library
+  - [x] Update `list_files` command to use `Zenodotos` library
+- [x] Update `get_file` command to use `Zenodotos` library
+- [x] Update `export` command to use `Zenodotos` library
   - [x] Refactor navigation module to use library interface
   - [x] Maintain all existing CLI functionality and user experience
 - [x] **Library-specific CLI features** ✅ **COMPLETED**
   - [x] Add field parsing utilities for CLI needs (FieldParser integrated)
-  - [x] Implement search_and_export method for CLI export --query (part of Quill library)
+  - [x] Implement search_and_export method for CLI export --query (part of Zenodotos library)
   - [x] Handle CLI-specific error cases (MultipleFilesFoundError, NoFilesFoundError integrated)
   - [x] Preserve interactive pagination functionality (navigation module refactored)
 - [x] **Backward compatibility** ✅ **COMPLETED**
@@ -275,6 +275,37 @@ The library now provides:
   - File synchronization
   - Custom workflows
 
+## PyPI Publishing (Current Initiative)
+
+### Phase 1: Manual Publishing (In Progress)
+- [x] **PyPI Account Setup** - TestPyPI and production PyPI accounts created
+- [x] **API Token Configuration** - GitHub secrets configured for secure token storage
+- [x] **Manual Release Script** - `scripts/release.sh` for complete publishing workflow
+- [x] **TestPyPI Validation Script** - `scripts/test-pypi-install.sh` for package testing
+- [x] **Publishing Documentation** - Complete guide in `docs/setup/publishing.md`
+- [ ] **First Test Release** - Publish to TestPyPI and validate installation
+- [ ] **First Production Release** - Publish to production PyPI
+
+### Phase 2: Automated Publishing (Future)
+- [ ] **GitHub Actions Workflow** - Automated publishing on tag creation
+- [ ] **Automated Version Management** - Extract version from git tags
+- [ ] **Release Notes Generation** - Auto-generate from conventional commits
+- [ ] **Package Signing** - GPG signing for enhanced security
+- [ ] **Automated Testing** - Pre-publishing validation in isolated environments
+
+### Publishing Process
+1. **Manual Publishing** (Current):
+   - Update version in `pyproject.toml`
+   - Run `./scripts/release.sh` for complete workflow
+   - TestPyPI validation before production release
+   - Manual verification of published packages
+
+2. **Automated Publishing** (Future):
+   - Tag-based triggers (`v*` tags)
+   - Automated version extraction
+   - Quality gates and validation
+   - Automated release notes
+
 ## Maintenance
 
 ### Code Quality
@@ -311,7 +342,7 @@ The library now provides:
 - **User Experience:** Interactive CLI with smart defaults and comprehensive error handling
 - **Architecture:** Well-structured modular design with library transformation progressing excellently
 - **Library Foundation:** Phase 1 completed - High-level API, custom exceptions, utility functions, configuration management
-- **Library Transformation:** CORE COMPLETED - Quill is now a dual-interface tool (CLI + Library)
+- **Library Transformation:** CORE COMPLETED - Zenodotos is now a dual-interface tool (CLI + Library)
 - **Module Structure:** Enhanced with dedicated `client.py`, `exceptions.py`, and `utils.py` modules
 - **Backward Compatibility:** Full CLI functionality preserved while adding library interface
 - **Real-world Validation:** CLI tested successfully with actual Google Drive operations

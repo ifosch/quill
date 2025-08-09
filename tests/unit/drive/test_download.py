@@ -6,13 +6,13 @@ from pathlib import Path
 import tempfile
 import os
 
-from quill.drive.client import DriveClient
+from zenodotos.drive.client import DriveClient
 
 
 @pytest.fixture
 def mock_google_drive_service():
     """Mock Google Drive API service."""
-    with patch("quill.drive.client.DriveClient.get_service") as mock_get_service:
+    with patch("zenodotos.drive.client.DriveClient.get_service") as mock_get_service:
         mock_service = MagicMock()
         mock_get_service.return_value = mock_service
         # Set up the service chain properly
@@ -24,7 +24,7 @@ def mock_google_drive_service():
 @pytest.fixture
 def mock_google_file_metadata():
     """Mock Google Drive file metadata retrieval."""
-    with patch("quill.drive.client.DriveClient.get_service") as mock_get_service:
+    with patch("zenodotos.drive.client.DriveClient.get_service") as mock_get_service:
         mock_service = MagicMock()
         mock_get_service.return_value = mock_service
         mock_get_request = MagicMock()

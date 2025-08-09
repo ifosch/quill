@@ -1,6 +1,6 @@
 # Installation Guide
 
-This guide will help you install and set up Quill.
+This guide will help you install and set up Zenodotos.
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ This guide will help you install and set up Quill.
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
    ```
 
-2. Install Quill:
+2. Install Zenodotos:
    ```bash
    pip install -e ".[dev]"
    ```
@@ -28,15 +28,15 @@ This guide will help you install and set up Quill.
    - Create OAuth 2.0 credentials
    - Download the credentials JSON file
 
-4. Configure Quill:
-   - Place the credentials file in `~/.config/quill/credentials.json`
-   - Run `quill list-files` to authenticate with Google Drive
+4. Configure Zenodotos:
+- Place the credentials file in `~/.config/zenodotos/credentials.json`
+- Run `zenodotos list-files` to authenticate with Google Drive
 
 ## Verifying Installation
 
 To verify your installation, run:
 ```bash
-quill --version
+zenodotos --version
 ```
 
-You should see the current version of Quill displayed.
+You should see the current version of Zenodotos displayed.

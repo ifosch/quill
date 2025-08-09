@@ -1,7 +1,7 @@
 # Cursor Project Rule: Using Pre-commit for Automated Checks
 ---
 description: |
-  All code changes in the quill project must pass pre-commit checks before being committed. Pre-commit provides automated checks for code quality, ensuring consistent standards across the codebase.
+  All code changes in the zenodotos project must pass pre-commit checks before being committed. Pre-commit provides automated checks for code quality, ensuring consistent standards across the codebase.
 
 rules:
   - Install pre-commit hooks after cloning the repository
@@ -30,7 +30,7 @@ hooks:
     command: ty check
   - name: pytest
     description: Running tests with coverage
-    command: pytest --cov=quill --cov-report=term-missing --cov-fail-under=80
+    command: pytest --cov=zenodotos --cov-report=term-missing --cov-fail-under=80
 
 rationale: |
   Pre-commit provides automated checks that ensure:

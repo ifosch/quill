@@ -1,11 +1,11 @@
-# Quill Project Rules and Guidelines
+# Zenodotos Project Rules and Guidelines
 
-This document outlines the specific rules and guidelines for the Quill project. Following these rules ensures consistency, maintainability, and proper operation of the project.
+This document outlines the specific rules and guidelines for the Zenodotos project. Following these rules ensures consistency, maintainability, and proper operation of the project.
 
 ## Project Structure
 
 ### File Operations
-- All file operations (creation, modification, deletion) must be performed strictly within the project root directory (`/home/natx/src/github.com/ifosch/quill`) and its subdirectories
+- All file operations (creation, modification, deletion) must be performed strictly within the project root directory (`/home/natx/src/github.com/ifosch/zenodotos`) and its subdirectories
 - No files should be created, modified, or deleted outside this directory tree
 - Any attempt to operate outside this directory is a violation of project policy
 

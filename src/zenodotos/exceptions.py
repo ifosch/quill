@@ -1,10 +1,10 @@
-"""Custom exceptions for the Quill library."""
+"""Custom exceptions for the Zenodotos library."""
 
 from typing import Optional
 
 
-class QuillError(Exception):
-    """Base exception for all Quill library errors."""
+class ZenodotosError(Exception):
+    """Base exception for all Zenodotos library errors."""
 
     def __init__(self, message: str, original_error: Optional[Exception] = None):
         """Initialize the exception.
@@ -18,7 +18,7 @@ class QuillError(Exception):
         self.original_error = original_error
 
 
-class AuthenticationError(QuillError):
+class AuthenticationError(ZenodotosError):
     """Authentication-related errors.
 
     Raised when:
@@ -30,7 +30,7 @@ class AuthenticationError(QuillError):
     pass
 
 
-class FileNotFoundError(QuillError):
+class FileNotFoundError(ZenodotosError):
     """File not found in Google Drive.
 
     Raised when:
@@ -42,7 +42,7 @@ class FileNotFoundError(QuillError):
     pass
 
 
-class PermissionError(QuillError):
+class PermissionError(ZenodotosError):
     """Permission-related errors.
 
     Raised when:
@@ -54,7 +54,7 @@ class PermissionError(QuillError):
     pass
 
 
-class ExportError(QuillError):
+class ExportError(ZenodotosError):
     """Export operation errors.
 
     Raised when:
@@ -66,7 +66,7 @@ class ExportError(QuillError):
     pass
 
 
-class ValidationError(QuillError):
+class ValidationError(ZenodotosError):
     """Input validation errors.
 
     Raised when:
@@ -79,7 +79,7 @@ class ValidationError(QuillError):
     pass
 
 
-class ConfigurationError(QuillError):
+class ConfigurationError(ZenodotosError):
     """Configuration-related errors.
 
     Raised when:
@@ -91,7 +91,7 @@ class ConfigurationError(QuillError):
     pass
 
 
-class RateLimitError(QuillError):
+class RateLimitError(ZenodotosError):
     """API rate limiting errors.
 
     Raised when:
@@ -103,7 +103,7 @@ class RateLimitError(QuillError):
     pass
 
 
-class NetworkError(QuillError):
+class NetworkError(ZenodotosError):
     """Network-related errors.
 
     Raised when:
@@ -115,7 +115,7 @@ class NetworkError(QuillError):
     pass
 
 
-class MultipleFilesFoundError(QuillError):
+class MultipleFilesFoundError(ZenodotosError):
     """Multiple files found when expecting single match.
 
     Raised when:
@@ -134,7 +134,7 @@ class MultipleFilesFoundError(QuillError):
         self.files = files or []
 
 
-class NoFilesFoundError(QuillError):
+class NoFilesFoundError(ZenodotosError):
     """No files found when expecting at least one match.
 
     Raised when:

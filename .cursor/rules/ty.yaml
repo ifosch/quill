@@ -1,7 +1,7 @@
 # Cursor Project Rule: Using Ty for Type Checking
 ---
 description: |
-  All Python type checking in the quill project must use the `ty` tool. Ty provides fast, incremental, and user-friendly type checking for Python code, making it easy to enforce and maintain type safety across the codebase.
+  All Python type checking in the zenodotos project must use the `ty` tool. Ty provides fast, incremental, and user-friendly type checking for Python code, making it easy to enforce and maintain type safety across the codebase.
 
 rules:
   - Use `ty check` to perform type checking on all Python code.

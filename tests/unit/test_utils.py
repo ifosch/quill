@@ -1,6 +1,6 @@
 """Tests for utility functions."""
 
-from quill.utils import (
+from zenodotos.utils import (
     FieldParser,
     validate_file_id,
     sanitize_filename,

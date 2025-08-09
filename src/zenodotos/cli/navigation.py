@@ -2,16 +2,16 @@
 
 import click
 from typing import List, Dict, Any, Optional
-from quill import Quill
-from quill.formatters.display import format_file_list
+from zenodotos import Zenodotos
+from zenodotos.formatters.display import format_file_list
 from .pagination import PaginationState
 
 
 def fetch_page(
-    quill: Quill, state: PaginationState, fields: List[str]
+    zenodotos: Zenodotos, state: PaginationState, fields: List[str]
 ) -> Dict[str, Any]:
     """Fetch a page of files from the API."""
-    result = quill.list_files_with_pagination(
+    result = zenodotos.list_files_with_pagination(
         page_size=state.page_size,
         page_token=state.page_token,
         query=state.query,
@@ -61,7 +61,7 @@ def handle_user_input(state: PaginationState) -> str:
 
 
 def navigate_to_previous_page(
-    quill: Quill, state: PaginationState, fields: List[str]
+    zenodotos: Zenodotos, state: PaginationState, fields: List[str]
 ) -> None:
     """Navigate to the previous page by rebuilding the path from the beginning."""
     if state.page_number == 2:
@@ -74,7 +74,7 @@ def navigate_to_previous_page(
 
         # Navigate to target page by going through all pages
         for _ in range(target_page - 1):
-            temp_result = quill.list_files_with_pagination(
+            temp_result = zenodotos.list_files_with_pagination(
                 page_size=state.page_size,
                 page_token=state.page_token,
                 query=state.query,
@@ -88,7 +88,7 @@ def navigate_to_previous_page(
 
 
 def interactive_pagination(
-    quill: Quill,
+    zenodotos: Zenodotos,
     page_size: int,
     query: Optional[str],
     all_fields: List[str],
@@ -100,7 +100,7 @@ def interactive_pagination(
     try:
         while True:
             # Fetch and display current page
-            result = fetch_page(quill, state, all_fields)
+            result = fetch_page(zenodotos, state, all_fields)
             display_page(result, requested_fields)
 
             # Handle user navigation
@@ -112,7 +112,7 @@ def interactive_pagination(
             elif action == "next":
                 state.go_to_next_page()
             elif action == "previous":
-                navigate_to_previous_page(quill, state, all_fields)
+                navigate_to_previous_page(zenodotos, state, all_fields)
 
     except KeyboardInterrupt:
         click.echo("\n\nGoodbye!")

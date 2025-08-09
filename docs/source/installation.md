@@ -1,6 +1,6 @@
 # Installation
 
-This guide will help you install and set up the Quill project.
+This guide will help you install and set up the Zenodotos project.
 
 ## Prerequisites
 
@@ -12,8 +12,8 @@ This guide will help you install and set up the Quill project.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ifosch/quill.git
-   cd quill
+   git clone https://github.com/ifosch/zenodotos.git
+cd zenodotos
    ```
 
 2. Install dependencies:

@@ -7,7 +7,7 @@ from .drive.models import DriveFile
 from .utils import FieldParser
 
 
-class Quill:
+class Zenodotos:
     """High-level Google Drive client for easy file operations.
 
     This class provides a simplified interface for common Google Drive operations
@@ -16,22 +16,22 @@ class Quill:
 
     Example:
         ```python
-        from quill import Quill
+        from zenodotos import Zenodotos
 
         # Basic usage
-        quill = Quill()
-        files = quill.list_files(page_size=20, query="name contains 'report'")
+        zenodotos = Zenodotos()
+        files = zenodotos.list_files(page_size=20, query="name contains 'report'")
 
         # Get file details
-        file_info = quill.get_file("file_id_here")
+        file_info = zenodotos.get_file("file_id_here")
 
         # Export file
-        exported_path = quill.export_file("file_id_here", format="pdf")
+        exported_path = zenodotos.export_file("file_id_here", format="pdf")
         ```
     """
 
     def __init__(self, credentials_path: Optional[str] = None):
-        """Initialize the Quill client.
+        """Initialize the Zenodotos client.
 
         Args:
             credentials_path: Optional path to credentials file. If not provided,

@@ -1,26 +1,26 @@
-# Quill Architecture
+# Zenodotos Architecture
 
-This document describes the architecture of Quill, explaining how it provides both a command-line interface and a Python library for Google Drive operations.
+This document describes the architecture of Zenodotos, explaining how it provides both a command-line interface and a Python library for Google Drive operations.
 
 ## Overview
 
-Quill follows a **dual-interface architecture** where the CLI serves as a real-world example of how to use the underlying library. This design provides maximum flexibility for users while maintaining a clean, modular codebase.
+Zenodotos follows a **dual-interface architecture** where the CLI serves as a real-world example of how to use the underlying library. This design provides maximum flexibility for users while maintaining a clean, modular codebase.
 
 ## Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Quill Project                            │
+│                  Zenodotos Project                          │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  ┌─────────────────┐    ┌─────────────────────────────────┐ │
 │  │   CLI Interface │    │        Library Interface        │ │
 │  │                 │    │                                 │ │
-│  │  quill list-    │    │  from quill import Quill        │ │
-│  │  files          │    │  quill = Quill()                │ │
-│  │  quill get-     │    │  files, token = quill.list_     │ │
+│  │  zenodotos list-│    │ from zenodotos import Zenodotos │ │
+│  │  files          │    │  zenodotos = Zenodotos()        │ │
+│  │  zenodotos get- │    │  files, token = zenodotos.list_ │ │
 │  │  file           │    │  files_with_pagination()        │ │
-│  │  quill export   │    │                                 │ │
+│  │  zenodotos export│   │                                 │ │
 │  └─────────────────┘    └─────────────────────────────────┘ │
 │           │                           │                     │
 │           └───────────┬───────────────┘                     │
@@ -29,7 +29,7 @@ Quill follows a **dual-interface architecture** where the CLI serves as a real-w
 │  │              High-Level Library API                    │ │
 │  │                                                        │ │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐ │ │
-│  │  │    Quill    │  │ FieldParser │  │   Exceptions    │ │ │
+│  │  │  Zenodotos  │  │ FieldParser │  │   Exceptions    │ │ │
 │  │  │   Class     │  │             │  │                 │ │ │
 │  │  └─────────────┘  └─────────────┘  └─────────────────┘ │ │
 │  └────────────────────────────────────────────────────────┘ │
@@ -62,9 +62,9 @@ Quill follows a **dual-interface architecture** where the CLI serves as a real-w
 
 The library API provides a simplified interface for common Google Drive operations.
 
-#### Quill Class
+#### Zenodotos Class
 - **Purpose**: Main entry point for all library operations
-- **Location**: `src/quill/client.py`
+- **Location**: `src/zenodotos/client.py`
 - **Key Methods**:
   - `list_files_with_pagination()`: List files with pagination
   - `get_file()`: Get file details
@@ -74,7 +74,7 @@ The library API provides a simplified interface for common Google Drive operatio
 
 #### FieldParser
 - **Purpose**: Parse and validate field options
-- **Location**: `src/quill/utils.py`
+- **Location**: `src/zenodotos/utils.py`
 - **Key Features**:
   - Handles required fields automatically
   - Removes duplicates while preserving order
@@ -82,9 +82,9 @@ The library API provides a simplified interface for common Google Drive operatio
 
 #### Exception Hierarchy
 - **Purpose**: Provide specific error types for robust error handling
-- **Location**: `src/quill/exceptions.py`
+- **Location**: `src/zenodotos/exceptions.py`
 - **Key Exceptions**:
-  - `QuillException`: Base exception
+  - `ZenodotosException`: Base exception
   - `MultipleFilesFoundError`: Multiple files match query
   - `NoFilesFoundError`: No files match query
   - `FileNotFoundError`: Specific file not found
@@ -94,7 +94,7 @@ The library API provides a simplified interface for common Google Drive operatio
 The CLI provides a user-friendly command-line interface that uses the library.
 
 #### Command Structure
-- **Location**: `src/quill/cli/`
+- **Location**: `src/zenodotos/cli/`
 - **Key Files**:
   - `commands.py`: Click command definitions
   - `navigation.py`: Interactive pagination logic
@@ -109,7 +109,7 @@ The CLI provides a user-friendly command-line interface that uses the library.
 
 #### Drive Client
 - **Purpose**: Low-level Google Drive API client
-- **Location**: `src/quill/drive/client.py`
+- **Location**: `src/zenodotos/drive/client.py`
 - **Features**:
   - Handles authentication
   - Manages API requests
@@ -117,7 +117,7 @@ The CLI provides a user-friendly command-line interface that uses the library.
 
 #### Configuration Management
 - **Purpose**: Handle configuration from multiple sources
-- **Location**: `src/quill/config.py`
+- **Location**: `src/zenodotos/config.py`
 - **Features**:
   - Environment variables
   - Configuration files (YAML, TOML, JSON)
@@ -126,7 +126,7 @@ The CLI provides a user-friendly command-line interface that uses the library.
 
 #### Utilities
 - **Purpose**: Common utility functions
-- **Location**: `src/quill/utils.py`
+- **Location**: `src/zenodotos/utils.py`
 - **Features**:
   - File ID validation
   - Filename sanitization
@@ -135,9 +135,9 @@ The CLI provides a user-friendly command-line interface that uses the library.
 ## Module Structure
 
 ```
-src/quill/
+src/zenodotos/
 ├── __init__.py              # Library exports
-├── client.py                # High-level Quill class
+├── client.py                # High-level Zenodotos class
 ├── exceptions.py            # Custom exception hierarchy
 ├── utils.py                 # Utility functions
 ├── auth.py                  # Authentication handling
@@ -202,7 +202,7 @@ The architecture promotes:
 ### CLI Command Execution
 
 ```
-User Input → Click Commands → Quill Library → Drive Client → Google Drive API
+User Input → Click Commands → Zenodotos Library → Drive Client → Google Drive API
      ↑                                                              ↓
      └─────────────── Formatted Output ← Display Formatters ←──────┘
 ```
@@ -210,7 +210,7 @@ User Input → Click Commands → Quill Library → Drive Client → Google Driv
 ### Library Usage
 
 ```
-Application Code → Quill Class → Drive Client → Google Drive API
+Application Code → Zenodotos Class → Drive Client → Google Drive API
      ↑                                                      ↓
      └─────────────── Return Data ← Data Models ←──────────┘
 ```
@@ -255,7 +255,7 @@ Default Values ───────┘
 ## Future Architecture Considerations
 
 ### Async Support
-- **AsyncQuill Class**: Async version of the Quill class
+- **AsyncZenodotos Class**: Async version of the Zenodotos class
 - **Concurrent Operations**: Support for parallel operations
 - **Background Tasks**: Long-running operation support
 

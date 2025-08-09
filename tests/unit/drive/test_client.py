@@ -6,8 +6,8 @@ from googleapiclient.errors import HttpError
 
 import pytest
 
-from quill.drive.client import DriveClient
-from quill.drive.models import DriveFile
+from zenodotos.drive.client import DriveClient
+from zenodotos.drive.models import DriveFile
 
 
 @pytest.fixture
@@ -28,7 +28,7 @@ def mock_service():
 @pytest.fixture
 def mock_auth(mock_credentials):
     """Mock Auth class."""
-    with patch("quill.drive.client.Auth") as mock_auth_class:
+    with patch("zenodotos.drive.client.Auth") as mock_auth_class:
         mock_auth_instance = Mock()
         mock_auth_instance.get_credentials.return_value = mock_credentials
         mock_auth_class.return_value = mock_auth_instance
@@ -38,7 +38,7 @@ def mock_auth(mock_credentials):
 @pytest.fixture
 def drive_client(mock_auth, mock_service):
     """Create a DriveClient instance with mocked dependencies."""
-    with patch("quill.drive.client.build", return_value=mock_service):
+    with patch("zenodotos.drive.client.build", return_value=mock_service):
         client = DriveClient()
         client.service = mock_service
         return client

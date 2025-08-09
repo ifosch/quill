@@ -1,8 +1,8 @@
 """Tests for the custom exception hierarchy."""
 
 import pytest
-from quill.exceptions import (
-    QuillError,
+from zenodotos.exceptions import (
+    ZenodotosError,
     AuthenticationError,
     FileNotFoundError,
     PermissionError,
@@ -16,17 +16,17 @@ from quill.exceptions import (
 )
 
 
-class TestQuillError:
-    """Test the base QuillError exception."""
+class TestZenodotosError:
+    """Test the base ZenodotosError exception."""
 
-    def test_quill_error_creation(self):
-        """Test QuillError can be created with message."""
-        error = QuillError("Test error message")
+    def test_zenodotos_error_creation(self):
+        """Test ZenodotosError can be created with message."""
+        error = ZenodotosError("Test error message")
         assert str(error) == "Test error message"
 
-    def test_quill_error_without_message(self):
-        """Test QuillError can be created without message."""
-        error = QuillError("")
+    def test_zenodotos_error_without_message(self):
+        """Test ZenodotosError can be created without message."""
+        error = ZenodotosError("")
         assert str(error) == ""
 
 
@@ -37,7 +37,7 @@ class TestAuthenticationError:
         """Test AuthenticationError creation."""
         error = AuthenticationError("Invalid credentials")
         assert str(error) == "Invalid credentials"
-        assert isinstance(error, QuillError)
+        assert isinstance(error, ZenodotosError)
 
 
 class TestFileNotFoundError:
@@ -47,7 +47,7 @@ class TestFileNotFoundError:
         """Test FileNotFoundError creation."""
         error = FileNotFoundError("File with ID 123 not found")
         assert str(error) == "File with ID 123 not found"
-        assert isinstance(error, QuillError)
+        assert isinstance(error, ZenodotosError)
 
 
 class TestPermissionError:
@@ -57,7 +57,7 @@ class TestPermissionError:
         """Test PermissionError creation."""
         error = PermissionError("Insufficient permissions")
         assert str(error) == "Insufficient permissions"
-        assert isinstance(error, QuillError)
+        assert isinstance(error, ZenodotosError)
 
 
 class TestExportError:
@@ -67,7 +67,7 @@ class TestExportError:
         """Test ExportError creation."""
         error = ExportError("Failed to export file")
         assert str(error) == "Failed to export file"
-        assert isinstance(error, QuillError)
+        assert isinstance(error, ZenodotosError)
 
 
 class TestValidationError:
@@ -77,7 +77,7 @@ class TestValidationError:
         """Test ValidationError creation."""
         error = ValidationError("Invalid file format")
         assert str(error) == "Invalid file format"
-        assert isinstance(error, QuillError)
+        assert isinstance(error, ZenodotosError)
 
 
 class TestConfigurationError:
@@ -87,7 +87,7 @@ class TestConfigurationError:
         """Test ConfigurationError creation."""
         error = ConfigurationError("Missing configuration file")
         assert str(error) == "Missing configuration file"
-        assert isinstance(error, QuillError)
+        assert isinstance(error, ZenodotosError)
 
 
 class TestRateLimitError:
@@ -97,7 +97,7 @@ class TestRateLimitError:
         """Test RateLimitError creation."""
         error = RateLimitError("Rate limit exceeded")
         assert str(error) == "Rate limit exceeded"
-        assert isinstance(error, QuillError)
+        assert isinstance(error, ZenodotosError)
 
 
 class TestNetworkError:
@@ -107,7 +107,7 @@ class TestNetworkError:
         """Test NetworkError creation."""
         error = NetworkError("Connection timeout")
         assert str(error) == "Connection timeout"
-        assert isinstance(error, QuillError)
+        assert isinstance(error, ZenodotosError)
 
 
 class TestMultipleFilesFoundError:
@@ -120,14 +120,14 @@ class TestMultipleFilesFoundError:
         )
         assert str(error) == "Multiple files found"
         assert error.files == ["file1", "file2"]
-        assert isinstance(error, QuillError)
+        assert isinstance(error, ZenodotosError)
 
     def test_multiple_files_found_error_without_files(self):
         """Test MultipleFilesFoundError without files parameter."""
         error = MultipleFilesFoundError("Multiple files found")
         assert str(error) == "Multiple files found"
         assert error.files == []
-        assert isinstance(error, QuillError)
+        assert isinstance(error, ZenodotosError)
 
     def test_multiple_files_found_error_with_empty_files(self):
         """Test MultipleFilesFoundError with empty files list."""
@@ -143,14 +143,14 @@ class TestNoFilesFoundError:
         """Test NoFilesFoundError creation."""
         error = NoFilesFoundError("No files found matching query")
         assert str(error) == "No files found matching query"
-        assert isinstance(error, QuillError)
+        assert isinstance(error, ZenodotosError)
 
 
 class TestExceptionInheritance:
     """Test exception inheritance hierarchy."""
 
-    def test_all_exceptions_inherit_from_quill_error(self):
-        """Test that all custom exceptions inherit from QuillError."""
+    def test_all_exceptions_inherit_from_zenodotos_error(self):
+        """Test that all custom exceptions inherit from ZenodotosError."""
         exceptions = [
             AuthenticationError,
             FileNotFoundError,
@@ -166,7 +166,7 @@ class TestExceptionInheritance:
 
         for exception_class in exceptions:
             error = exception_class("Test message")
-            assert isinstance(error, QuillError)
+            assert isinstance(error, ZenodotosError)
             assert isinstance(error, Exception)
 
     def test_exception_raising_and_catching(self):
@@ -175,7 +175,7 @@ class TestExceptionInheritance:
             raise FileNotFoundError("File not found")
 
         assert str(exc_info.value) == "File not found"
-        assert isinstance(exc_info.value, QuillError)
+        assert isinstance(exc_info.value, ZenodotosError)
 
     def test_multiple_files_found_error_with_files(self):
         """Test MultipleFilesFoundError with files parameter."""

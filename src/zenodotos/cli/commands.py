@@ -1,9 +1,9 @@
 """CLI command definitions."""
 
 import click
-from quill import Quill
-from quill.exceptions import MultipleFilesFoundError, NoFilesFoundError
-from quill.formatters.display import format_file_list
+from zenodotos import Zenodotos
+from zenodotos.exceptions import MultipleFilesFoundError, NoFilesFoundError
+from zenodotos.formatters.display import format_file_list
 from .navigation import interactive_pagination
 
 
@@ -38,15 +38,15 @@ from .navigation import interactive_pagination
 )
 def list_files(page_size, page_token, query, fields, no_interactive):
     """List files in your Google Drive with interactive pagination."""
-    quill = Quill()
+    zenodotos = Zenodotos()
 
     # Use the library's field parser for consistent field handling
-    field_parser = quill.get_field_parser()
+    field_parser = zenodotos.get_field_parser()
     all_fields, requested_fields = field_parser.parse_fields(fields)
 
     # If page_token is provided or no-interactive is set, use single page mode
     if page_token is not None or no_interactive:
-        result = quill.list_files_with_pagination(
+        result = zenodotos.list_files_with_pagination(
             page_size=page_size, page_token=page_token, query=query, fields=all_fields
         )
         click.echo(format_file_list(result["files"], requested_fields))
@@ -57,7 +57,9 @@ def list_files(page_size, page_token, query, fields, no_interactive):
             click.echo("Use --page-token option to get the next page")
     else:
         # Use interactive pagination by default
-        interactive_pagination(quill, page_size, query, all_fields, requested_fields)
+        interactive_pagination(
+            zenodotos, page_size, query, all_fields, requested_fields
+        )
 
 
 @click.command()
@@ -75,15 +77,15 @@ def get_file(file_id, fields):
     Retrieves and displays comprehensive metadata for a single file identified by its ID.
     Use --fields to customize which information is displayed.
     """
-    quill = Quill()
+    zenodotos = Zenodotos()
 
     # Use the library's field parser for consistent field handling
-    field_parser = quill.get_field_parser()
+    field_parser = zenodotos.get_field_parser()
     all_fields, requested_fields = field_parser.parse_fields(fields)
 
     try:
         # Get the file using the library interface
-        file = quill.get_file(file_id)
+        file = zenodotos.get_file(file_id)
 
         # Display the file information using the existing formatter
         # Pass as a single-item list since format_file_list expects a list
@@ -143,7 +145,7 @@ def export(file_id, query, output, format, verbose):
         raise click.ClickException("FILE_ID and --query are mutually exclusive")
 
     try:
-        quill = Quill()
+        zenodotos = Zenodotos()
 
         # Handle query-based export using the library's search_and_export method
         if query:
@@ -151,7 +153,7 @@ def export(file_id, query, output, format, verbose):
                 click.echo(f"Searching for files with query: {query}")
 
             try:
-                result_path = quill.search_and_export(
+                result_path = zenodotos.search_and_export(
                     query, output_path=output, format=format
                 )
                 click.echo(f"Successfully exported to: {result_path}")
@@ -177,7 +179,9 @@ def export(file_id, query, output, format, verbose):
             if verbose:
                 click.echo(f"Exporting file with ID: {file_id}")
 
-            result_path = quill.export_file(file_id, output_path=output, format=format)
+            result_path = zenodotos.export_file(
+                file_id, output_path=output, format=format
+            )
             click.echo(f"Successfully exported to: {result_path}")
 
     except FileNotFoundError as e:

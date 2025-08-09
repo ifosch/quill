@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-This guide will help you get started with the Quill project quickly.
+This guide will help you get started with the Zenodotos project quickly.
 
 ## Basic Usage
 
@@ -25,7 +25,7 @@ This guide will help you get started with the Quill project quickly.
    pytest tests/test_specific.py
 
    # Run tests with coverage
-   pytest --cov=quill --cov-report=term-missing --cov-fail-under=80
+   pytest --cov=zenodotos --cov-report=term-missing --cov-fail-under=80
    ```
    - The coverage report will show which lines are not covered by tests.
    - The build will fail if coverage is below 80%.

@@ -1,4 +1,4 @@
-"""Utility functions and classes for the Quill library."""
+"""Utility functions and classes for the Zenodotos library."""
 
 from typing import Any, List, Optional
 

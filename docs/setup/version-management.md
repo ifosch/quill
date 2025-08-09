@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Quill project uses a centralized version management system to ensure consistency across all environments (local development, CI/CD, and documentation). This system prevents version mismatches and simplifies maintenance.
+The Zenodotos project uses a centralized version management system to ensure consistency across all environments (local development, CI/CD, and documentation). This system prevents version mismatches and simplifies maintenance.
 
 ## Problem Solved
 

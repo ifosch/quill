@@ -1,1 +1,1 @@
-"""Test suite for Quill."""
+"""Test suite for Zenodotos."""

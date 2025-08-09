@@ -195,4 +195,4 @@ jobs:
     - name: Check import performance
       run: |
         echo "Checking import performance..."
-        uv run python -c "import time; start = time.time(); import quill; end = time.time(); print(f'Import time: {end - start:.3f} seconds')"
+        uv run python -c "import time; start = time.time(); import zenodotos; end = time.time(); print(f'Import time: {end - start:.3f} seconds')"

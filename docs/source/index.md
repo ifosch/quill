@@ -1,10 +1,10 @@
-# Quill Documentation
+# Zenodotos Documentation
 
-Welcome to the Quill project documentation. This documentation provides comprehensive information about the project, its architecture, and how to use it.
+Welcome to the Zenodotos project documentation. This documentation provides comprehensive information about the project, its architecture, and how to use it.
 
 ## Project Overview
 
-Quill is a **dual-interface tool** for interacting with Google Drive - both a powerful command-line interface and a comprehensive Python library. This design provides maximum flexibility for users while maintaining a clean, modular codebase.
+Zenodotos is a **dual-interface tool** for interacting with Google Drive - both a powerful command-line interface and a comprehensive Python library. This design provides maximum flexibility for users while maintaining a clean, modular codebase.
 
 ### Key Features
 
@@ -43,10 +43,10 @@ tdd-practices
 ## Getting Started
 
 ### For CLI Users
-To get started with Quill CLI, please refer to the [Installation](installation.md) and [User Quick Start](user-quickstart.md) guides.
+To get started with Zenodotos CLI, please refer to the [Installation](installation.md) and [User Quick Start](user-quickstart.md) guides.
 
 ### For Library Users
-To integrate Quill into your Python applications, see the [Library API](library.md) documentation.
+To integrate Zenodotos into your Python applications, see the [Library API](library.md) documentation.
 
 ### For Developers
 For development and contribution, see the [Development Quick Start](quickstart.md) guide and [Architecture](architecture.md) documentation.

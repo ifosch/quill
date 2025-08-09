@@ -7,16 +7,16 @@ from pathlib import Path
 from unittest.mock import patch
 import pytest
 
-from quill.config import Config, QuillConfig
-from quill.exceptions import ConfigurationError
+from zenodotos.config import Config, ZenodotosConfig
+from zenodotos.exceptions import ConfigurationError
 
 
-class TestQuillConfig:
-    """Test the QuillConfig dataclass."""
+class TestZenodotosConfig:
+    """Test the ZenodotosConfig dataclass."""
 
-    def test_quill_config_defaults(self):
-        """Test QuillConfig default values."""
-        config = QuillConfig()
+    def test_zenodotos_config_defaults(self):
+        """Test ZenodotosConfig default values."""
+        config = ZenodotosConfig()
 
         assert config.credentials_path is None
         assert config.token_path is None
@@ -41,9 +41,9 @@ class TestQuillConfig:
         assert config.debug_mode is False
         assert config.verbose_output is False
 
-    def test_quill_config_custom_values(self):
-        """Test QuillConfig with custom values."""
-        config = QuillConfig(
+    def test_zenodotos_config_custom_values(self):
+        """Test ZenodotosConfig with custom values."""
+        config = ZenodotosConfig(
             credentials_path="/custom/credentials.json",
             page_size=50,
             max_retries=5,
@@ -66,9 +66,9 @@ class TestConfigInitialization:
         """Test Config initialization with defaults."""
         config = Config()
 
-        assert config.config_dir == Path.home() / ".config" / "quill"
+        assert config.config_dir == Path.home() / ".config" / "zenodotos"
         assert config.config_file == config.config_dir / "config.yaml"
-        assert isinstance(config._config, QuillConfig)
+        assert isinstance(config._config, ZenodotosConfig)
 
     def test_config_with_custom_file(self):
         """Test Config initialization with custom config file."""
@@ -95,7 +95,7 @@ class TestConfigBackwardCompatibility:
         """Test that Config initializes with correct default paths."""
         config = Config()
 
-        expected_config_dir = Path.home() / ".config" / "quill"
+        expected_config_dir = Path.home() / ".config" / "zenodotos"
         expected_credentials_file = expected_config_dir / "credentials.json"
         expected_token_file = expected_config_dir / "token.json"
 
@@ -112,7 +112,7 @@ class TestConfigBackwardCompatibility:
 
             assert str(config.credentials_file) == custom_creds_path
             # Token file should still use default location
-            expected_token_file = Path.home() / ".config" / "quill" / "token.json"
+            expected_token_file = Path.home() / ".config" / "zenodotos" / "token.json"
             assert config.token_file == expected_token_file
 
     def test_ensure_config_dir_creates_directory(self):
@@ -178,7 +178,7 @@ class TestConfigBackwardCompatibility:
         """Test config behavior when no environment variables are set."""
         config = Config()
 
-        expected_config_dir = Path.home() / ".config" / "quill"
+        expected_config_dir = Path.home() / ".config" / "zenodotos"
         assert config.config_dir == expected_config_dir
         assert config.credentials_file == expected_config_dir / "credentials.json"
         assert config.token_file == expected_config_dir / "token.json"
@@ -285,11 +285,11 @@ class TestEnvironmentVariableLoading:
     def test_load_from_environment(self):
         """Test loading configuration from environment variables."""
         env_vars = {
-            "QUILL_PAGE_SIZE": "50",
-            "QUILL_MAX_RETRIES": "7",
-            "QUILL_DEBUG_MODE": "true",
-            "QUILL_LOG_LEVEL": "DEBUG",
-            "QUILL_ENABLE_CACHE": "false",
+            "ZENODOTOS_PAGE_SIZE": "50",
+            "ZENODOTOS_MAX_RETRIES": "7",
+            "ZENODOTOS_DEBUG_MODE": "true",
+            "ZENODOTOS_LOG_LEVEL": "DEBUG",
+            "ZENODOTOS_ENABLE_CACHE": "false",
         }
 
         with patch.dict(os.environ, env_vars):
@@ -303,11 +303,11 @@ class TestEnvironmentVariableLoading:
     def test_environment_variable_type_conversion(self):
         """Test environment variable type conversion."""
         env_vars = {
-            "QUILL_PAGE_SIZE": "25",
-            "QUILL_MAX_DISPLAY_WIDTH": "150",
-            "QUILL_CACHE_TTL_SECONDS": "7200",
-            "QUILL_VERBOSE_OUTPUT": "yes",
-            "QUILL_DEFAULT_EXPORT_FORMAT": "pdf",
+            "ZENODOTOS_PAGE_SIZE": "25",
+            "ZENODOTOS_MAX_DISPLAY_WIDTH": "150",
+            "ZENODOTOS_CACHE_TTL_SECONDS": "7200",
+            "ZENODOTOS_VERBOSE_OUTPUT": "yes",
+            "ZENODOTOS_DEFAULT_EXPORT_FORMAT": "pdf",
         }
 
         with patch.dict(os.environ, env_vars):
@@ -333,7 +333,7 @@ class TestEnvironmentVariableLoading:
         ]
 
         for env_value, expected in test_cases:
-            with patch.dict(os.environ, {"QUILL_DEBUG_MODE": env_value}):
+            with patch.dict(os.environ, {"ZENODOTOS_DEBUG_MODE": env_value}):
                 config = Config()
                 assert config.get("debug_mode") == expected
 
@@ -349,13 +349,13 @@ class TestConfigurationValidation:
 
     def test_invalid_page_size(self):
         """Test validation of invalid page size."""
-        with patch.dict(os.environ, {"QUILL_PAGE_SIZE": "0"}):
+        with patch.dict(os.environ, {"ZENODOTOS_PAGE_SIZE": "0"}):
             with pytest.raises(
                 ConfigurationError, match="page_size must be between 1 and 1000"
             ):
                 Config()
 
-        with patch.dict(os.environ, {"QUILL_PAGE_SIZE": "1001"}):
+        with patch.dict(os.environ, {"ZENODOTOS_PAGE_SIZE": "1001"}):
             with pytest.raises(
                 ConfigurationError, match="page_size must be between 1 and 1000"
             ):
@@ -363,13 +363,13 @@ class TestConfigurationValidation:
 
     def test_invalid_max_retries(self):
         """Test validation of invalid max retries."""
-        with patch.dict(os.environ, {"QUILL_MAX_RETRIES": "-1"}):
+        with patch.dict(os.environ, {"ZENODOTOS_MAX_RETRIES": "-1"}):
             with pytest.raises(
                 ConfigurationError, match="max_retries must be between 0 and 10"
             ):
                 Config()
 
-        with patch.dict(os.environ, {"QUILL_MAX_RETRIES": "11"}):
+        with patch.dict(os.environ, {"ZENODOTOS_MAX_RETRIES": "11"}):
             with pytest.raises(
                 ConfigurationError, match="max_retries must be between 0 and 10"
             ):
@@ -377,13 +377,13 @@ class TestConfigurationValidation:
 
     def test_invalid_timeout_seconds(self):
         """Test validation of invalid timeout seconds."""
-        with patch.dict(os.environ, {"QUILL_TIMEOUT_SECONDS": "0"}):
+        with patch.dict(os.environ, {"ZENODOTOS_TIMEOUT_SECONDS": "0"}):
             with pytest.raises(
                 ConfigurationError, match="timeout_seconds must be between 1 and 300"
             ):
                 Config()
 
-        with patch.dict(os.environ, {"QUILL_TIMEOUT_SECONDS": "301"}):
+        with patch.dict(os.environ, {"ZENODOTOS_TIMEOUT_SECONDS": "301"}):
             with pytest.raises(
                 ConfigurationError, match="timeout_seconds must be between 1 and 300"
             ):
@@ -391,13 +391,13 @@ class TestConfigurationValidation:
 
     def test_invalid_max_display_width(self):
         """Test validation of invalid max display width."""
-        with patch.dict(os.environ, {"QUILL_MAX_DISPLAY_WIDTH": "39"}):
+        with patch.dict(os.environ, {"ZENODOTOS_MAX_DISPLAY_WIDTH": "39"}):
             with pytest.raises(
                 ConfigurationError, match="max_display_width must be between 40 and 500"
             ):
                 Config()
 
-        with patch.dict(os.environ, {"QUILL_MAX_DISPLAY_WIDTH": "501"}):
+        with patch.dict(os.environ, {"ZENODOTOS_MAX_DISPLAY_WIDTH": "501"}):
             with pytest.raises(
                 ConfigurationError, match="max_display_width must be between 40 and 500"
             ):
@@ -405,14 +405,14 @@ class TestConfigurationValidation:
 
     def test_invalid_cache_ttl_seconds(self):
         """Test validation of invalid cache TTL seconds."""
-        with patch.dict(os.environ, {"QUILL_CACHE_TTL_SECONDS": "-1"}):
+        with patch.dict(os.environ, {"ZENODOTOS_CACHE_TTL_SECONDS": "-1"}):
             with pytest.raises(
                 ConfigurationError,
                 match="cache_ttl_seconds must be between 0 and 86400",
             ):
                 Config()
 
-        with patch.dict(os.environ, {"QUILL_CACHE_TTL_SECONDS": "86401"}):
+        with patch.dict(os.environ, {"ZENODOTOS_CACHE_TTL_SECONDS": "86401"}):
             with pytest.raises(
                 ConfigurationError,
                 match="cache_ttl_seconds must be between 0 and 86400",
@@ -421,7 +421,7 @@ class TestConfigurationValidation:
 
     def test_invalid_log_level(self):
         """Test validation of invalid log level."""
-        with patch.dict(os.environ, {"QUILL_LOG_LEVEL": "INVALID"}):
+        with patch.dict(os.environ, {"ZENODOTOS_LOG_LEVEL": "INVALID"}):
             with pytest.raises(ConfigurationError, match="log_level must be one of"):
                 Config()
 
