@@ -1,6 +1,6 @@
 # Contributing Guide
 
-Thank you for your interest in contributing to the Quill project! This guide will help you understand how to contribute effectively.
+Thank you for your interest in contributing to the Zenodotos project! This guide will help you understand how to contribute effectively.
 
 ## Development Environment
 

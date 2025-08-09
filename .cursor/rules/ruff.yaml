@@ -1,7 +1,7 @@
 # Cursor Project Rule: Using Ruff for Linting and Formatting
 ---
 description: |
-  All Python code in the quill project must be linted and formatted using the `ruff` tool. Ruff provides fast, reliable linting and formatting capabilities, replacing multiple tools like flake8, black, isort, and more.
+  All Python code in the zenodotos project must be linted and formatted using the `ruff` tool. Ruff provides fast, reliable linting and formatting capabilities, replacing multiple tools like flake8, black, isort, and more.
 
 rules:
   - Use `ruff check` for linting Python code

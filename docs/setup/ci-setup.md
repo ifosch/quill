@@ -1,6 +1,6 @@
 # CI/CD Setup Guide
 
-This document explains the GitHub Actions CI/CD setup for the Quill project, which ensures code quality and maintains high standards across all contributions.
+This document explains the GitHub Actions CI/CD setup for the Zenodotos project, which ensures code quality and maintains high standards across all contributions.
 
 ## Overview
 
@@ -130,7 +130,7 @@ uv run ruff format --check .
 uv run ty check
 
 # Tests with coverage
-uv run pytest --cov=quill --cov-report=term-missing --cov-fail-under=80
+uv run pytest --cov=zenodotos --cov-report=term-missing --cov-fail-under=80
 
 # Security audit
 uv run bandit -r src/ -f txt
@@ -233,4 +233,4 @@ If you encounter issues with the CI:
 - [ ] **Quality Trend Analysis**: Track quality metrics over time
 - [ ] **Automated Remediation**: Auto-fix common issues
 
-This CI/CD setup ensures that Quill maintains high code quality standards while providing a smooth development experience for contributors.
+This CI/CD setup ensures that Zenodotos maintains high code quality standards while providing a smooth development experience for contributors.

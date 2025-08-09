@@ -3,7 +3,7 @@
 from datetime import datetime, timezone
 import pytest
 
-from quill.drive.models import DriveFile
+from zenodotos.drive.models import DriveFile
 
 
 @pytest.mark.parametrize(

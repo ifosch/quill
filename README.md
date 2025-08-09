@@ -1,4 +1,4 @@
-# Quill
+# Zenodotos
 
 A command-line interface tool for interacting with Google Drive, providing a simple and efficient way to manage your files and folders.
 
@@ -19,8 +19,8 @@ A command-line interface tool for interacting with Google Drive, providing a sim
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/quill.git
-   cd quill
+   git clone https://github.com/yourusername/zenodotos.git
+   cd zenodotos
    ```
 
 2. Create a virtual environment and activate it:
@@ -54,7 +54,7 @@ You can provide your Google Drive API credentials in two ways:
 1. **Default Location:**
    Place the downloaded credentials file at:
    ```
-   ~/.config/quill/credentials.json
+   ~/.config/zenodotos/credentials.json
    ```
 
 2. **Custom Location:**
@@ -74,10 +74,10 @@ You can provide your Google Drive API credentials in two ways:
 
 ### Interactive File Browsing
 
-**New!** Quill now provides an interactive pagination experience by default:
+**New!** Zenodotos now provides an interactive pagination experience by default:
 
 ```bash
-quill list-files
+zenodotos list-files
 ```
 
 This will show your files with a clean navigation interface:
@@ -97,7 +97,7 @@ Project Report.docx (856 KB) - Word - Modified: 2024-01-14
 
 For scripting or automated use, disable interactive mode:
 ```bash
-quill list-files --no-interactive
+zenodotos list-files --no-interactive
 ```
 
 ### List Files Options
@@ -115,22 +115,22 @@ All list-files options work in both interactive and non-interactive modes:
 **Interactive search with pagination:**
 ```bash
 # Search for PDFs interactively
-quill list-files --query "mimeType='application/pdf'"
+zenodotos list-files --query "mimeType='application/pdf'"
 
 # Find files modified in the last week (interactive)
-quill list-files --query "modifiedTime > '2024-01-01'"
+zenodotos list-files --query "modifiedTime > '2024-01-01'"
 
 # Complex search with multiple conditions
-quill list-files --query "name contains 'report' and mimeType='application/pdf'"
+zenodotos list-files --query "name contains 'report' and mimeType='application/pdf'"
 ```
 
 **Non-interactive with specific pages:**
 ```bash
 # Get exactly 20 files, no interaction
-quill list-files --page-size 20 --no-interactive
+zenodotos list-files --page-size 20 --no-interactive
 
 # Use page token for specific page access
-quill list-files --page-token "ABC123token" --no-interactive
+zenodotos list-files --page-token "ABC123token" --no-interactive
 ```
 
 #### Field Customization
@@ -141,16 +141,16 @@ Choose exactly what information you want to see:
 
 ```bash
 # Use default fields (comprehensive output)
-quill list-files
+zenodotos list-files
 
 # Minimal output - just names and sizes
-quill list-files --fields "name,size"
+zenodotos list-files --fields "name,size"
 
 # Detailed output with timestamps and owners
-quill list-files --fields "name,size,modifiedTime,createdTime,owners"
+zenodotos list-files --fields "name,size,modifiedTime,createdTime,owners"
 
 # Full metadata output (same as default)
-quill list-files --fields "id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink"
+zenodotos list-files --fields "id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink"
 ```
 
 #### Available Fields
@@ -172,12 +172,12 @@ The `--fields` option accepts any combination of these Google Drive API fields:
 
 Get detailed information about a specific file:
 ```bash
-quill get-file <file_id>
+zenodotos get-file <file_id>
 ```
 
 Example:
 ```bash
-quill get-file 1abc...xyz
+zenodotos get-file 1abc...xyz
 ```
 
 #### Customize Output Fields
@@ -186,16 +186,16 @@ Choose exactly what information you want to see:
 
 ```bash
 # Use default fields (comprehensive output)
-quill get-file <file_id>
+zenodotos get-file <file_id>
 
 # Minimal output - just names and sizes
-quill get-file <file_id> --fields "name,size"
+zenodotos get-file <file_id> --fields "name,size"
 
 # Detailed output with timestamps and owners
-quill get-file <file_id> --fields "name,size,modifiedTime,createdTime,owners"
+zenodotos get-file <file_id> --fields "name,size,modifiedTime,createdTime,owners"
 
 # Full metadata output (same as default)
-quill get-file <file_id> --fields "id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink"
+zenodotos get-file <file_id> --fields "id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink"
 ```
 
 #### Available Fields
@@ -218,24 +218,24 @@ Export Google Workspace documents with smart format defaults. You can export fil
 
 ```bash
 # Export by file ID (automatic format selection)
-quill export <file_id>
+zenodotos export <file_id>
 
 # Export by search query (finds and exports single match)
-quill export --query "name contains 'My Document'"
+zenodotos export --query "name contains 'My Document'"
 
 # Export with custom format
-quill export <file_id> --format pdf
+zenodotos export <file_id> --format pdf
 
 # Export to specific output path
-quill export <file_id> --output "my-document.pdf"
+zenodotos export <file_id> --output "my-document.pdf"
 
 # Export with verbose output
-quill export <file_id> --verbose
+zenodotos export <file_id> --verbose
 ```
 
 #### Smart Format Defaults
 
-Quill automatically selects the optimal export format based on file type:
+Zenodotos automatically selects the optimal export format based on file type:
 
 - **Google Docs** → HTML (ZIP file with embedded resources)
 - **Google Sheets** → XLSX (Excel format)
@@ -249,16 +249,16 @@ Export files by searching for them instead of using file IDs:
 
 ```bash
 # Export a single file by name
-quill export --query "name = 'My Important Document'"
+zenodotos export --query "name = 'My Important Document'"
 
 # Export files containing specific text
-quill export --query "name contains 'report'"
+zenodotos export --query "name contains 'report'"
 
 # Export files by MIME type
-quill export --query "mimeType = 'application/vnd.google-apps.document'"
+zenodotos export --query "mimeType = 'application/vnd.google-apps.document'"
 
 # Export files modified recently
-quill export --query "modifiedTime > '2024-01-01'"
+zenodotos export --query "modifiedTime > '2024-01-01'"
 ```
 
 **Query Behavior:**
@@ -280,30 +280,30 @@ Override the default format with these options:
 
 ```bash
 # Export a Google Doc to HTML (default)
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
 
 # Export a Google Sheet to Excel
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format xlsx
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format xlsx
 
 # Export a presentation to PDF
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
 
 # Export to a specific filename
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --output "My Report.pdf"
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --output "My Report.pdf"
 ```
 
 ### Help
 
 Get help on available commands:
 ```bash
-quill --help
+zenodotos --help
 ```
 
 Get help on specific commands:
 ```bash
-quill list-files --help
-quill get-file --help
-quill export --help
+zenodotos list-files --help
+zenodotos get-file --help
+zenodotos export --help
 ```
 
 For detailed command documentation, see:
@@ -313,10 +313,10 @@ For detailed command documentation, see:
 
 ## Architecture
 
-Quill features a clean, modular architecture with both CLI and library interfaces:
+Zenodotos features a clean, modular architecture with both CLI and library interfaces:
 
 ```
-src/quill/
+src/zenodotos/
 ├── cli/                    # Command-line interface
 │   ├── __init__.py        # CLI registration and main entry
 │   ├── commands.py        # Click command definitions
@@ -329,7 +329,7 @@ src/quill/
 │   └── display.py       # Terminal display formatters
 ├── auth.py              # Authentication handling
 ├── config.py            # Configuration management
-├── client.py            # High-level library API (Quill class)
+├── client.py            # High-level library API (Zenodotos class)
 ├── exceptions.py        # Custom exception hierarchy
 └── utils.py             # Utility functions (FieldParser, etc.)
 ```
@@ -344,43 +344,43 @@ This modular design ensures:
 
 ## Library Usage
 
-Quill is not just a CLI tool - it's also a powerful Python library for Google Drive operations. The CLI serves as a real-world example of how to use the library.
+Zenodotos is not just a CLI tool - it's also a powerful Python library for Google Drive operations. The CLI serves as a real-world example of how to use the library.
 
 ### Basic Library Usage
 
 ```python
-from quill import Quill
+from zenodotos import Zenodotos
 
 # Initialize the library
-quill = Quill()
+zenodotos = Zenodotos()
 
 # List files with pagination
-files, next_page_token = quill.list_files_with_pagination(page_size=10)
+files, next_page_token = zenodotos.list_files_with_pagination(page_size=10)
 
 # Get a specific file
-file_info = quill.get_file("file_id_here")
+file_info = zenodotos.get_file("file_id_here")
 
 # Export a file
-quill.export_file("file_id_here", format="pdf")
+zenodotos.export_file("file_id_here", format="pdf")
 
 # Search and export
-quill.search_and_export("name contains 'report'", format="pdf")
+zenodotos.search_and_export("name contains 'report'", format="pdf")
 ```
 
 ### Advanced Library Features
 
 ```python
-from quill import Quill, MultipleFilesFoundError, NoFilesFoundError
+from zenodotos import Zenodotos, MultipleFilesFoundError, NoFilesFoundError
 
-quill = Quill()
+zenodotos = Zenodotos()
 
 # Custom field selection
-field_parser = quill.get_field_parser()
+field_parser = zenodotos.get_field_parser()
 all_fields, requested_fields = field_parser.parse_fields("id,name,size")
 
 # Error handling
 try:
-    quill.search_and_export("name = 'specific_file'")
+    zenodotos.search_and_export("name = 'specific_file'")
 except MultipleFilesFoundError as e:
     print(f"Multiple files found: {e}")
 except NoFilesFoundError as e:
@@ -419,7 +419,7 @@ pytest
 
 Run tests with coverage (fails if coverage is less than 80%):
 ```bash
-pytest --cov=quill --cov-report=term-missing --cov-fail-under=80
+pytest --cov=zenodotos --cov-report=term-missing --cov-fail-under=80
 ```
 
 **Current test coverage: 96%** ✅ (exceeds 80% requirement)
@@ -439,7 +439,7 @@ ruff check . --fix
 ty check .
 
 # Run tests with coverage
-pytest --cov=quill --cov-report=term-missing --cov-fail-under=80
+pytest --cov=zenodotos --cov-report=term-missing --cov-fail-under=80
 ```
 
 **All checks must pass before committing changes.**

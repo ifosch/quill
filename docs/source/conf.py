@@ -1,4 +1,4 @@
-"""Sphinx configuration file for the Quill project."""
+"""Sphinx configuration file for the Zenodotos project."""
 
 import os
 import sys
@@ -8,9 +8,9 @@ from datetime import datetime
 sys.path.insert(0, os.path.abspath("../.."))
 
 # Project information
-project = "Quill"
-copyright = f"{datetime.now().year}, Quill Contributors"
-author = "Quill Contributors"
+project = "Zenodotos"
+copyright = f"{datetime.now().year}, Zenodotos Contributors"
+author = "Zenodotos Contributors"
 
 # The full version, including alpha/beta/rc tags
 release = "0.1.0"

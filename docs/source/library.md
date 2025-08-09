@@ -1,10 +1,10 @@
-# Quill Library API
+# Zenodotos Library API
 
-Quill is not just a CLI tool - it's also a powerful Python library for Google Drive operations. The CLI serves as a real-world example of how to use the library.
+Zenodotos is not just a CLI tool - it's also a powerful Python library for Google Drive operations. The CLI serves as a real-world example of how to use the library.
 
 ## Overview
 
-The Quill library provides a high-level interface for Google Drive operations, making it easy to integrate Google Drive functionality into your Python applications.
+The Zenodotos library provides a high-level interface for Google Drive operations, making it easy to integrate Google Drive functionality into your Python applications.
 
 ### Key Features
 
@@ -19,33 +19,33 @@ The Quill library provides a high-level interface for Google Drive operations, m
 ### Basic Usage
 
 ```python
-from quill import Quill
+from zenodotos import Zenodotos
 
 # Initialize the library
-quill = Quill()
+zenodotos = Zenodotos()
 
 # List files with pagination
-files, next_page_token = quill.list_files_with_pagination(page_size=10)
+files, next_page_token = zenodotos.list_files_with_pagination(page_size=10)
 
 # Get a specific file
-file_info = quill.get_file("file_id_here")
+file_info = zenodotos.get_file("file_id_here")
 
 # Export a file
-quill.export_file("file_id_here", format="pdf")
+zenodotos.export_file("file_id_here", format="pdf")
 
 # Search and export
-quill.search_and_export("name contains 'report'", format="pdf")
+zenodotos.search_and_export("name contains 'report'", format="pdf")
 ```
 
 ### Error Handling
 
 ```python
-from quill import Quill, MultipleFilesFoundError, NoFilesFoundError
+from zenodotos import Zenodotos, MultipleFilesFoundError, NoFilesFoundError
 
-quill = Quill()
+zenodotos = Zenodotos()
 
 try:
-    quill.search_and_export("name = 'specific_file'")
+    zenodotos.search_and_export("name = 'specific_file'")
 except MultipleFilesFoundError as e:
     print(f"Multiple files found: {e}")
 except NoFilesFoundError as e:
@@ -54,17 +54,17 @@ except NoFilesFoundError as e:
 
 ## API Reference
 
-### Quill Class
+### Zenodotos Class
 
 The main entry point for all library operations.
 
 #### Constructor
 
 ```python
-Quill()
+Zenodotos()
 ```
 
-Creates a new Quill instance with default configuration.
+Creates a new Zenodotos instance with default configuration.
 
 #### Methods
 
@@ -84,16 +84,16 @@ List files from Google Drive with pagination support.
 **Example:**
 ```python
 # Basic listing
-files, next_token = quill.list_files_with_pagination()
+files, next_token = zenodotos.list_files_with_pagination()
 
 # With query
-files, next_token = quill.list_files_with_pagination(
+files, next_token = zenodotos.list_files_with_pagination(
     query="name contains 'report'",
     page_size=20
 )
 
 # With custom fields
-files, next_token = quill.list_files_with_pagination(
+files, next_token = zenodotos.list_files_with_pagination(
     fields="id,name,size,modifiedTime"
 )
 ```
@@ -111,7 +111,7 @@ Get detailed information about a specific file.
 
 **Example:**
 ```python
-file_info = quill.get_file("1abc123def456ghi789jkl012mno345pqr678stu901vwx")
+file_info = zenodotos.get_file("1abc123def456ghi789jkl012mno345pqr678stu901vwx")
 print(f"File: {file_info.name}, Size: {file_info.size}")
 ```
 
@@ -130,10 +130,10 @@ Export a Google Workspace document.
 **Example:**
 ```python
 # Auto-detect format
-output_file = quill.export_file("1abc123def456ghi789jkl012mno345pqr678stu901vwx")
+output_file = zenodotos.export_file("1abc123def456ghi789jkl012mno345pqr678stu901vwx")
 
 # Specify format
-output_file = quill.export_file(
+output_file = zenodotos.export_file(
     "1abc123def456ghi789jkl012mno345pqr678stu901vwx",
     format="pdf",
     output_path="my_document.pdf"
@@ -159,10 +159,10 @@ Search for files and export them. Automatically handles single/multiple matches.
 **Example:**
 ```python
 # Export single match
-output_file = quill.search_and_export("name = 'My Document'")
+output_file = zenodotos.search_and_export("name = 'My Document'")
 
 # Export with format
-output_file = quill.search_and_export(
+output_file = zenodotos.search_and_export(
     "name contains 'report'",
     format="pdf"
 )
@@ -177,7 +177,7 @@ Get the FieldParser utility for field handling.
 
 **Example:**
 ```python
-field_parser = quill.get_field_parser()
+field_parser = zenodotos.get_field_parser()
 all_fields, requested_fields = field_parser.parse_fields("id,name,size")
 ```
 
@@ -225,9 +225,9 @@ Data model representing a Google Drive file.
 
 ## Exception Classes
 
-### QuillException
+### ZenodotosException
 
-Base exception for all Quill library errors.
+Base exception for all Zenodotos library errors.
 
 ### MultipleFilesFoundError
 
@@ -252,7 +252,7 @@ The library supports configuration through environment variables and config file
 ### Environment Variables
 
 - `GOOGLE_DRIVE_CREDENTIALS`: Path to Google Drive API credentials file
-- `QUILL_CONFIG_FILE`: Path to configuration file
+- `ZENODOTOS_CONFIG_FILE`: Path to configuration file
 
 ### Configuration Files
 
@@ -261,7 +261,7 @@ Supported formats: YAML, TOML, JSON
 **Example config.yaml:**
 ```yaml
 google_drive:
-  credentials_path: ~/.config/quill/credentials.json
+  credentials_path: ~/.config/zenodotos/credentials.json
   page_size: 20
   default_fields: "id,name,mimeType,size"
 ```
@@ -271,33 +271,33 @@ google_drive:
 ### Custom Field Selection
 
 ```python
-from quill import Quill
+from zenodotos import Zenodotos
 
-quill = Quill()
+zenodotos = Zenodotos()
 
 # Get field parser for custom field handling
-field_parser = quill.get_field_parser()
+field_parser = zenodotos.get_field_parser()
 
 # Parse user-specified fields
 all_fields, requested_fields = field_parser.parse_fields("id,name,size,modifiedTime")
 
 # Use in list operation
-files, next_token = quill.list_files_with_pagination(fields=",".join(all_fields))
+files, next_token = zenodotos.list_files_with_pagination(fields=",".join(all_fields))
 ```
 
 ### Batch Operations
 
 ```python
-from quill import Quill
+from zenodotos import Zenodotos
 
-quill = Quill()
+zenodotos = Zenodotos()
 
 # List all files (handle pagination)
 all_files = []
 page_token = None
 
 while True:
-    files, page_token = quill.list_files_with_pagination(
+    files, page_token = zenodotos.list_files_with_pagination(
         page_size=100,
         page_token=page_token
     )
@@ -312,13 +312,13 @@ print(f"Total files: {len(all_files)}")
 ### Error Handling Patterns
 
 ```python
-from quill import Quill, MultipleFilesFoundError, NoFilesFoundError
+from zenodotos import Zenodotos, MultipleFilesFoundError, NoFilesFoundError
 
-quill = Quill()
+zenodotos = Zenodotos()
 
 def export_report(report_name):
     try:
-        return quill.search_and_export(f"name = '{report_name}'")
+        return zenodotos.search_and_export(f"name = '{report_name}'")
     except MultipleFilesFoundError:
         print(f"Multiple reports found with name '{report_name}'")
         return None
@@ -336,15 +336,15 @@ def export_report(report_name):
 
 ```python
 from flask import Flask, jsonify
-from quill import Quill, NoFilesFoundError
+from zenodotos import Zenodotos, NoFilesFoundError
 
 app = Flask(__name__)
-quill = Quill()
+zenodotos = Zenodotos()
 
 @app.route('/files')
 def list_files():
     try:
-        files, _ = quill.list_files_with_pagination(page_size=50)
+        files, _ = zenodotos.list_files_with_pagination(page_size=50)
         return jsonify([{
             'id': f.id,
             'name': f.name,
@@ -357,7 +357,7 @@ def list_files():
 @app.route('/export/<file_id>')
 def export_file(file_id):
     try:
-        output_path = quill.export_file(file_id, format='pdf')
+        output_path = zenodotos.export_file(file_id, format='pdf')
         return jsonify({'exported_to': output_path})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -366,21 +366,21 @@ def export_file(file_id):
 ### Data Processing Pipeline
 
 ```python
-from quill import Quill
+from zenodotos import Zenodotos
 import pandas as pd
 
-quill = Quill()
+zenodotos = Zenodotos()
 
 def process_spreadsheets():
     # Find all Google Sheets
-    files, _ = quill.list_files_with_pagination(
+    files, _ = zenodotos.list_files_with_pagination(
         query="mimeType='application/vnd.google-apps.spreadsheet'"
     )
 
     for file in files:
         try:
             # Export as CSV for processing
-            csv_path = quill.export_file(file.id, format='csv')
+            csv_path = zenodotos.export_file(file.id, format='csv')
 
             # Process with pandas
             df = pd.read_csv(csv_path)
@@ -392,28 +392,28 @@ def process_spreadsheets():
 
 ## Migration from CLI
 
-If you're currently using the CLI and want to integrate Quill into your Python code:
+If you're currently using the CLI and want to integrate Zenodotos into your Python code:
 
 ### Before (CLI)
 ```bash
-quill list-files --query "name contains 'report'" --fields "id,name,size"
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
+zenodotos list-files --query "name contains 'report'" --fields "id,name,size"
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
 ```
 
 ### After (Library)
 ```python
-from quill import Quill
+from zenodotos import Zenodotos
 
-quill = Quill()
+zenodotos = Zenodotos()
 
 # List files
-files, _ = quill.list_files_with_pagination(
+files, _ = zenodotos.list_files_with_pagination(
     query="name contains 'report'",
     fields="id,name,size"
 )
 
 # Export file
-output_path = quill.export_file(
+output_path = zenodotos.export_file(
     "1abc123def456ghi789jkl012mno345pqr678stu901vwx",
     format="pdf"
 )

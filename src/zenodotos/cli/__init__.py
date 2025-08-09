@@ -1,4 +1,4 @@
-"""Command-line interface for Quill."""
+"""Command-line interface for Zenodotos."""
 
 import click
 from .commands import list_files, get_file, export
@@ -7,7 +7,7 @@ from .commands import list_files, get_file, export
 @click.group()
 @click.version_option()
 def cli():
-    """Quill - Google Drive CLI Tool."""
+    """Zenodotos - Google Drive CLI Tool."""
     pass
 
 

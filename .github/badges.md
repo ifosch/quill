@@ -4,8 +4,8 @@ Copy these badges to your README.md to display CI status and project metrics:
 
 ## CI/CD Status
 ```markdown
-![CI](https://github.com/ifosch/quill/workflows/CI/badge.svg)
-![Quality Checks](https://github.com/ifosch/quill/workflows/Quality%20Checks/badge.svg)
+![CI](https://github.com/ifosch/zenodotos/workflows/CI/badge.svg)
+![Quality Checks](https://github.com/ifosch/zenodotos/workflows/Quality%20Checks/badge.svg)
 ```
 
 ## Project Information
@@ -25,8 +25,8 @@ Copy these badges to your README.md to display CI status and project metrics:
 ```markdown
 ## Status
 
-[![CI](https://github.com/ifosch/quill/workflows/CI/badge.svg)](https://github.com/ifosch/quill/actions/workflows/ci.yml)
-[![Quality Checks](https://github.com/ifosch/quill/workflows/Quality%20Checks/badge.svg)](https://github.com/ifosch/quill/actions/workflows/quality-checks.yml)
+[![CI](https://github.com/ifosch/zenodotos/workflows/CI/badge.svg)](https://github.com/ifosch/zenodotos/actions/workflows/ci.yml)
+[![Quality Checks](https://github.com/ifosch/zenodotos/workflows/Quality%20Checks/badge.svg)](https://github.com/ifosch/zenodotos/actions/workflows/quality-checks.yml)
 [![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Code Style](https://img.shields.io/badge/code%20style-ruff-black.svg)](https://github.com/astral-sh/ruff)

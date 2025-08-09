@@ -1,6 +1,6 @@
 # Test-Driven Development (TDD) Practices
 
-This guide captures practical TDD workflows and patterns discovered during bug fixes and feature development in the Quill project.
+This guide captures practical TDD workflows and patterns discovered during bug fixes and feature development in the Zenodotos project.
 
 ## Overview
 
@@ -50,7 +50,7 @@ Test-Driven Development follows a simple but powerful cycle: **RED → GREEN →
    uv run pytest tests/unit/ -v
 
    # Check test coverage
-   uv run pytest --cov=quill --cov-report=term-missing
+uv run pytest --cov=zenodotos --cov-report=term-missing
    ```
 
 2. **Improve Code Quality**
@@ -83,7 +83,7 @@ def test_format_file_list_with_complete_google_drive_id():
 
 **🟢 GREEN Phase:**
 ```python
-# In src/quill/formatters/display.py
+# In src/zenodotos/formatters/display.py
 field_config = {
     "id": {"header": "ID", "width": 45, "align": "<"},  # Increased from 30 to 45
     # ... other fields
@@ -115,7 +115,7 @@ def test_cli_field_processing_removes_duplicates(fields_input, expected_order):
 
 **🟢 GREEN Phase:**
 ```python
-# In src/quill/cli/commands.py
+# In src/zenodotos/cli/commands.py
 user_fields_raw = [f.strip() for f in fields.split(",") if f.strip()]
 # Remove duplicates while preserving order of first occurrence
 seen = set()
@@ -177,7 +177,7 @@ def test_cli_end_to_end():
 uv run pytest tests/unit/test_cli.py::test_specific_function -v
 
 # Run with coverage
-uv run pytest --cov=quill --cov-report=term-missing
+uv run pytest --cov=zenodotos --cov-report=term-missing
 
 # Run tests in specific module
 uv run pytest tests/unit/formatters/ -v
@@ -195,7 +195,7 @@ uv run pytest tests/unit/test_cli.py::test_failing -vvs
 uv run pytest tests/unit/test_cli.py::test_failing --pdb
 
 # Show coverage gaps
-uv run pytest --cov=quill --cov-report=html
+uv run pytest --cov=zenodotos --cov-report=html
 # Open htmlcov/index.html to see detailed coverage
 ```
 
@@ -214,7 +214,7 @@ uv run pytest tests/unit/test_module.py::test_new_feature -v
 uv run pytest tests/unit/test_module.py -v
 
 # 5. Check overall coverage
-uv run pytest --cov=quill --cov-report=term-missing
+uv run pytest --cov=zenodotos --cov-report=term-missing
 ```
 
 ## Common Pitfalls and Solutions
@@ -325,4 +325,4 @@ From applying TDD to real bugs in this project:
 
 ---
 
-*This guide was developed through practical application of TDD to real bugs in the Quill project. It captures patterns and practices that proved effective for maintaining code quality while delivering reliable features.*
+*This guide was developed through practical application of TDD to real bugs in the Zenodotos project. It captures patterns and practices that proved effective for maintaining code quality while delivering reliable features.*

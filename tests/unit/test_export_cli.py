@@ -5,7 +5,7 @@ import os
 from unittest.mock import patch, Mock
 from click.testing import CliRunner
 
-from quill.cli import cli
+from zenodotos.cli import cli
 
 
 class TestExportCommand:
@@ -15,11 +15,11 @@ class TestExportCommand:
         """Test export command with only file ID (auto-naming)."""
         runner = CliRunner()
 
-        # Mock the Quill.export_file method
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
-            mock_quill.export_file.return_value = "My Document.zip"
+        # Mock the Zenodotos.export_file method
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+            mock_zenodotos.export_file.return_value = "My Document.zip"
 
             result = runner.invoke(cli, ["export", "1abc123"])
 
@@ -28,8 +28,8 @@ class TestExportCommand:
             assert "Successfully exported" in result.output
             assert "My Document.zip" in result.output
 
-            # Verify Quill was called correctly
-            mock_quill.export_file.assert_called_once_with(
+            # Verify Zenodotos was called correctly
+            mock_zenodotos.export_file.assert_called_once_with(
                 "1abc123", output_path=None, format=None
             )
 
@@ -40,10 +40,10 @@ class TestExportCommand:
         with tempfile.TemporaryDirectory() as temp_dir:
             output_path = os.path.join(temp_dir, "custom_name.zip")
 
-            with patch("quill.cli.commands.Quill") as mock_quill_class:
-                mock_quill = Mock()
-                mock_quill_class.return_value = mock_quill
-                mock_quill.export_file.return_value = output_path
+            with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+                mock_zenodotos = Mock()
+                mock_zenodotos_class.return_value = mock_zenodotos
+                mock_zenodotos.export_file.return_value = output_path
 
                 result = runner.invoke(
                     cli, ["export", "1abc123", "--output", output_path]
@@ -53,8 +53,8 @@ class TestExportCommand:
                 assert "Successfully exported" in result.output
                 assert "custom_name.zip" in result.output
 
-                # Verify Quill was called with output path
-                mock_quill.export_file.assert_called_once_with(
+                # Verify Zenodotos was called with output path
+                mock_zenodotos.export_file.assert_called_once_with(
                     "1abc123", output_path=output_path, format=None
                 )
 
@@ -62,10 +62,10 @@ class TestExportCommand:
         """Test export command when file doesn't exist."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
-            mock_quill.export_file.side_effect = FileNotFoundError("File not found")
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+            mock_zenodotos.export_file.side_effect = FileNotFoundError("File not found")
 
             result = runner.invoke(cli, ["export", "nonexistent123"])
 
@@ -76,10 +76,12 @@ class TestExportCommand:
         """Test export command when user lacks permission."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
-            mock_quill.export_file.side_effect = PermissionError("Permission denied")
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+            mock_zenodotos.export_file.side_effect = PermissionError(
+                "Permission denied"
+            )
 
             result = runner.invoke(cli, ["export", "restricted123"])
 
@@ -90,10 +92,12 @@ class TestExportCommand:
         """Test export command when a generic error occurs."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
-            mock_quill.export_file.side_effect = RuntimeError("API connection failed")
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+            mock_zenodotos.export_file.side_effect = RuntimeError(
+                "API connection failed"
+            )
 
             result = runner.invoke(cli, ["export", "1abc123"])
 
@@ -123,10 +127,10 @@ class TestExportCommand:
         """Test export command with verbose flag."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
-            mock_quill.export_file.return_value = "My Document.zip"
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+            mock_zenodotos.export_file.return_value = "My Document.zip"
 
             result = runner.invoke(cli, ["export", "1abc123", "--verbose"])
 
@@ -138,18 +142,18 @@ class TestExportCommand:
         """Test export command with format option."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
-            mock_quill.export_file.return_value = "My Document.pdf"
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+            mock_zenodotos.export_file.return_value = "My Document.pdf"
 
             result = runner.invoke(cli, ["export", "1abc123", "--format", "pdf"])
 
             assert result.exit_code == 0
             assert "Successfully exported" in result.output
 
-            # Verify Quill was called with format
-            mock_quill.export_file.assert_called_once_with(
+            # Verify Zenodotos was called with format
+            mock_zenodotos.export_file.assert_called_once_with(
                 "1abc123", output_path=None, format="pdf"
             )
 
@@ -175,16 +179,16 @@ class TestExportCommand:
         """Test export command uses smart defaults when no format specified."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
-            mock_quill.export_file.return_value = "My Document.zip"
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+            mock_zenodotos.export_file.return_value = "My Document.zip"
 
             result = runner.invoke(cli, ["export", "1abc123"])
 
             assert result.exit_code == 0
-            # Verify Quill was called with format=None (smart default)
-            mock_quill.export_file.assert_called_once_with(
+            # Verify Zenodotos was called with format=None (smart default)
+            mock_zenodotos.export_file.assert_called_once_with(
                 "1abc123", output_path=None, format=None
             )
 
@@ -193,11 +197,11 @@ class TestExportCommand:
         """Test export command with query that returns single match."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
 
-            mock_quill.search_and_export.return_value = "My Document.zip"
+            mock_zenodotos.search_and_export.return_value = "My Document.zip"
 
             result = runner.invoke(
                 cli, ["export", "--query", 'name contains "My Document"']
@@ -208,7 +212,7 @@ class TestExportCommand:
             assert "My Document.zip" in result.output
 
             # Verify search_and_export was called with query
-            mock_quill.search_and_export.assert_called_once_with(
+            mock_zenodotos.search_and_export.assert_called_once_with(
                 'name contains "My Document"', output_path=None, format=None
             )
 
@@ -216,9 +220,9 @@ class TestExportCommand:
         """Test export command with query that returns multiple matches."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
 
             # Create mock DriveFile objects for the exception
             mock_file1 = Mock()
@@ -232,9 +236,9 @@ class TestExportCommand:
             mock_file2.mime_type = "application/vnd.google-apps.document"
 
             # Mock search_and_export to raise MultipleFilesFoundError
-            from quill.exceptions import MultipleFilesFoundError
+            from zenodotos.exceptions import MultipleFilesFoundError
 
-            mock_quill.search_and_export.side_effect = MultipleFilesFoundError(
+            mock_zenodotos.search_and_export.side_effect = MultipleFilesFoundError(
                 "Multiple files found", files=[mock_file1, mock_file2]
             )
 
@@ -253,14 +257,14 @@ class TestExportCommand:
         """Test export command with query that returns no matches."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
 
             # Mock search_and_export to raise NoFilesFoundError
-            from quill.exceptions import NoFilesFoundError
+            from zenodotos.exceptions import NoFilesFoundError
 
-            mock_quill.search_and_export.side_effect = NoFilesFoundError(
+            mock_zenodotos.search_and_export.side_effect = NoFilesFoundError(
                 "No files found"
             )
 
@@ -272,7 +276,7 @@ class TestExportCommand:
             assert "No files found" in result.output
 
             # Verify search_and_export was called
-            mock_quill.search_and_export.assert_called_once_with(
+            mock_zenodotos.search_and_export.assert_called_once_with(
                 'name contains "Nonexistent"', output_path=None, format=None
             )
 
@@ -301,11 +305,11 @@ class TestExportCommand:
         """Test export command with query and verbose flag for single match."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
 
-            mock_quill.search_and_export.return_value = "My Document.zip"
+            mock_zenodotos.search_and_export.return_value = "My Document.zip"
 
             result = runner.invoke(
                 cli, ["export", "--query", 'name contains "My Document"', "--verbose"]
@@ -319,10 +323,10 @@ class TestExportCommand:
         """Test export command with file ID and verbose flag."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
-            mock_quill.export_file.return_value = "My Document.zip"
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+            mock_zenodotos.export_file.return_value = "My Document.zip"
 
             result = runner.invoke(cli, ["export", "1abc123", "--verbose"])
 
@@ -334,11 +338,11 @@ class TestExportCommand:
         """Test export command handles generic exceptions."""
         runner = CliRunner()
 
-        with patch("quill.cli.commands.Quill") as mock_quill_class:
-            mock_quill = Mock()
-            mock_quill_class.return_value = mock_quill
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
             # Raise a generic exception that's not FileNotFoundError, PermissionError, or ValueError
-            mock_quill.export_file.side_effect = ConnectionError("Network error")
+            mock_zenodotos.export_file.side_effect = ConnectionError("Network error")
 
             result = runner.invoke(cli, ["export", "1abc123"])
 

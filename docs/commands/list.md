@@ -5,7 +5,7 @@ The `list-files` command displays files from your Google Drive.
 ## Usage
 
 ```bash
-quill list-files [OPTIONS]
+zenodotos list-files [OPTIONS]
 ```
 
 ## Options
@@ -45,53 +45,53 @@ The `--fields` option accepts any combination of these Google Drive API fields:
 
 List the first 10 files with default fields:
 ```bash
-quill list-files
+zenodotos list-files
 ```
 
 List 20 files:
 ```bash
-quill list-files --page-size 20
+zenodotos list-files --page-size 20
 ```
 
 ### Custom Fields
 
 List files with only basic information:
 ```bash
-quill list-files --fields "id,name,size"
+zenodotos list-files --fields "id,name,size"
 ```
 
 List files with creation and modification dates:
 ```bash
-quill list-files --fields "name,createdTime,modifiedTime"
+zenodotos list-files --fields "name,createdTime,modifiedTime"
 ```
 
 ### Search and Filter
 
 Search for files containing "report" in the name:
 ```bash
-quill list-files --query "name contains 'report'"
+zenodotos list-files --query "name contains 'report'"
 ```
 
 List only PDF files:
 ```bash
-quill list-files --query "mimeType='application/pdf'"
+zenodotos list-files --query "mimeType='application/pdf'"
 ```
 
 Search for files modified in the last week:
 ```bash
-quill list-files --query "modifiedTime > '2023-01-01'"
+zenodotos list-files --query "modifiedTime > '2023-01-01'"
 ```
 
 ### Combined Options
 
 List PDF files with specific fields:
 ```bash
-quill list-files --fields "id,name,size,modifiedTime" --query "mimeType='application/pdf'"
+zenodotos list-files --fields "id,name,size,modifiedTime" --query "mimeType='application/pdf'"
 ```
 
 Search with pagination:
 ```bash
-quill list-files --page-size 50 --query "name contains 'project'"
+zenodotos list-files --page-size 50 --query "name contains 'project'"
 ```
 
 ## Output Format

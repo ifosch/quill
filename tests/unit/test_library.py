@@ -1,41 +1,41 @@
-"""Tests for the Quill library components."""
+"""Tests for the Zenodotos library components."""
 
 import pytest
 from unittest.mock import Mock, patch
-from quill import Quill, FieldParser
-from quill.drive.models import DriveFile
+from zenodotos import Zenodotos, FieldParser
+from zenodotos.drive.models import DriveFile
 from datetime import datetime
 
 
-class TestQuill:
-    """Test the high-level Quill client."""
+class TestZenodotos:
+    """Test the high-level Zenodotos client."""
 
-    def test_quill_initialization(self):
-        """Test Quill client initialization."""
-        with patch("quill.client.DriveClient") as mock_client_class:
+    def test_zenodotos_initialization(self):
+        """Test Zenodotos client initialization."""
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
             mock_client = Mock()
             mock_client_class.return_value = mock_client
 
-            quill = Quill()
-            assert quill._client is not None
-            assert isinstance(quill._client, Mock)
+            zenodotos = Zenodotos()
+            assert zenodotos._client is not None
+            assert isinstance(zenodotos._client, Mock)
 
-    def test_quill_initialization_with_credentials_path(self):
-        """Test Quill client initialization with custom credentials path."""
-        with patch("quill.client.DriveClient") as mock_client_class:
+    def test_zenodotos_initialization_with_credentials_path(self):
+        """Test Zenodotos client initialization with custom credentials path."""
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
             mock_client = Mock()
             mock_client_class.return_value = mock_client
 
             credentials_path = "/custom/path/credentials.json"
-            quill = Quill(credentials_path=credentials_path)
+            zenodotos = Zenodotos(credentials_path=credentials_path)
 
-            assert quill._client is not None
-            assert isinstance(quill._client, Mock)
+            assert zenodotos._client is not None
+            assert isinstance(zenodotos._client, Mock)
             mock_client_class.assert_called_once_with(credentials_path=credentials_path)
 
     def test_list_files_basic(self):
         """Test basic list_files functionality."""
-        with patch("quill.client.DriveClient") as mock_client_class:
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
             mock_client = Mock()
             mock_client_class.return_value = mock_client
 
@@ -51,8 +51,8 @@ class TestQuill:
                 "next_page_token": None,
             }
 
-            quill = Quill()
-            result = quill.list_files(page_size=10)
+            zenodotos = Zenodotos()
+            result = zenodotos.list_files(page_size=10)
 
             assert result == [mock_file]
             mock_client.list_files.assert_called_once_with(
@@ -61,7 +61,7 @@ class TestQuill:
 
     def test_list_files_with_query(self):
         """Test list_files with query parameter."""
-        with patch("quill.client.DriveClient") as mock_client_class:
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
             mock_client = Mock()
             mock_client_class.return_value = mock_client
 
@@ -76,8 +76,8 @@ class TestQuill:
                 "next_page_token": None,
             }
 
-            quill = Quill()
-            result = quill.list_files(
+            zenodotos = Zenodotos()
+            result = zenodotos.list_files(
                 page_size=20, query="name contains 'report'", fields=["name", "size"]
             )
 
@@ -88,7 +88,7 @@ class TestQuill:
 
     def test_list_files_with_pagination(self):
         """Test list_files_with_pagination returns full result."""
-        with patch("quill.client.DriveClient") as mock_client_class:
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
             mock_client = Mock()
             mock_client_class.return_value = mock_client
 
@@ -104,8 +104,8 @@ class TestQuill:
             }
             mock_client.list_files.return_value = expected_result
 
-            quill = Quill()
-            result = quill.list_files_with_pagination(
+            zenodotos = Zenodotos()
+            result = zenodotos.list_files_with_pagination(
                 page_size=10, page_token="current_token", query="test query"
             )
 
@@ -119,7 +119,7 @@ class TestQuill:
 
     def test_get_file(self):
         """Test get_file functionality."""
-        with patch("quill.client.DriveClient") as mock_client_class:
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
             mock_client = Mock()
             mock_client_class.return_value = mock_client
 
@@ -133,22 +133,22 @@ class TestQuill:
             )
             mock_client.get_file.return_value = mock_file
 
-            quill = Quill()
-            result = quill.get_file("test123")
+            zenodotos = Zenodotos()
+            result = zenodotos.get_file("test123")
 
             assert result == mock_file
             mock_client.get_file.assert_called_once_with("test123")
 
     def test_export_file(self):
         """Test export_file functionality."""
-        with patch("quill.client.DriveClient") as mock_client_class:
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
             mock_client = Mock()
             mock_client_class.return_value = mock_client
 
             mock_client.export.return_value = "/path/to/exported/file.pdf"
 
-            quill = Quill()
-            result = quill.export_file(
+            zenodotos = Zenodotos()
+            result = zenodotos.export_file(
                 "test123", output_path="/custom/path.pdf", format="pdf"
             )
 
@@ -159,7 +159,7 @@ class TestQuill:
 
     def test_search_and_export_single_match(self):
         """Test search_and_export with single match."""
-        with patch("quill.client.DriveClient") as mock_client_class:
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
             mock_client = Mock()
             mock_client_class.return_value = mock_client
 
@@ -178,8 +178,8 @@ class TestQuill:
             # Mock export response
             mock_client.export.return_value = "/path/to/exported/report.pdf"
 
-            quill = Quill()
-            result = quill.search_and_export(
+            zenodotos = Zenodotos()
+            result = zenodotos.search_and_export(
                 "name contains 'report'", output_path="/custom/path.pdf", format="pdf"
             )
 
@@ -193,21 +193,21 @@ class TestQuill:
 
     def test_search_and_export_no_matches(self):
         """Test search_and_export with no matches."""
-        with patch("quill.client.DriveClient") as mock_client_class:
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
             mock_client = Mock()
             mock_client_class.return_value = mock_client
 
             mock_client.list_files.return_value = {"files": [], "next_page_token": None}
 
-            quill = Quill()
+            zenodotos = Zenodotos()
             with pytest.raises(
                 FileNotFoundError, match="No files found matching the query"
             ):
-                quill.search_and_export("name contains 'nonexistent'")
+                zenodotos.search_and_export("name contains 'nonexistent'")
 
     def test_search_and_export_multiple_matches(self):
         """Test search_and_export with multiple matches."""
-        with patch("quill.client.DriveClient") as mock_client_class:
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
             mock_client = Mock()
             mock_client_class.return_value = mock_client
 
@@ -223,17 +223,17 @@ class TestQuill:
                 "next_page_token": None,
             }
 
-            quill = Quill()
+            zenodotos = Zenodotos()
             with pytest.raises(
                 ValueError, match="Multiple files found \\(2 matches\\)"
             ):
-                quill.search_and_export("name contains 'report'")
+                zenodotos.search_and_export("name contains 'report'")
 
     def test_get_field_parser(self):
         """Test get_field_parser returns FieldParser instance."""
-        with patch("quill.client.DriveClient"):
-            quill = Quill()
-            field_parser = quill.get_field_parser()
+        with patch("zenodotos.client.DriveClient"):
+            zenodotos = Zenodotos()
+            field_parser = zenodotos.get_field_parser()
 
             assert isinstance(field_parser, FieldParser)
 

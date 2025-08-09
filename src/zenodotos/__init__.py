@@ -1,16 +1,16 @@
-"""Quill - Google Drive Library and CLI Tool."""
+"""Zenodotos - Google Drive Library and CLI Tool."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 # Main library exports
-from .client import Quill
+from .client import Zenodotos
 from .drive.client import DriveClient
 from .drive.models import DriveFile
 from .auth import Auth
 from .utils import FieldParser, validate_file_id, sanitize_filename, format_file_size
-from .config import Config, QuillConfig
+from .config import Config, ZenodotosConfig
 from .exceptions import (
-    QuillError,
+    ZenodotosError,
     AuthenticationError,
     FileNotFoundError,
     PermissionError,
@@ -25,7 +25,7 @@ from .exceptions import (
 
 __all__ = [
     # High-level library interface
-    "Quill",
+    "Zenodotos",
     # Utility functions
     "FieldParser",
     "validate_file_id",
@@ -33,13 +33,13 @@ __all__ = [
     "format_file_size",
     # Configuration
     "Config",
-    "QuillConfig",
+    "ZenodotosConfig",
     # Core components (existing)
     "DriveClient",
     "DriveFile",
     "Auth",
     # Custom exceptions
-    "QuillError",
+    "ZenodotosError",
     "AuthenticationError",
     "FileNotFoundError",
     "PermissionError",

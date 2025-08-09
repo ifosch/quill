@@ -63,7 +63,7 @@ jobs:
 
     - name: Run tests with coverage
       run: |
-        uv run pytest --cov=quill --cov-report=xml --cov-report=term-missing --cov-fail-under=80
+        uv run pytest --cov=zenodotos --cov-report=xml --cov-report=term-missing --cov-fail-under=80
 
     # Coverage upload to Codecov can be added when Codecov is set up
     # - name: Upload coverage to Codecov
@@ -237,7 +237,7 @@ jobs:
 
     - name: Test CLI help commands
       run: |
-        uv run quill --help
-        uv run quill list-files --help
-        uv run quill get-file --help
-        uv run quill export --help
+        uv run zenodotos --help
+        uv run zenodotos list-files --help
+        uv run zenodotos get-file --help
+        uv run zenodotos export --help

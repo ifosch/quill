@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "quill"
-version = "0.1.0"
+name = "zenodotos"
+version = "0.1.1"
 description = "A command-line interface tool for interacting with Google Drive"
 readme = "README.md"
 requires-python = ">=3.11,<4.0"
@@ -20,6 +20,7 @@ dependencies = [
     "pytest>=8.4.0",
     "pytest-cov>=6.2.1",
     "python-dateutil>=2.9.0.post0",
+    "pyyaml>=6.0.0",
     "tomli-w>=1.0.0",
 ]
 
@@ -37,12 +38,12 @@ dev = [
 ]
 
 [project.scripts]
-quill = "quill.cli:cli"
+zenodotos = "zenodotos.cli:cli"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "-v --cov=quill --cov-report=term-missing --cov-fail-under=80"
+addopts = "-v --cov=zenodotos --cov-report=term-missing --cov-fail-under=80"
 
 [tool.ruff]
 line-length = 88

@@ -1,7 +1,7 @@
 # Cursor Project Rule: Using the uv Tool
 ---
 description: |
-  All Python dependency management, virtual environment operations, and package building/publishing in the quill project must use the `uv` tool. Do not use `pip`, `venv`, `virtualenv`, `build`, or `twine` directly unless explicitly required for compatibility.
+  All Python dependency management, virtual environment operations, and package building/publishing in the zenodotos project must use the `uv` tool. Do not use `pip`, `venv`, `virtualenv`, `build`, or `twine` directly unless explicitly required for compatibility.
 
 rules:
   - Use `uv add` to add dependencies. Consider using `uv add --dev` for development dependencies.

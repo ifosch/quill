@@ -5,7 +5,7 @@ The `get-file` command retrieves and displays detailed information about a speci
 ## Overview
 
 ```bash
-quill get-file <file_id> [OPTIONS]
+zenodotos get-file <file_id> [OPTIONS]
 ```
 
 The get-file command retrieves comprehensive metadata for a single file identified by its ID. You can customize which information is displayed using the `--fields` option.
@@ -45,24 +45,24 @@ The `--fields` option accepts any combination of these Google Drive API fields:
 
 Get detailed information about a file with default fields:
 ```bash
-quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+zenodotos get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx
 ```
 
 ### Custom Fields
 
 Get only basic information:
 ```bash
-quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "name,size"
+zenodotos get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "name,size"
 ```
 
 Get file with creation and modification dates:
 ```bash
-quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "name,createdTime,modifiedTime"
+zenodotos get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "name,createdTime,modifiedTime"
 ```
 
 Get complete metadata:
 ```bash
-quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink"
+zenodotos get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink"
 ```
 
 ## Error Handling
@@ -81,28 +81,28 @@ The command handles various error conditions gracefully:
 Before exporting a file, you might want to check its details:
 ```bash
 # Get file information
-quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+zenodotos get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx
 
 # Then export with appropriate format
-quill export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
 ```
 
 ### Check File Ownership
 
 Verify who owns a file:
 ```bash
-quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "name,owners"
+zenodotos get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "name,owners"
 ```
 
 ### Get File Timestamps
 
 Check when a file was created and last modified:
 ```bash
-quill get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "name,createdTime,modifiedTime"
+zenodotos get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx --fields "name,createdTime,modifiedTime"
 ```
 
 ## Related Commands
 
-- `quill list-files` - List multiple files with pagination
-- `quill export` - Export Google Workspace documents
-- `quill --help` - Show general help information
+- `zenodotos list-files` - List multiple files with pagination
+- `zenodotos export` - Export Google Workspace documents
+- `zenodotos --help` - Show general help information

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Version Management Script for Quill Project
+# Version Management Script for Zenodotos Project
 # This script updates tool versions across all configuration files
 
 set -e
