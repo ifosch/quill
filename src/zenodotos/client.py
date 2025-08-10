@@ -166,6 +166,31 @@ class Zenodotos:
 
         return self.export_file(files[0].id, output_path, format)
 
+    def search_and_get_file(self, query: str) -> DriveFile:
+        """Search for files and get single match (for CLI get-file --query).
+
+        Args:
+            query: Search query to find files
+
+        Returns:
+            DriveFile object with file metadata
+
+        Raises:
+            FileNotFoundError: If no files found matching the query
+            ValueError: If multiple files found matching the query
+            PermissionError: If user doesn't have permission
+            RuntimeError: For other API errors
+        """
+        files = self.list_files(query=query, page_size=100)
+
+        if not files:
+            raise FileNotFoundError("No files found matching the query")
+
+        if len(files) > 1:
+            raise ValueError(f"Multiple files found ({len(files)} matches)")
+
+        return self.get_file(files[0].id)
+
     def get_field_parser(self) -> "FieldParser":
         """Get field parsing utilities (for CLI --fields option).
 

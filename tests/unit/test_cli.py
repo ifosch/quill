@@ -294,8 +294,8 @@ class TestGetFile:
         runner = CliRunner()
         result = runner.invoke(cli, ["get-file"])
 
-        assert result.exit_code == 2  # Click error code for missing required argument
-        assert "Missing argument 'FILE_ID'" in result.output
+        assert result.exit_code == 1  # Our custom validation error
+        assert "Either FILE_ID or --query must be provided" in result.output
 
     def test_help(self):
         """Test get-file help."""
@@ -305,6 +305,155 @@ class TestGetFile:
         assert result.exit_code == 0
         assert "Get detailed information about a specific file" in result.output
         assert "--fields" in result.output
+        assert "--query" in result.output
+
+    def test_with_query_single_match(self):
+        """Test get-file with query that returns single match."""
+        runner = CliRunner()
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+
+            # Mock the field parser
+            mock_field_parser = Mock()
+            mock_zenodotos.get_field_parser.return_value = mock_field_parser
+            mock_field_parser.parse_fields.return_value = (
+                [
+                    "id",
+                    "name",
+                    "mimeType",
+                    "size",
+                    "createdTime",
+                    "modifiedTime",
+                    "description",
+                    "owners",
+                    "webViewLink",
+                ],
+                [
+                    "id",
+                    "name",
+                    "mimeType",
+                    "size",
+                    "createdTime",
+                    "modifiedTime",
+                    "description",
+                    "owners",
+                    "webViewLink",
+                ],
+            )
+
+            # Mock the search_and_get_file response
+            mock_file = DriveFile(
+                id="test123",
+                name="report.pdf",
+                mime_type="application/pdf",
+                size=2048,
+                created_time=datetime(2024, 1, 1),
+                modified_time=datetime(2024, 1, 2),
+                description="Test report",
+                owners=[{"displayName": "Test User"}],
+                web_view_link="https://drive.google.com/file/d/test123/view",
+            )
+            mock_zenodotos.search_and_get_file.return_value = mock_file
+
+            result = runner.invoke(
+                cli, ["get-file", "--query", 'name contains "report"']
+            )
+
+            assert result.exit_code == 0
+            assert "report.pdf" in result.output
+            assert "application/pdf" in result.output
+            assert "2,048" in result.output
+            mock_zenodotos.search_and_get_file.assert_called_once_with(
+                'name contains "report"'
+            )
+
+    def test_with_query_multiple_matches(self):
+        """Test get-file with query that returns multiple matches."""
+        runner = CliRunner()
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+
+            # Mock the field parser
+            mock_field_parser = Mock()
+            mock_zenodotos.get_field_parser.return_value = mock_field_parser
+            mock_field_parser.parse_fields.return_value = (
+                ["id", "name", "mimeType"],
+                ["id", "name"],
+            )
+
+            # Mock search_and_get_file to raise ValueError for multiple matches
+            mock_zenodotos.search_and_get_file.side_effect = ValueError(
+                "Multiple files found (2 matches)"
+            )
+
+            # Mock list_files to return multiple files for display
+            mock_file1 = DriveFile(
+                id="test123", name="report1.pdf", mime_type="application/pdf"
+            )
+            mock_file2 = DriveFile(
+                id="test456", name="report2.pdf", mime_type="application/pdf"
+            )
+            mock_zenodotos.list_files.return_value = [mock_file1, mock_file2]
+
+            result = runner.invoke(
+                cli, ["get-file", "--query", 'name contains "report"']
+            )
+
+            assert result.exit_code == 1
+            assert "Multiple files found matching the query" in result.output
+            assert "test123 - report1.pdf (application/pdf)" in result.output
+            assert "test456 - report2.pdf (application/pdf)" in result.output
+            assert (
+                "Please use the file ID to get details for a specific file"
+                in result.output
+            )
+
+    def test_with_query_no_matches(self):
+        """Test get-file with query that returns no matches."""
+        runner = CliRunner()
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+
+            # Mock the field parser
+            mock_field_parser = Mock()
+            mock_zenodotos.get_field_parser.return_value = mock_field_parser
+            mock_field_parser.parse_fields.return_value = (
+                ["id", "name", "mimeType"],
+                ["id", "name"],
+            )
+
+            # Mock search_and_get_file to raise FileNotFoundError
+            mock_zenodotos.search_and_get_file.side_effect = FileNotFoundError(
+                "No files found matching the query"
+            )
+
+            result = runner.invoke(
+                cli, ["get-file", "--query", 'name contains "nonexistent"']
+            )
+
+            assert result.exit_code == 1
+            assert "No files found matching the query" in result.output
+
+    def test_missing_file_id_and_query(self):
+        """Test get-file without file ID and query."""
+        runner = CliRunner()
+        result = runner.invoke(cli, ["get-file"])
+
+        assert result.exit_code == 1
+        assert "Either FILE_ID or --query must be provided" in result.output
+
+    def test_both_file_id_and_query(self):
+        """Test get-file with both file ID and query."""
+        runner = CliRunner()
+        result = runner.invoke(
+            cli, ["get-file", "test123", "--query", 'name contains "report"']
+        )
+
+        assert result.exit_code == 1
+        assert "FILE_ID and --query are mutually exclusive" in result.output
 
 
 class TestExport:

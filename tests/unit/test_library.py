@@ -229,6 +229,85 @@ class TestZenodotos:
             ):
                 zenodotos.search_and_export("name contains 'report'")
 
+    def test_search_and_get_file_single_match(self):
+        """Test search_and_get_file with single match."""
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
+            mock_client = Mock()
+            mock_client_class.return_value = mock_client
+
+            # Mock list_files response
+            mock_file = DriveFile(
+                id="test123",
+                name="report.pdf",
+                mime_type="application/pdf",
+                size=2048,
+            )
+            mock_client.list_files.return_value = {
+                "files": [mock_file],
+                "next_page_token": None,
+            }
+
+            # Mock get_file response
+            mock_detailed_file = DriveFile(
+                id="test123",
+                name="report.pdf",
+                mime_type="application/pdf",
+                size=2048,
+                created_time=datetime(2024, 1, 1),
+                modified_time=datetime(2024, 1, 2),
+                description="Test report",
+                owners=[{"displayName": "Test User"}],
+                web_view_link="https://drive.google.com/file/d/test123/view",
+            )
+            mock_client.get_file.return_value = mock_detailed_file
+
+            zenodotos = Zenodotos()
+            result = zenodotos.search_and_get_file("name contains 'report'")
+
+            assert result == mock_detailed_file
+            mock_client.list_files.assert_called_once_with(
+                page_size=100, query="name contains 'report'", fields=None
+            )
+            mock_client.get_file.assert_called_once_with("test123")
+
+    def test_search_and_get_file_no_matches(self):
+        """Test search_and_get_file with no matches."""
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
+            mock_client = Mock()
+            mock_client_class.return_value = mock_client
+
+            mock_client.list_files.return_value = {"files": [], "next_page_token": None}
+
+            zenodotos = Zenodotos()
+            with pytest.raises(
+                FileNotFoundError, match="No files found matching the query"
+            ):
+                zenodotos.search_and_get_file("name contains 'nonexistent'")
+
+    def test_search_and_get_file_multiple_matches(self):
+        """Test search_and_get_file with multiple matches."""
+        with patch("zenodotos.client.DriveClient") as mock_client_class:
+            mock_client = Mock()
+            mock_client_class.return_value = mock_client
+
+            # Mock multiple files
+            mock_file1 = DriveFile(
+                id="test123", name="report1.pdf", mime_type="application/pdf"
+            )
+            mock_file2 = DriveFile(
+                id="test456", name="report2.pdf", mime_type="application/pdf"
+            )
+            mock_client.list_files.return_value = {
+                "files": [mock_file1, mock_file2],
+                "next_page_token": None,
+            }
+
+            zenodotos = Zenodotos()
+            with pytest.raises(
+                ValueError, match="Multiple files found \\(2 matches\\)"
+            ):
+                zenodotos.search_and_get_file("name contains 'report'")
+
     def test_get_field_parser(self):
         """Test get_field_parser returns FieldParser instance."""
         with patch("zenodotos.client.DriveClient"):

@@ -170,14 +170,37 @@ The `--fields` option accepts any combination of these Google Drive API fields:
 
 ### View File Details
 
-Get detailed information about a specific file:
+Get detailed information about a specific file. You can use either a file ID or a search query:
+
 ```bash
+# Get file details by ID
 zenodotos get-file <file_id>
+
+# Get file details by search query
+zenodotos get-file --query "name contains 'My Document'"
 ```
 
 Example:
 ```bash
 zenodotos get-file 1abc...xyz
+```
+
+#### Query-Based File Retrieval
+
+Get file details by searching for them instead of using file IDs:
+
+```bash
+# Get file by exact name
+zenodotos get-file --query "name = 'My Important Document'"
+
+# Get file containing specific text
+zenodotos get-file --query "name contains 'report'"
+
+# Get file by MIME type
+zenodotos get-file --query "mimeType = 'application/vnd.google-apps.document'"
+
+# Get file modified recently
+zenodotos get-file --query "modifiedTime > '2024-01-01'"
 ```
 
 #### Customize Output Fields

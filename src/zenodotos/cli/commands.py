@@ -63,7 +63,11 @@ def list_files(page_size, page_token, query, fields, no_interactive):
 
 
 @click.command()
-@click.argument("file_id", required=True)
+@click.argument("file_id", required=False)
+@click.option(
+    "--query",
+    help="Search query to find files to get details for (e.g., \"name contains 'report'\")",
+)
 @click.option(
     "--fields",
     default=None,
@@ -71,12 +75,21 @@ def list_files(page_size, page_token, query, fields, no_interactive):
     "Defaults to: id,name,mimeType,size,createdTime,modifiedTime,description,owners,webViewLink. "
     "Note: name, mimeType, and size are always included for proper display.",
 )
-def get_file(file_id, fields):
+def get_file(file_id, query, fields):
     """Get detailed information about a specific file from Google Drive.
 
-    Retrieves and displays comprehensive metadata for a single file identified by its ID.
+    Retrieves and displays comprehensive metadata for a single file identified by its ID or search query.
     Use --fields to customize which information is displayed.
+
+    Either FILE_ID or --query must be provided. Use --query to search for files by name or other criteria.
     """
+    # Validate that either file_id or query is provided
+    if not file_id and not query:
+        raise click.ClickException("Either FILE_ID or --query must be provided")
+
+    if file_id and query:
+        raise click.ClickException("FILE_ID and --query are mutually exclusive")
+
     zenodotos = Zenodotos()
 
     # Use the library's field parser for consistent field handling
@@ -84,12 +97,45 @@ def get_file(file_id, fields):
     all_fields, requested_fields = field_parser.parse_fields(fields)
 
     try:
-        # Get the file using the library interface
-        file = zenodotos.get_file(file_id)
+        # Handle query-based file retrieval
+        if query:
+            try:
+                # Get the file using the library's search_and_get_file method
+                file = zenodotos.search_and_get_file(query)
 
-        # Display the file information using the existing formatter
-        # Pass as a single-item list since format_file_list expects a list
-        click.echo(format_file_list([file], requested_fields))
+                # Display the file information using the existing formatter
+                # Pass as a single-item list since format_file_list expects a list
+                click.echo(format_file_list([file], requested_fields))
+
+            except ValueError:
+                # Multiple matches - show the options
+                click.echo("Multiple files found matching the query:", err=True)
+                click.echo("", err=True)
+
+                # Get the list of matching files to show options
+                files = zenodotos.list_files(query=query, page_size=100)
+                for file in files:
+                    click.echo(
+                        f"  {file.id} - {file.name} ({file.mime_type})", err=True
+                    )
+                click.echo("", err=True)
+                click.echo(
+                    "Please use the file ID to get details for a specific file.",
+                    err=True,
+                )
+                raise click.ClickException("Multiple files found")
+            except FileNotFoundError:
+                click.echo("No files found matching the query.", err=True)
+                raise click.ClickException("No files found")
+
+        # Handle file ID-based retrieval (existing functionality)
+        else:
+            # Get the file using the library interface
+            file = zenodotos.get_file(file_id)
+
+            # Display the file information using the existing formatter
+            # Pass as a single-item list since format_file_list expects a list
+            click.echo(format_file_list([file], requested_fields))
 
     except FileNotFoundError as e:
         click.echo(f"Error: {str(e)}", err=True)
