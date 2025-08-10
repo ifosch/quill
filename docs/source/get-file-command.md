@@ -5,17 +5,20 @@ The `get-file` command retrieves and displays detailed information about a speci
 ## Overview
 
 ```bash
-zenodotos get-file <file_id> [OPTIONS]
+zenodotos get-file [<file_id>] [OPTIONS]
 ```
 
-The get-file command retrieves comprehensive metadata for a single file identified by its ID. You can customize which information is displayed using the `--fields` option.
+The get-file command retrieves comprehensive metadata for a single file identified by its ID or search query. You can customize which information is displayed using the `--fields` option.
+
+Either `file_id` or `--query` must be provided. Use `--query` to search for files by name or other criteria.
 
 ## Arguments
 
-- `file_id` (required): The Google Drive file ID of the file to retrieve information about.
+- `file_id` (optional): The Google Drive file ID of the file to retrieve information about. Required if `--query` is not provided.
 
 ## Options
 
+- `--query TEXT`: Search query to find files to get details for (e.g., "name contains 'report'")
 - `--fields TEXT`: Comma-separated list of fields to retrieve for the file
 - `--help`: Show help message and exit
 
@@ -48,6 +51,24 @@ Get detailed information about a file with default fields:
 zenodotos get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx
 ```
 
+### Query-Based File Retrieval
+
+Get file details by searching for them instead of using file IDs:
+
+```bash
+# Get file by exact name
+zenodotos get-file --query "name = 'My Important Document'"
+
+# Get file containing specific text in the name
+zenodotos get-file --query "name contains 'report'"
+
+# Get file by MIME type
+zenodotos get-file --query "mimeType = 'application/vnd.google-apps.document'"
+
+# Get file modified recently
+zenodotos get-file --query "modifiedTime > '2024-01-01'"
+```
+
 ### Custom Fields
 
 Get only basic information:
@@ -71,7 +92,9 @@ The command handles various error conditions gracefully:
 
 - **File not found**: Displays "File not found" error when the file ID doesn't exist
 - **Permission denied**: Shows "Permission denied" when you don't have access to the file
-- **Missing file ID**: Displays help when no file ID is provided
+- **Missing file ID and query**: Displays error when neither file ID nor query is provided
+- **Multiple files found**: Shows list of matching files when query matches multiple files
+- **No files found**: Shows error when query matches no files
 - **General errors**: Shows appropriate error messages for other issues
 
 ## Use Cases
@@ -80,8 +103,11 @@ The command handles various error conditions gracefully:
 
 Before exporting a file, you might want to check its details:
 ```bash
-# Get file information
+# Get file information by ID
 zenodotos get-file 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+
+# Get file information by search
+zenodotos get-file --query "name contains 'Project Report'"
 
 # Then export with appropriate format
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf

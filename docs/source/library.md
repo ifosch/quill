@@ -168,6 +168,33 @@ output_file = zenodotos.search_and_export(
 )
 ```
 
+##### `search_and_get_file(query)`
+
+Search for files and get detailed information about a single match.
+
+**Parameters:**
+- `query` (str): Google Drive API query
+
+**Returns:**
+- `DriveFile`: File information object
+
+**Raises:**
+- `FileNotFoundError`: When query matches no files
+- `ValueError`: When query matches multiple files
+- `PermissionError`: When user doesn't have permission
+- `RuntimeError`: For other API errors
+
+**Example:**
+```python
+# Get file details by search
+file_info = zenodotos.search_and_get_file("name = 'My Document'")
+print(f"File: {file_info.name}, Size: {file_info.size}")
+
+# Get file by MIME type
+file_info = zenodotos.search_and_get_file("mimeType = 'application/pdf'")
+print(f"PDF file: {file_info.name}")
+```
+
 ##### `get_field_parser()`
 
 Get the FieldParser utility for field handling.
