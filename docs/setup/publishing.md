@@ -82,10 +82,13 @@ Use the provided release script for the complete publishing process:
 
 ```bash
 # TestPyPI release only
-./scripts/release.sh --test
+./scripts/release.sh --testpypi
 
 # Production PyPI release only
-./scripts/release.sh --production
+./scripts/release.sh --pypi
+
+# To publish to both indexes, run the script twice:
+./scripts/release.sh --testpypi && ./scripts/release.sh --pypi
 ```
 
 The script will:

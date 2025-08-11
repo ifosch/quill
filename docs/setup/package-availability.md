@@ -69,7 +69,6 @@ The package availability checker (`scripts/check-package-availability.sh`) provi
 |--------|-------------|
 | `--pypi` | Check only PyPI availability |
 | `--testpypi` | Check only TestPyPI availability |
-| `--both` | Check both PyPI and TestPyPI (default) |
 
 #### Additional Options
 | Option | Description |
@@ -79,7 +78,7 @@ The package availability checker (`scripts/check-package-availability.sh`) provi
 | `--deployment-times` | Show typical deployment time information |
 | `--help` | Show help message |
 
-**Note**: Only one target option (`--pypi`, `--testpypi`, or `--both`) can be used at a time.
+**Note**: Only one target option (`--pypi` or `--testpypi`) can be used at a time. If no target is specified, both indexes will be checked.
 
 ### Examples
 
@@ -88,7 +87,7 @@ The package availability checker (`scripts/check-package-availability.sh`) provi
 ./scripts/check-package-availability.sh
 
 # Check current version with full verification
-./scripts/check-package-availability.sh --both --pip-test --timing
+./scripts/check-package-availability.sh --pip-test --timing
 
 # Check specific version on TestPyPI only
 ./scripts/check-package-availability.sh --testpypi --pip-test zenodotos 0.2.0
