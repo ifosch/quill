@@ -105,6 +105,19 @@ publish_to_test_pypi() {
     uv publish --publish-url https://test.pypi.org/legacy/ --check-url https://test.pypi.org/simple/ --token "$TEST_PYPI_TOKEN"
 
     print_success "Package published to TestPyPI"
+
+    # Wait a moment for upload to complete
+    print_info "Waiting for upload to complete..."
+    sleep 5
+
+    # Check package availability
+    print_info "Checking package availability on TestPyPI..."
+    if ./scripts/check-package-availability.sh --testpypi --pip-test "$(get_current_version)"; then
+        print_success "Package is available and installable on TestPyPI!"
+    else
+        print_warning "Package may not be immediately available. This is normal for recent uploads."
+        print_info "You can check again later with: ./scripts/check-package-availability.sh --testpypi $(get_current_version)"
+    fi
 }
 
 # Function to publish to production PyPI
@@ -120,6 +133,19 @@ publish_to_production_pypi() {
     uv publish --publish-url https://upload.pypi.org/legacy/ --check-url https://pypi.org/simple/ --token "$PYPI_TOKEN"
 
     print_success "Package published to production PyPI"
+
+    # Wait a moment for upload to complete
+    print_info "Waiting for upload to complete..."
+    sleep 5
+
+    # Check package availability
+    print_info "Checking package availability on PyPI..."
+    if ./scripts/check-package-availability.sh --pypi --pip-test "$(get_current_version)"; then
+        print_success "Package is available and installable on PyPI!"
+    else
+        print_warning "Package may not be immediately available. This is normal for recent uploads."
+        print_info "You can check again later with: ./scripts/check-package-availability.sh --pypi $(get_current_version)"
+    fi
 }
 
 # Function to show usage
@@ -192,11 +218,19 @@ if [ "$PUBLISH_TARGET" = "test" ]; then
     publish_to_test_pypi
     print_success "TestPyPI release completed successfully!"
     print_info "Version $(get_current_version) is now available on TestPyPI"
-    print_info "Note: Index propagation may take a few minutes. Test installation manually using:"
-    print_info "  ./scripts/test-pypi-install.sh $(get_current_version)"
+    echo ""
+    print_info "📋 Next Steps:"
+    print_info "  • Test installation: ./scripts/test-pypi-install.sh $(get_current_version)"
+    print_info "  • Check availability: ./scripts/check-package-availability.sh --testpypi $(get_current_version)"
+    print_info "  • View deployment times: ./scripts/check-package-availability.sh --deployment-times"
 elif [ "$PUBLISH_TARGET" = "production" ]; then
     print_info "Publishing to production PyPI..."
     publish_to_production_pypi
     print_success "Production PyPI release completed successfully!"
     print_info "Version $(get_current_version) is now available on production PyPI"
+    echo ""
+    print_info "📋 Next Steps:"
+    print_info "  • Test installation: pip install zenodotos==$(get_current_version)"
+    print_info "  • Check availability: ./scripts/check-package-availability.sh --pypi $(get_current_version)"
+    print_info "  • View deployment times: ./scripts/check-package-availability.sh --deployment-times"
 fi

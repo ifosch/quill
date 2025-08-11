@@ -81,25 +81,30 @@ export PYPI_TOKEN="pypi-your-production-token-here"
 Use the provided release script for the complete publishing process:
 
 ```bash
-# Full release (TestPyPI + Production PyPI)
-./scripts/release.sh
+# TestPyPI release only
+./scripts/release.sh --test
 
-# Test-only release (TestPyPI only)
-./scripts/release.sh --test-only
+# Production PyPI release only
+./scripts/release.sh --production
 ```
 
 The script will:
 1. Validate your environment
 2. Build the package
-3. Publish to TestPyPI
-4. Test the TestPyPI installation
-5. Publish to production PyPI (unless `--test-only`)
+3. Publish to the specified target (TestPyPI or PyPI)
+4. Automatically check package availability after upload
+5. Test pip installation when available
+6. Provide clear status feedback and next steps
 
 ### Step 3: Verify the Release
 
 After publishing, verify the package works correctly:
 
 ```bash
+# Check package availability and test installation
+./scripts/check-package-availability.sh --testpypi --pip-test  # For TestPyPI
+./scripts/check-package-availability.sh --pypi --pip-test      # For production PyPI
+
 # Test installation from TestPyPI
 ./scripts/test-pypi-install.sh
 
@@ -107,6 +112,8 @@ After publishing, verify the package works correctly:
 pip install zenodotos
 zenodotos --help
 ```
+
+**Note**: The release script automatically checks package availability after upload, but you can manually verify at any time using the availability checker.
 
 ## Manual Steps (Alternative)
 
@@ -209,21 +216,42 @@ Before publishing, ensure:
 
 After publishing, verify:
 
-1. **Package installs correctly**:
+1. **Check package availability**:
+   ```bash
+   # For TestPyPI
+   ./scripts/check-package-availability.sh --testpypi --pip-test
+
+   # For production PyPI
+   ./scripts/check-package-availability.sh --pypi --pip-test
+   ```
+
+2. **Package installs correctly**:
    ```bash
    ./scripts/test-pypi-install.sh
    ```
 
-2. **CLI commands work**:
+3. **CLI commands work**:
    ```bash
    zenodotos --help
    zenodotos list-files --help
    ```
 
-3. **Library imports work**:
+4. **Library imports work**:
    ```bash
    python -c "import zenodotos; print('Success')"
    ```
+
+### Package Availability Monitoring
+
+The package availability checker provides comprehensive verification:
+
+- **Availability Status**: Check if packages are found on the index
+- **Installation Testing**: Verify packages are actually installable
+- **Timing Information**: Track response times and deployment durations
+- **Upload Time Detection**: Identify recently uploaded packages
+- **Deployment Guidance**: Understand typical timeframes
+
+For detailed information about package availability checking, see [Package Availability Checking](package-availability.md).
 
 ## Troubleshooting
 
@@ -247,6 +275,13 @@ After publishing, verify:
    - Check that all dependencies are available on PyPI
    - Verify package metadata is correct
    - Test with a clean virtual environment
+   - Use availability checker: `./scripts/check-package-availability.sh --pip-test`
+
+5. **Package Not Available**:
+   - Check if package was uploaded successfully
+   - Wait for index propagation (see deployment times)
+   - Use availability checker: `./scripts/check-package-availability.sh`
+   - Verify version number matches uploaded package
 
 ### Getting Help
 

@@ -41,19 +41,27 @@ This checklist ensures a smooth and reliable release process for Zenodotos packa
 - [ ] **Test package locally**: `uv pip install dist/zenodotos-*.tar.gz`
 
 ### ✅ TestPyPI Publishing
-- [ ] **Publish to TestPyPI**: `uv publish --repository testpypi --token "$TEST_PYPI_TOKEN"`
+- [ ] **Publish to TestPyPI**: `./scripts/release.sh --test`
 - [ ] **Verify TestPyPI upload**: Check https://test.pypi.org/project/zenodotos/
+- [ ] **Check package availability**: `./scripts/check-package-availability.sh --testpypi`
 - [ ] **Test TestPyPI installation**: `./scripts/test-pypi-install.sh`
 - [ ] **Verify CLI functionality**: Test all commands work
 - [ ] **Verify library functionality**: Test imports and basic usage
 
 ### ✅ Production PyPI Publishing
-- [ ] **Publish to production PyPI**: `uv publish --repository pypi --token "$PYPI_TOKEN"`
+- [ ] **Publish to production PyPI**: `./scripts/release.sh --production`
 - [ ] **Verify production upload**: Check https://pypi.org/project/zenodotos/
+- [ ] **Check package availability**: `./scripts/check-package-availability.sh --pypi`
 - [ ] **Test production installation**: `pip install zenodotos`
 - [ ] **Verify production functionality**: Test CLI and library
 
 ## Post-Release Verification
+
+### ✅ Package Availability Verification
+- [ ] **Check TestPyPI availability**: `./scripts/check-package-availability.sh --testpypi --pip-test`
+- [ ] **Check production PyPI availability**: `./scripts/check-package-availability.sh --pypi --pip-test`
+- [ ] **Verify deployment times**: `./scripts/check-package-availability.sh --deployment-times`
+- [ ] **Monitor propagation**: Check availability periodically until fully propagated
 
 ### ✅ Installation Testing
 - [ ] **Clean environment test**: Install in fresh virtual environment
