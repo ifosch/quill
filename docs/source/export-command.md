@@ -20,7 +20,7 @@ You can export files using either a file ID or a search query. File ID and query
 
 - `--query TEXT`: Search query to find files to export (e.g., "name contains 'report'")
 - `--output TEXT`: Output path for the exported file. If not provided, saves to current directory with document name
-- `--format [html|pdf|xlsx|csv]`: Export format (auto-detected if not specified)
+- `--format [html|pdf|xlsx|csv|md]`: Export format (auto-detected if not specified)
 - `--verbose`: Show detailed progress information
 - `--help`: Show help message and exit
 
@@ -106,6 +106,7 @@ You can override the smart defaults with these format options:
 - `pdf`: PDF export
 - `xlsx`: Excel format (for spreadsheets)
 - `csv`: CSV format (for spreadsheets)
+- `md`: Markdown format (for Google Docs)
 
 ## Usage Examples
 
@@ -152,6 +153,9 @@ Override the default format:
 ```bash
 # Export a Google Doc to PDF instead of HTML
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf
+
+# Export a Google Doc to Markdown
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format md
 
 # Export a Google Sheet to CSV instead of XLSX
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format csv
@@ -211,7 +215,7 @@ Error: Unsupported format: invalid_format
 
 ### Invalid Format Option
 ```bash
-Error: Invalid value for '--format': 'invalid' is not one of 'html', 'pdf', 'xlsx', 'csv'.
+Error: Invalid value for '--format': 'invalid' is not one of 'html', 'pdf', 'xlsx', 'csv', 'md'.
 ```
 
 ## Technical Details
@@ -241,7 +245,7 @@ For example:
 
 Not all formats are compatible with all file types. The smart defaults ensure optimal compatibility:
 
-- **Google Docs**: Best exported as HTML for web viewing or PDF for printing
+- **Google Docs**: Best exported as HTML for web viewing, PDF for printing, or Markdown for documentation
 - **Google Sheets**: Best exported as XLSX for Excel compatibility or CSV for data processing
 - **Google Slides**: Best exported as PDF for presentation sharing
 - **Google Drawings**: Best exported as PNG for image viewing
