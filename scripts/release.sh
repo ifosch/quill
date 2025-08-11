@@ -112,11 +112,11 @@ publish_to_test_pypi() {
 
     # Check package availability
     print_info "Checking package availability on TestPyPI..."
-    if ./scripts/check-package-availability.sh --testpypi --pip-test "$(get_current_version)"; then
+    if ./scripts/check-package-availability.sh --testpypi --pip-test --wait "$(get_current_version)"; then
         print_success "Package is available and installable on TestPyPI!"
     else
-        print_warning "Package may not be immediately available. This is normal for recent uploads."
-        print_info "You can check again later with: ./scripts/check-package-availability.sh --testpypi $(get_current_version)"
+        print_warning "Package did not become available within the timeout period."
+        print_info "You can check manually with: ./scripts/check-package-availability.sh --testpypi $(get_current_version)"
     fi
 }
 
@@ -140,11 +140,11 @@ publish_to_production_pypi() {
 
     # Check package availability
     print_info "Checking package availability on PyPI..."
-    if ./scripts/check-package-availability.sh --pypi --pip-test "$(get_current_version)"; then
+    if ./scripts/check-package-availability.sh --pypi --pip-test --wait "$(get_current_version)"; then
         print_success "Package is available and installable on PyPI!"
     else
-        print_warning "Package may not be immediately available. This is normal for recent uploads."
-        print_info "You can check again later with: ./scripts/check-package-availability.sh --pypi $(get_current_version)"
+        print_warning "Package did not become available within the timeout period."
+        print_info "You can check manually with: ./scripts/check-package-availability.sh --pypi $(get_current_version)"
     fi
 }
 
