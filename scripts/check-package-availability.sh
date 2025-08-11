@@ -201,6 +201,64 @@ check_testpypi_availability() {
     fi
 }
 
+# Function to wait for package availability
+wait_for_availability() {
+    local package_name="$1"
+    local version="$2"
+    local index_type="$3"  # "pypi" or "testpypi"
+    local timeout_seconds="$4"
+    local interval_seconds="$5"
+
+    local start_time=$(date +%s)
+    local elapsed_time=0
+
+    print_info "Waiting for $package_name==$version to become available on $index_type..."
+    print_info "Timeout: ${timeout_seconds}s, Check interval: ${interval_seconds}s"
+    echo ""
+
+    while [ $elapsed_time -lt $timeout_seconds ]; do
+        # Check availability
+        if [ "$index_type" = "pypi" ]; then
+            if check_pypi_availability "$package_name" "$version" >/dev/null 2>&1; then
+                local end_time=$(date +%s)
+                local total_wait_time=$((end_time - start_time))
+                print_success "Package $package_name==$version is now AVAILABLE on PyPI!"
+                print_timing "Total wait time: ${total_wait_time}s"
+                return 0
+            fi
+        elif [ "$index_type" = "testpypi" ]; then
+            if check_testpypi_availability "$package_name" "$version" >/dev/null 2>&1; then
+                local end_time=$(date +%s)
+                local total_wait_time=$((end_time - start_time))
+                print_success "Package $package_name==$version is now AVAILABLE on TestPyPI!"
+                print_timing "Total wait time: ${total_wait_time}s"
+                return 0
+            fi
+        fi
+
+        # Calculate remaining time
+        local remaining_time=$((timeout_seconds - elapsed_time))
+        local minutes=$((remaining_time / 60))
+        local seconds=$((remaining_time % 60))
+
+        # Show progress
+        if [ $minutes -gt 0 ]; then
+            print_info "Package not yet available. Waiting ${interval_seconds}s... (${elapsed_time}/${timeout_seconds}s, ~${minutes}m ${seconds}s remaining)"
+        else
+            print_info "Package not yet available. Waiting ${interval_seconds}s... (${elapsed_time}/${timeout_seconds}s, ${seconds}s remaining)"
+        fi
+
+        sleep $interval_seconds
+        elapsed_time=$((elapsed_time + interval_seconds))
+    done
+
+    local end_time=$(date +%s)
+    local total_wait_time=$((end_time - start_time))
+    print_error "Package $package_name==$version did not become available on $index_type within ${timeout_seconds}s"
+    print_timing "Total wait time: ${total_wait_time}s"
+    return 1
+}
+
 # Function to check package availability via pip
 check_pip_availability() {
     local package_name="$1"
@@ -284,6 +342,9 @@ show_usage() {
     echo ""
     echo "Additional Options:"
     echo "  --pip-test          Also test pip installation"
+    echo "  --wait              Wait for package to become available"
+    echo "  --timeout SECONDS   Maximum wait time in seconds (default: 600 for PyPI, 300 for TestPyPI)"
+    echo "  --interval SECONDS  Check interval in seconds (default: 30)"
     echo "  --timing            Show detailed timing information"
     echo "  --deployment-times  Show typical deployment time information"
     echo "  --help              Show this help message"
@@ -296,7 +357,8 @@ show_usage() {
     echo "  $0 --pypi                            # Check only PyPI"
     echo "  $0 --testpypi                        # Check only TestPyPI"
     echo "  $0 --pypi --pip-test                 # Check PyPI with pip installation test"
-    echo "  $0 --testpypi --pip-test zenodotos 0.2.0 # Check specific version on TestPyPI with pip test"
+    echo "  $0 --testpypi --wait                 # Wait for TestPyPI availability (up to 5 minutes)"
+    echo "  $0 --pypi --wait --timeout 1800      # Wait for PyPI availability (up to 30 minutes)"
     echo "  $0 --deployment-times                # Show deployment time information"
     echo ""
     echo "Note: Only one target option (--pypi or --testpypi) can be used at a time."
@@ -311,6 +373,9 @@ show_usage() {
 CHECK_PYPI=false
 CHECK_TESTPYPI=false
 CHECK_PIP=false
+WAIT_FOR_AVAILABILITY=false
+TIMEOUT_SECONDS=0
+INTERVAL_SECONDS=30
 SHOW_TIMING=false
 SHOW_DEPLOYMENT_TIMES=false
 PACKAGE_NAME="zenodotos"
@@ -340,6 +405,28 @@ while [[ $# -gt 0 ]]; do
         --pip-test)
             CHECK_PIP=true
             shift
+            ;;
+        --wait)
+            WAIT_FOR_AVAILABILITY=true
+            shift
+            ;;
+        --timeout)
+            if [ -z "$2" ] || [[ "$2" =~ ^- ]]; then
+                print_error "--timeout requires a number of seconds"
+                show_usage
+                exit 1
+            fi
+            TIMEOUT_SECONDS="$2"
+            shift 2
+            ;;
+        --interval)
+            if [ -z "$2" ] || [[ "$2" =~ ^- ]]; then
+                print_error "--interval requires a number of seconds"
+                show_usage
+                exit 1
+            fi
+            INTERVAL_SECONDS="$2"
+            shift 2
             ;;
         --timing)
             SHOW_TIMING=true
@@ -379,6 +466,15 @@ if [ "$CHECK_PYPI" = false ] && [ "$CHECK_TESTPYPI" = false ]; then
     CHECK_TESTPYPI=true
 fi
 
+# Set default timeout if waiting is enabled but no timeout specified
+if [ "$WAIT_FOR_AVAILABILITY" = true ] && [ "$TIMEOUT_SECONDS" = 0 ]; then
+    if [ "$CHECK_TESTPYPI" = true ]; then
+        TIMEOUT_SECONDS=300  # 5 minutes for TestPyPI
+    elif [ "$CHECK_PYPI" = true ]; then
+        TIMEOUT_SECONDS=600  # 10 minutes for PyPI
+    fi
+fi
+
 # Set default version if not provided
 if [ -z "$VERSION" ]; then
     VERSION=$(get_current_version)
@@ -413,10 +509,18 @@ if [ "$CHECK_PYPI" = true ]; then
     print_info "🔍 CHECKING PRODUCTION PYPI"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-    if check_pypi_availability "$PACKAGE_NAME" "$VERSION"; then
-        PYPI_AVAILABLE=true
+    if [ "$WAIT_FOR_AVAILABILITY" = true ]; then
+        if wait_for_availability "$PACKAGE_NAME" "$VERSION" "pypi" "$TIMEOUT_SECONDS" "$INTERVAL_SECONDS"; then
+            PYPI_AVAILABLE=true
+        else
+            PYPI_AVAILABLE=false
+        fi
     else
-        PYPI_AVAILABLE=false
+        if check_pypi_availability "$PACKAGE_NAME" "$VERSION"; then
+            PYPI_AVAILABLE=true
+        else
+            PYPI_AVAILABLE=false
+        fi
     fi
 
     # Test pip installation if requested
@@ -439,10 +543,18 @@ if [ "$CHECK_TESTPYPI" = true ]; then
     print_info "🧪 CHECKING TEST PYPI"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-    if check_testpypi_availability "$PACKAGE_NAME" "$VERSION"; then
-        TESTPYPI_AVAILABLE=true
+    if [ "$WAIT_FOR_AVAILABILITY" = true ]; then
+        if wait_for_availability "$PACKAGE_NAME" "$VERSION" "testpypi" "$TIMEOUT_SECONDS" "$INTERVAL_SECONDS"; then
+            TESTPYPI_AVAILABLE=true
+        else
+            TESTPYPI_AVAILABLE=false
+        fi
     else
-        TESTPYPI_AVAILABLE=false
+        if check_testpypi_availability "$PACKAGE_NAME" "$VERSION"; then
+            TESTPYPI_AVAILABLE=true
+        else
+            TESTPYPI_AVAILABLE=false
+        fi
     fi
 
     # Test pip installation if requested
