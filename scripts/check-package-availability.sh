@@ -281,7 +281,6 @@ show_usage() {
     echo "Target Options (choose one):"
     echo "  --pypi              Check only PyPI availability"
     echo "  --testpypi          Check only TestPyPI availability"
-    echo "  --both              Check both PyPI and TestPyPI (default)"
     echo ""
     echo "Additional Options:"
     echo "  --pip-test          Also test pip installation"
@@ -294,14 +293,14 @@ show_usage() {
     echo "  VERSION             Version to check (default: current version from pyproject.toml)"
     echo ""
     echo "Examples:"
-    echo "  $0                                    # Check current version on both indexes"
     echo "  $0 --pypi                            # Check only PyPI"
     echo "  $0 --testpypi                        # Check only TestPyPI"
-    echo "  $0 --both --pip-test                 # Check both with pip installation test"
-    echo "  $0 --pypi --pip-test zenodotos 0.2.0 # Check specific version on PyPI with pip test"
+    echo "  $0 --pypi --pip-test                 # Check PyPI with pip installation test"
+    echo "  $0 --testpypi --pip-test zenodotos 0.2.0 # Check specific version on TestPyPI with pip test"
     echo "  $0 --deployment-times                # Show deployment time information"
     echo ""
-    echo "Note: Only one target option (--pypi, --testpypi, or --both) can be used at a time."
+    echo "Note: Only one target option (--pypi or --testpypi) can be used at a time."
+    echo "      If no target is specified, both indexes will be checked."
     echo ""
     echo "Environment variables:"
     echo "  PYPI_TOKEN          Your PyPI API token (for authenticated requests)"
@@ -337,16 +336,7 @@ while [[ $# -gt 0 ]]; do
             CHECK_TESTPYPI=true
             shift
             ;;
-        --both)
-            if [ "$CHECK_PYPI" = true ] || [ "$CHECK_TESTPYPI" = true ]; then
-                print_error "Cannot use --both with --pypi or --testpypi. Use only one target option."
-                show_usage
-                exit 1
-            fi
-            CHECK_PYPI=true
-            CHECK_TESTPYPI=true
-            shift
-            ;;
+
         --pip-test)
             CHECK_PIP=true
             shift

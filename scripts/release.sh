@@ -152,36 +152,53 @@ publish_to_production_pypi() {
 show_usage() {
     echo "Usage: $0 [OPTIONS]"
     echo ""
-    echo "Options:"
-    echo "  --test          Publish to TestPyPI only"
-    echo "  --production    Publish to production PyPI only"
+    echo "Target Options (choose one):"
+    echo "  --testpypi      Publish to TestPyPI only"
+    echo "  --pypi          Publish to production PyPI only"
+    echo ""
+    echo "Additional Options:"
     echo "  --help          Show this help message"
     echo ""
     echo "Environment variables:"
-    echo "  TEST_PYPI_TOKEN    Your TestPyPI API token (required for --test)"
-    echo "  PYPI_TOKEN         Your production PyPI API token (required for --production)"
+    echo "  TEST_PYPI_TOKEN    Your TestPyPI API token (required for --testpypi)"
+    echo "  PYPI_TOKEN         Your production PyPI API token (required for --pypi)"
     echo ""
     echo "Examples:"
     echo "  export TEST_PYPI_TOKEN=your_test_token"
-    echo "  ./scripts/release.sh --test"
+    echo "  ./scripts/release.sh --testpypi"
     echo ""
     echo "  export PYPI_TOKEN=your_production_token"
-    echo "  ./scripts/release.sh --production"
+    echo "  ./scripts/release.sh --pypi"
+    echo ""
+    echo "Note: To publish to both indexes, run the script twice:"
+    echo "  ./scripts/release.sh --testpypi && ./scripts/release.sh --pypi"
 }
 
 # Parse command line arguments
-PUBLISH_TARGET=""
+PUBLISH_TESTPYPI=false
+PUBLISH_PYPI=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --test)
-            PUBLISH_TARGET="test"
+        --testpypi)
+            if [ "$PUBLISH_PYPI" = true ]; then
+                print_error "Cannot use --testpypi and --pypi together. Use only one target."
+                show_usage
+                exit 1
+            fi
+            PUBLISH_TESTPYPI=true
             shift
             ;;
-        --production)
-            PUBLISH_TARGET="production"
+        --pypi)
+            if [ "$PUBLISH_TESTPYPI" = true ]; then
+                print_error "Cannot use --testpypi and --pypi together. Use only one target."
+                show_usage
+                exit 1
+            fi
+            PUBLISH_PYPI=true
             shift
             ;;
+
         --help)
             show_usage
             exit 0
@@ -195,8 +212,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate that a target was specified
-if [ -z "$PUBLISH_TARGET" ]; then
-    print_error "No publish target specified. Use --test or --production"
+if [ "$PUBLISH_TESTPYPI" = false ] && [ "$PUBLISH_PYPI" = false ]; then
+    print_error "No publish target specified. Use --testpypi or --pypi"
     show_usage
     exit 1
 fi
@@ -213,7 +230,7 @@ validate_environment
 build_package
 
 # Publish to specified target
-if [ "$PUBLISH_TARGET" = "test" ]; then
+if [ "$PUBLISH_TESTPYPI" = true ]; then
     print_info "Publishing to TestPyPI..."
     publish_to_test_pypi
     print_success "TestPyPI release completed successfully!"
@@ -223,7 +240,9 @@ if [ "$PUBLISH_TARGET" = "test" ]; then
     print_info "  • Test installation: ./scripts/test-pypi-install.sh $(get_current_version)"
     print_info "  • Check availability: ./scripts/check-package-availability.sh --testpypi $(get_current_version)"
     print_info "  • View deployment times: ./scripts/check-package-availability.sh --deployment-times"
-elif [ "$PUBLISH_TARGET" = "production" ]; then
+fi
+
+if [ "$PUBLISH_PYPI" = true ]; then
     print_info "Publishing to production PyPI..."
     publish_to_production_pypi
     print_success "Production PyPI release completed successfully!"

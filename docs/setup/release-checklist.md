@@ -41,7 +41,7 @@ This checklist ensures a smooth and reliable release process for Zenodotos packa
 - [ ] **Test package locally**: `uv pip install dist/zenodotos-*.tar.gz`
 
 ### ✅ TestPyPI Publishing
-- [ ] **Publish to TestPyPI**: `./scripts/release.sh --test`
+- [ ] **Publish to TestPyPI**: `./scripts/release.sh --testpypi`
 - [ ] **Verify TestPyPI upload**: Check https://test.pypi.org/project/zenodotos/
 - [ ] **Check package availability**: `./scripts/check-package-availability.sh --testpypi`
 - [ ] **Test TestPyPI installation**: `./scripts/test-pypi-install.sh`
@@ -49,7 +49,7 @@ This checklist ensures a smooth and reliable release process for Zenodotos packa
 - [ ] **Verify library functionality**: Test imports and basic usage
 
 ### ✅ Production PyPI Publishing
-- [ ] **Publish to production PyPI**: `./scripts/release.sh --production`
+- [ ] **Publish to production PyPI**: `./scripts/release.sh --pypi`
 - [ ] **Verify production upload**: Check https://pypi.org/project/zenodotos/
 - [ ] **Check package availability**: `./scripts/check-package-availability.sh --pypi`
 - [ ] **Test production installation**: `pip install zenodotos`
