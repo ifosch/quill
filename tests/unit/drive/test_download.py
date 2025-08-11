@@ -329,7 +329,7 @@ class TestDriveClientDownload:
             with pytest.raises(ValueError, match="Unsupported format: invalid_format"):
                 client.export("test_id", format="invalid_format")
 
-    @pytest.mark.parametrize("format_type", ["html", "pdf", "xlsx", "csv"])
+    @pytest.mark.parametrize("format_type", ["html", "pdf", "xlsx", "csv", "md"])
     def test_export_format_validation_valid_formats(self, format_type):
         """Test format validation for valid formats."""
         client = DriveClient()
@@ -369,3 +369,54 @@ class TestDriveClientDownload:
 
         result = client._get_smart_default_format("test_id")
         assert result == expected_format
+
+    def test_export_google_doc_to_markdown(self):
+        """Test export of Google Doc to markdown format."""
+        client = DriveClient()
+
+        # Mock the Google Drive API service
+        mock_google_drive_service = MagicMock()
+
+        # Mock Google's export request
+        mock_google_export_request = MagicMock()
+        mock_google_export_request.execute.return_value = (
+            b"# Markdown content\n\nThis is a test document."
+        )
+        mock_google_drive_service.files().export.return_value = (
+            mock_google_export_request
+        )
+
+        # Mock Google's file metadata call for output path
+        mock_google_get_request = MagicMock()
+        mock_google_get_request.execute.return_value = {"name": "Test Document"}
+        mock_google_drive_service.files().get.return_value = mock_google_get_request
+
+        # Setup client with mocked Google service
+        client.service = mock_google_drive_service
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_path = os.path.join(temp_dir, "test.md")
+            result = client.export("test_id", output_path=output_path, format="md")
+
+            # Verify the correct MIME type was used for markdown
+            mock_google_drive_service.files().export.assert_called_with(
+                fileId="test_id", mimeType="text/markdown"
+            )
+            assert result == output_path
+
+            # Verify the content was written correctly
+            with open(output_path, "rb") as f:
+                content = f.read()
+            assert content == b"# Markdown content\n\nThis is a test document."
+
+    def test_get_mime_type_for_markdown_format(self):
+        """Test MIME type mapping for markdown format."""
+        client = DriveClient()
+        mime_type = client._get_mime_type_for_format("md")
+        assert mime_type == "text/markdown"
+
+    def test_get_file_extension_for_markdown_format(self):
+        """Test file extension mapping for markdown format."""
+        client = DriveClient()
+        extension = client._get_file_extension_for_format("md")
+        assert extension == "md"

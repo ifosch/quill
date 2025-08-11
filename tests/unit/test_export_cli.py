@@ -173,7 +173,7 @@ class TestExportCommand:
         result = runner.invoke(cli, ["export", "--help"])
 
         assert result.exit_code == 0
-        assert "html|pdf|xlsx|csv" in result.output
+        assert "html|pdf|xlsx|csv|md" in result.output
 
     def test_export_smart_default_no_format_specified(self):
         """Test export command uses smart defaults when no format specified."""

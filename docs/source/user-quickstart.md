@@ -203,6 +203,7 @@ Zenodotos automatically selects the best export format for each file type:
 | File Type | Default Format | Use Case |
 |-----------|----------------|----------|
 | Google Docs | HTML (ZIP) | Web viewing, sharing |
+| Google Docs | Markdown | Documentation, GitHub |
 | Google Sheets | XLSX | Excel compatibility |
 | Google Slides | PDF | Presentation sharing |
 | Google Drawings | PNG | Image viewing |
@@ -270,7 +271,7 @@ zenodotos get-file --help
    - Ensure the Google Drive API is enabled in your project
 
 3. **"Invalid format" error**
-   - Use only supported formats: `html`, `pdf`, `xlsx`, `csv`
+   - Use only supported formats: `html`, `pdf`, `xlsx`, `csv`, `md`
    - Check the format compatibility with your file type
 
 4. **Export fails**

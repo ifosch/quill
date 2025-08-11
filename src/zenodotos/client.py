@@ -120,7 +120,7 @@ class Zenodotos:
             file_id: The Google Drive file ID
             output_path: Output path for the exported file. If not provided,
                 saves to current directory with document name
-            format: Export format (html, pdf, xlsx, csv). If not provided,
+            format: Export format (html, pdf, xlsx, csv, md). If not provided,
                 uses smart default based on file type
 
         Returns:
@@ -145,7 +145,7 @@ class Zenodotos:
         Args:
             query: Search query to find files
             output_path: Output path for the exported file
-            format: Export format (html, pdf, xlsx, csv)
+            format: Export format (html, pdf, xlsx, csv, md)
 
         Returns:
             Path to the exported file

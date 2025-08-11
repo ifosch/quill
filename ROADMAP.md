@@ -43,7 +43,7 @@ This document outlines the planned features and development goals for the Zenodo
 
 ### Export System (Completed)
 - ✅ **Smart format defaults** - Automatic format selection based on file type
-- ✅ **Format override options** - Support for html, pdf, xlsx, csv formats
+- ✅ **Format override options** - Support for html, pdf, xlsx, csv, md formats
 - ✅ **Comprehensive error handling** - File not found, permission errors, invalid formats
 - ✅ **Verbose output support** - Detailed progress information
 - ✅ **Auto-naming** - Automatic filename generation based on document name
@@ -148,7 +148,7 @@ The library now provides:
 - [x] Download files
   - [x] Export Google Workspace documents (Docs, Sheets, Slides)
   - [x] Smart default format selection based on file type
-  - [x] Format override option (--format html/pdf/xlsx/csv)
+  - [x] Format override option (--format html/pdf/xlsx/csv/md)
   - [x] Query-based export (search and export in one command)
   - [ ] Progress tracking
   - [ ] Resume interrupted downloads
@@ -156,6 +156,12 @@ The library now provides:
   - [ ] Format compatibility matrix validation
   - [ ] Non-native file handling (uploaded PDFs, Word docs, etc.)
   - [ ] Advanced format options (page ranges, quality settings)
+  - [ ] Enhanced export formats
+    - Markdown export with comments
+    - PDF export with page ranges
+    - HTML export with embedded images
+    - Custom export templates
+    - Export with metadata preservation
 - [ ] Upload files
   - Support for different file types
   - Progress tracking
@@ -221,6 +227,8 @@ The library now provides:
 - [ ] Caching
   - File metadata cache
   - Authentication token cache
+  - Cache management and TTL configuration
+  - Cache statistics and monitoring
 - [ ] Batch operations
   - Batch uploads
   - Batch downloads
@@ -239,6 +247,8 @@ The library now provides:
 - [ ] Enhanced authentication
   - OAuth 2.0 refresh token handling
   - Service account support
+  - Multiple account profiles
+  - Profile switching and management
 - [ ] Encryption
   - End-to-end encryption
   - Secure file transfer
@@ -247,6 +257,31 @@ The library now provides:
   - Access logs
   - Security events
 
+## User Experience Improvements
+
+### Configuration and Profiles
+- [ ] Multiple account support
+  - Profile-based configuration
+  - Easy switching between accounts
+  - Profile-specific settings and defaults
+  - Profile validation and management
+- [ ] Enhanced configuration management
+  - Profile templates
+  - Configuration import/export
+  - Environment-specific configurations
+
+### Interactive Features
+- [ ] Interactive file browser
+  - Terminal-based file explorer
+  - Folder navigation with preview
+  - Interactive file operations (move, copy, delete)
+  - Keyboard shortcuts and navigation
+- [ ] Shell integration
+  - Command completion for bash/zsh
+  - Shell aliases and shortcuts
+  - Custom command aliases
+  - Tab completion for file IDs and paths
+
 ## Future Considerations
 
 ### Integration
@@ -254,6 +289,12 @@ The library now provides:
   - [x] Interactive mode (pagination, navigation)
   - [x] Configuration management (environment variables, config files)
   - [ ] Shell completion
+  - [ ] Shell aliases and shortcuts
+  - [ ] Configuration profiles (multiple account support)
+- [ ] Interactive file browser
+  - Terminal-based file explorer
+  - Folder navigation and file preview
+  - Interactive file operations
 - [ ] GUI client
   - Desktop application
   - Web interface
@@ -274,6 +315,17 @@ The library now provides:
   - Scheduled backups
   - File synchronization
   - Custom workflows
+- [ ] File synchronization
+  - Bidirectional sync with local folders
+  - Upload-only sync
+  - Download-only sync
+  - Conflict resolution
+  - Incremental sync
+- [ ] Scheduled operations
+  - Automated uploads and downloads
+  - Periodic file synchronization
+  - Custom scheduling (daily, weekly, monthly)
+  - Time-based operations
 
 ## PyPI Publishing (Current Initiative)
 
@@ -325,7 +377,14 @@ The library now provides:
 - [ ] Error tracking
 - [ ] Performance monitoring
 - [ ] Usage analytics
+  - Operation statistics and metrics
+  - Performance benchmarks
+  - Usage patterns and trends
 - [ ] Health checks
+- [ ] Logging and audit trails
+  - Operation logs
+  - Access logs
+  - Performance logs
 
 ## Accumulated Tech Debt
 

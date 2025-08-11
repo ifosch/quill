@@ -298,12 +298,16 @@ Override the default format with these options:
 - `pdf`: PDF export
 - `xlsx`: Excel format (for spreadsheets)
 - `csv`: CSV format (for spreadsheets)
+- `md`: Markdown format (for Google Docs)
 
 #### Examples
 
 ```bash
 # Export a Google Doc to HTML (default)
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
+
+# Export a Google Doc to Markdown
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format md
 
 # Export a Google Sheet to Excel
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format xlsx
