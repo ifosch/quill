@@ -102,11 +102,7 @@ jobs:
         env:
           TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
 
-      - name: Wait for TestPyPI propagation
-        if: ${{ !inputs.skip_testpypi }}
-        run: |
-          echo "⏳ Waiting for TestPyPI propagation..."
-          sleep 30  # Initial wait
+
 
       - name: Check TestPyPI availability
         if: ${{ !inputs.skip_testpypi }}
@@ -129,10 +125,7 @@ jobs:
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 
-      - name: Wait for PyPI propagation
-        run: |
-          echo "⏳ Waiting for PyPI propagation..."
-          sleep 60  # Initial wait for PyPI
+
 
       - name: Check PyPI availability
         run: |
