@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Manual Release Script for Zenodotos
-# This script handles building and publishing to PyPI with TestPyPI validation
+# This script handles building and publishing to PyPI (TestPyPI or production)
+# For verification and testing, use the separate availability and installation scripts
 
 set -e
 
@@ -110,14 +111,8 @@ publish_to_test_pypi() {
     print_info "Waiting for upload to complete..."
     sleep 5
 
-    # Check package availability
-    print_info "Checking package availability on TestPyPI..."
-    if ./scripts/check-package-availability.sh --testpypi --pip-test --wait "$(get_current_version)"; then
-        print_success "Package is available and installable on TestPyPI!"
-    else
-        print_warning "Package did not become available within the timeout period."
-        print_info "You can check manually with: ./scripts/check-package-availability.sh --testpypi $(get_current_version)"
-    fi
+    print_success "Package published to TestPyPI successfully!"
+    print_info "Package upload completed. Availability may take a few minutes to propagate."
 }
 
 # Function to publish to production PyPI
@@ -138,14 +133,8 @@ publish_to_production_pypi() {
     print_info "Waiting for upload to complete..."
     sleep 5
 
-    # Check package availability
-    print_info "Checking package availability on PyPI..."
-    if ./scripts/check-package-availability.sh --pypi --pip-test --wait "$(get_current_version)"; then
-        print_success "Package is available and installable on PyPI!"
-    else
-        print_warning "Package did not become available within the timeout period."
-        print_info "You can check manually with: ./scripts/check-package-availability.sh --pypi $(get_current_version)"
-    fi
+    print_success "Package published to PyPI successfully!"
+    print_info "Package upload completed. Availability may take a few minutes to propagate."
 }
 
 # Function to show usage
@@ -164,14 +153,19 @@ show_usage() {
     echo "  PYPI_TOKEN         Your production PyPI API token (required for --pypi)"
     echo ""
     echo "Examples:"
-    echo "  export TEST_PYPI_TOKEN=your_test_token"
-    echo "  ./scripts/release.sh --testpypi"
-    echo ""
-    echo "  export PYPI_TOKEN=your_production_token"
-    echo "  ./scripts/release.sh --pypi"
-    echo ""
-    echo "Note: To publish to both indexes, run the script twice:"
-    echo "  ./scripts/release.sh --testpypi && ./scripts/release.sh --pypi"
+echo "  export TEST_PYPI_TOKEN=your_test_token"
+echo "  ./scripts/release.sh --testpypi"
+echo ""
+echo "  export PYPI_TOKEN=your_production_token"
+echo "  ./scripts/release.sh --pypi"
+echo ""
+echo "Note: To publish to both indexes, run the script twice:"
+echo "  ./scripts/release.sh --testpypi && ./scripts/release.sh --pypi"
+echo ""
+echo "Decoupled Workflow:"
+echo "  1. Publish: ./scripts/release.sh --testpypi"
+echo "  2. Verify: ./scripts/check-package-availability.sh --testpypi --wait <version>"
+echo "  3. Test: ./scripts/test-pypi-install.sh <version>"
 }
 
 # Parse command line arguments
@@ -237,8 +231,8 @@ if [ "$PUBLISH_TESTPYPI" = true ]; then
     print_info "Version $(get_current_version) is now available on TestPyPI"
     echo ""
     print_info "📋 Next Steps:"
+    print_info "  • Check availability: ./scripts/check-package-availability.sh --testpypi --wait $(get_current_version)"
     print_info "  • Test installation: ./scripts/test-pypi-install.sh $(get_current_version)"
-    print_info "  • Check availability: ./scripts/check-package-availability.sh --testpypi $(get_current_version)"
     print_info "  • View deployment times: ./scripts/check-package-availability.sh --deployment-times"
 fi
 
@@ -249,7 +243,7 @@ if [ "$PUBLISH_PYPI" = true ]; then
     print_info "Version $(get_current_version) is now available on production PyPI"
     echo ""
     print_info "📋 Next Steps:"
+    print_info "  • Check availability: ./scripts/check-package-availability.sh --pypi --wait $(get_current_version)"
     print_info "  • Test installation: pip install zenodotos==$(get_current_version)"
-    print_info "  • Check availability: ./scripts/check-package-availability.sh --pypi $(get_current_version)"
     print_info "  • View deployment times: ./scripts/check-package-availability.sh --deployment-times"
 fi
