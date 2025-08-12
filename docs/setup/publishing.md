@@ -105,11 +105,11 @@ After publishing, verify the package works correctly:
 
 ```bash
 # Check package availability and test installation
-./scripts/check-package-availability.sh --testpypi --pip-test  # For TestPyPI
-./scripts/check-package-availability.sh --pypi --pip-test      # For production PyPI
+./scripts/check-package-availability.sh --testpypi  # For TestPyPI
+./scripts/check-package-availability.sh --pypi      # For production PyPI
 
 # Test installation from TestPyPI
-./scripts/test-pypi-install.sh
+./scripts/test-package-install.sh --testpypi
 
 # Test installation from production PyPI
 pip install zenodotos
@@ -143,7 +143,7 @@ uv publish --repository testpypi --token "$TEST_PYPI_TOKEN"
 
 ```bash
 # Use the test script
-./scripts/test-pypi-install.sh
+./scripts/test-package-install.sh --testpypi
 
 # Or test manually
 mkdir test-install
@@ -222,15 +222,15 @@ After publishing, verify:
 1. **Check package availability**:
    ```bash
    # For TestPyPI
-   ./scripts/check-package-availability.sh --testpypi --pip-test
+./scripts/check-package-availability.sh --testpypi
 
-   # For production PyPI
-   ./scripts/check-package-availability.sh --pypi --pip-test
+# For production PyPI
+./scripts/check-package-availability.sh --pypi
    ```
 
 2. **Package installs correctly**:
    ```bash
-   ./scripts/test-pypi-install.sh
+   ./scripts/test-package-install.sh --testpypi
    ```
 
 3. **CLI commands work**:

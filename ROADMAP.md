@@ -333,17 +333,17 @@ The library now provides:
 - [x] **PyPI Account Setup** - TestPyPI and production PyPI accounts created
 - [x] **API Token Configuration** - GitHub secrets configured for secure token storage
 - [x] **Manual Release Script** - `scripts/release.sh` for complete publishing workflow
-- [x] **TestPyPI Validation Script** - `scripts/test-pypi-install.sh` for package testing
+- [x] **Package Installation Test Script** - `scripts/test-package-install.sh` for package testing
 - [x] **Publishing Documentation** - Complete guide in `docs/setup/publishing.md`
 - [ ] **First Test Release** - Publish to TestPyPI and validate installation
 - [ ] **First Production Release** - Publish to production PyPI
 
-### Phase 1.5: Script Decoupling (Current Focus)
-- [ ] **Decouple Release Script** - Remove automatic availability checking from `release.sh`
-- [ ] **Decouple Availability Checker** - Make `check-package-availability.sh` completely independent
-- [ ] **Decouple Installation Tester** - Ensure `test-pypi-install.sh` works independently
+### Phase 1.5: Script Decoupling (Completed ✅)
+- [x] **Decouple Release Script** - Remove automatic availability checking from `release.sh`
+- [x] **Decouple Availability Checker** - Make `check-package-availability.sh` completely independent
+- [x] **Decouple Installation Tester** - Ensure `test-package-install.sh` works independently
 - [ ] **Update Documentation** - Reflect new separated architecture
-- [ ] **Test Decoupled Workflow** - Verify each step works independently
+- [x] **Test Decoupled Workflow** - Verify each step works independently
 
 **Benefits of Decoupling:**
 - **Clear Separation of Concerns**: Each script has a single responsibility
@@ -372,7 +372,7 @@ The library now provides:
    - Update version in `pyproject.toml`
    - Step 1: Run `./scripts/release.sh --testpypi` (publish only)
    - Step 2: Run `./scripts/check-package-availability.sh --testpypi --wait` (verify availability)
-   - Step 3: Run `./scripts/test-pypi-install.sh <version>` (test installation)
+   - Step 3: Run `./scripts/test-package-install.sh --testpypi <version>` (test installation)
    - Repeat for PyPI if TestPyPI successful
    - Manual orchestration of steps
 
