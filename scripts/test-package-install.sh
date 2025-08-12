@@ -202,15 +202,40 @@ print_info "Initializing uv project..."
 uv init .
 print_success "Project initialized"
 
-# Install package
+# Install package with retry logic
 print_info "Installing $PACKAGE_NAME from $INDEX_NAME..."
-if [ -n "$VERSION" ]; then
-    print_info "Installing specific version: $VERSION"
-    uv add --index "$INDEX_URL" --index-strategy unsafe-best-match "$PACKAGE_NAME==$VERSION"
-else
-    print_info "Installing latest version"
-    uv add --index "$INDEX_URL" --index-strategy unsafe-best-match "$PACKAGE_NAME"
-fi
+MAX_RETRIES=3
+RETRY_DELAY=30
+
+for attempt in $(seq 1 $MAX_RETRIES); do
+    print_info "Installation attempt $attempt of $MAX_RETRIES..."
+
+    if [ -n "$VERSION" ]; then
+        print_info "Installing specific version: $VERSION"
+        if uv add --index "$INDEX_URL" --index-strategy unsafe-best-match "$PACKAGE_NAME==$VERSION" 2>&1; then
+            print_success "Package installed successfully on attempt $attempt"
+            break
+        else
+            print_warning "Installation failed on attempt $attempt"
+        fi
+    else
+        print_info "Installing latest version"
+        if uv add --index "$INDEX_URL" --index-strategy unsafe-best-match "$PACKAGE_NAME" 2>&1; then
+            print_success "Package installed successfully on attempt $attempt"
+            break
+        else
+            print_warning "Installation failed on attempt $attempt"
+        fi
+    fi
+
+    if [ $attempt -lt $MAX_RETRIES ]; then
+        print_info "Waiting $RETRY_DELAY seconds before retry..."
+        sleep $RETRY_DELAY
+    else
+        print_error "Failed to install $PACKAGE_NAME after $MAX_RETRIES attempts"
+        exit 1
+    fi
+done
 
 # Test basic functionality
 print_info "Testing basic functionality..."
