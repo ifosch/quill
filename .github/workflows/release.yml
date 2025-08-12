@@ -56,26 +56,43 @@ jobs:
           uv run ruff format --check .
           uv run ty check
 
-      - name: Update version in pyproject.toml
+      - name: Check and update version in pyproject.toml
         run: |
-          # Update version in pyproject.toml
-          sed -i 's/^version = ".*"/version = "${{ inputs.version }}"/' pyproject.toml
+          # Get current version from pyproject.toml
+          CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          echo "Current version in pyproject.toml: $CURRENT_VERSION"
+          echo "Target version: ${{ inputs.version }}"
 
-          # Update uv.lock
-          uv lock
+          if [ "$CURRENT_VERSION" = "${{ inputs.version }}" ]; then
+            echo "✅ Version already matches target version. No update needed."
+            echo "Skipping version bump and lock file update."
+          else
+            echo "🔄 Updating version from $CURRENT_VERSION to ${{ inputs.version }}"
+            # Update version in pyproject.toml
+            sed -i 's/^version = ".*"/version = "${{ inputs.version }}"/' pyproject.toml
 
-          # Show the changes
-          echo "Updated pyproject.toml:"
-          grep '^version = ' pyproject.toml
-          echo "Updated uv.lock"
+            # Update uv.lock
+            uv lock
 
-      - name: Commit version bump
+            # Show the changes
+            echo "Updated pyproject.toml:"
+            grep '^version = ' pyproject.toml
+            echo "Updated uv.lock"
+          fi
+
+      - name: Commit version bump (if needed)
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add pyproject.toml uv.lock
-          git commit -m "feat(release): bump version to ${{ inputs.version }}"
-          git push origin ${{ github.ref }}
+          # Check if there are any changes to commit
+          if git diff --staged --quiet && git diff --quiet; then
+            echo "✅ No changes to commit. Version already matches target."
+          else
+            echo "🔄 Committing version bump..."
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add pyproject.toml uv.lock
+            git commit -m "feat(release): bump version to ${{ inputs.version }}"
+            git push origin ${{ github.ref }}
+          fi
 
       - name: TestPyPI Release
         if: ${{ !inputs.skip_testpypi }}
