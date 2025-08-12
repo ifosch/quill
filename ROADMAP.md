@@ -352,14 +352,14 @@ The library now provides:
 - **Better Error Handling**: Each step can fail independently
 - **Reusable Components**: Scripts can be used outside the release process
 
-### Phase 2: Automated Publishing with GitHub Actions (Future)
-- [ ] **GitHub Actions Workflow** - Automated publishing on tag creation
-- [ ] **Release Orchestration** - Coordinate all three steps (publish → verify → test)
-- [ ] **Automated Version Management** - Extract version from git tags
-- [ ] **Release Notes Generation** - Auto-generate from conventional commits
-- [ ] **Package Signing** - GPG signing for enhanced security
-- [ ] **Automated Testing** - Pre-publishing validation in isolated environments
-- [ ] **GitHub Release Creation** - Automatic tag creation and release notes
+### Phase 2: Automated Publishing with GitHub Actions (Current Focus)
+- [x] **GitHub Actions Workflow** - Manual release workflow with workflow_dispatch
+- [x] **Release Orchestration** - Coordinate all three steps (publish → verify → test)
+- [x] **Version Management** - Manual version input with validation
+- [x] **Automated Testing** - Pre-publishing validation in isolated environments
+- [x] **GitHub Release Creation** - Automatic tag creation and release notes
+- [ ] **Package Signing** - GPG signing for enhanced security (future)
+- [ ] **Release Notes Generation** - Auto-generate from conventional commits (future)
 
 ### Publishing Process
 1. **Manual Publishing** (Current):
@@ -377,11 +377,11 @@ The library now provides:
    - Manual orchestration of steps
 
 3. **Automated Publishing** (Phase 2):
-   - Tag-based triggers (`v*` tags)
-   - Automated version extraction
+   - Manual workflow dispatch with version input
+   - Automated version validation and update
    - GitHub Actions orchestrates all three steps
    - Quality gates and validation
-   - Automated release notes and GitHub releases
+   - Automated Git tagging and GitHub releases
 
 ## Maintenance
 
