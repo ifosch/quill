@@ -121,7 +121,7 @@ Export a Google Workspace document.
 
 **Parameters:**
 - `file_id` (str): Google Drive file ID
-- `format` (str, optional): Export format (html, pdf, xlsx, csv, md)
+- `format` (str, optional): Export format (html, pdf, xlsx, csv, md, rtf)
 - `output_path` (str, optional): Output file path
 
 **Returns:**

@@ -270,8 +270,8 @@ zenodotos get-file --help
    - Check if you have permission to access the file
    - Ensure the Google Drive API is enabled in your project
 
-3. **"Invalid format" error**
-   - Use only supported formats: `html`, `pdf`, `xlsx`, `csv`, `md`
+  3. **"Invalid format" error**
+   - Use only supported formats: `html`, `pdf`, `xlsx`, `csv`, `md`, `rtf`
    - Check the format compatibility with your file type
 
 4. **Export fails**

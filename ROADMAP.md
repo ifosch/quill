@@ -43,7 +43,7 @@ This document outlines the planned features and development goals for the Zenodo
 
 ### Export System (Completed)
 - ✅ **Smart format defaults** - Automatic format selection based on file type
-- ✅ **Format override options** - Support for html, pdf, xlsx, csv, md formats
+- ✅ **Format override options** - Support for html, pdf, xlsx, csv, md, rtf formats
 - ✅ **Comprehensive error handling** - File not found, permission errors, invalid formats
 - ✅ **Verbose output support** - Detailed progress information
 - ✅ **Auto-naming** - Automatic filename generation based on document name
@@ -148,7 +148,7 @@ The library now provides:
 - [x] Download files
   - [x] Export Google Workspace documents (Docs, Sheets, Slides)
   - [x] Smart default format selection based on file type
-  - [x] Format override option (--format html/pdf/xlsx/csv/md)
+  - [x] Format override option (--format html/pdf/xlsx/csv/md/rtf)
   - [x] Query-based export (search and export in one command)
   - [ ] Progress tracking
   - [ ] Resume interrupted downloads
@@ -156,12 +156,13 @@ The library now provides:
   - [ ] Format compatibility matrix validation
   - [ ] Non-native file handling (uploaded PDFs, Word docs, etc.)
   - [ ] Advanced format options (page ranges, quality settings)
-  - [ ] Enhanced export formats
-    - Markdown export with comments
-    - PDF export with page ranges
-    - HTML export with embedded images
-    - Custom export templates
-    - Export with metadata preservation
+  - [x] Enhanced export formats
+    - [x] Markdown export (md)
+    - [x] RTF export (rtf)
+    - [ ] PDF export with page ranges
+    - [ ] HTML export with embedded images
+    - [ ] Custom export templates
+    - [ ] Export with metadata preservation
 - [ ] Upload files
   - Support for different file types
   - Progress tracking
