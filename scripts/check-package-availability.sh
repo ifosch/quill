@@ -75,80 +75,32 @@ get_current_version() {
     fi
 }
 
-# Function to check package availability on PyPI
-check_pypi_availability() {
+# Function to check package availability on a specific index
+check_availability() {
     local package_name="$1"
     local version="$2"
+    local index_type="$3"  # "pypi" or "testpypi"
     local start_time=$(date +%s)
 
-    print_info "Checking PyPI availability for $package_name==$version..."
-
-    # Try to get package info from PyPI JSON API
-    local response
-    if response=$(curl -s -f "https://pypi.org/pypi/$package_name/$version/json" 2>/dev/null); then
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-
-        if [ "$JQ_AVAILABLE" = true ]; then
-            local info=$(echo "$response" | jq -r '.info')
-            local version_info=$(echo "$response" | jq -r '.releases["'"$version"'"]')
-
-            print_success "Package $package_name==$version is AVAILABLE on PyPI"
-            print_timing "Response time: ${duration}s"
-
-            # Extract useful information
-            local summary=$(echo "$info" | jq -r '.summary // "No summary"')
-            local author=$(echo "$info" | jq -r '.author // "Unknown"')
-            local upload_time=$(echo "$version_info" | jq -r '.[0].upload_time // "Unknown"')
-
-            echo "  📦 Summary: $summary"
-            echo "  👤 Author: $author"
-            echo "  📅 Upload time: $upload_time"
-
-            # Check if it's a recent upload
-            if [ "$upload_time" != "Unknown" ]; then
-                local upload_timestamp=$(date -d "$upload_time" +%s 2>/dev/null || echo "0")
-                local current_timestamp=$(date +%s)
-                local time_since_upload=$((current_timestamp - upload_timestamp))
-
-                if [ $time_since_upload -lt 300 ]; then
-                    print_warning "Package was uploaded very recently (${time_since_upload}s ago)"
-                    print_info "Index propagation may still be in progress..."
-                elif [ $time_since_upload -lt 3600 ]; then
-                    print_info "Package was uploaded ${time_since_upload}s ago"
-                else
-                    local hours=$((time_since_upload / 3600))
-                    print_info "Package was uploaded ${hours}h ago"
-                fi
-            fi
-
-            return 0
-        else
-            print_success "Package $package_name==$version is AVAILABLE on PyPI"
-            print_timing "Response time: ${duration}s"
-            echo "Raw response: $response"
-            return 0
-        fi
+    # Determine the base URL based on index type
+    local base_url
+    local index_display_name
+    if [ "$index_type" = "pypi" ]; then
+        base_url="https://pypi.org"
+        index_display_name="PyPI"
+    elif [ "$index_type" = "testpypi" ]; then
+        base_url="https://test.pypi.org"
+        index_display_name="TestPyPI"
     else
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        print_error "Package $package_name==$version is NOT AVAILABLE on PyPI"
-        print_timing "Response time: ${duration}s"
+        print_error "Invalid index type: $index_type"
         return 1
     fi
-}
 
-# Function to check package availability on TestPyPI
-check_testpypi_availability() {
-    local package_name="$1"
-    local version="$2"
-    local start_time=$(date +%s)
+    print_info "Checking $index_display_name availability for $package_name==$version..."
 
-    print_info "Checking TestPyPI availability for $package_name==$version..."
-
-    # Try to get package info from TestPyPI JSON API
+    # Try to get package info from JSON API
     local response
-    if response=$(curl -s -f "https://test.pypi.org/pypi/$package_name/$version/json" 2>/dev/null); then
+    if response=$(curl -s -f "$base_url/pypi/$package_name/$version/json" 2>/dev/null); then
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
 
@@ -156,7 +108,7 @@ check_testpypi_availability() {
             local info=$(echo "$response" | jq -r '.info')
             local version_info=$(echo "$response" | jq -r '.releases["'"$version"'"]')
 
-            print_success "Package $package_name==$version is AVAILABLE on TestPyPI"
+            print_success "Package $package_name==$version is AVAILABLE on $index_display_name"
             print_timing "Response time: ${duration}s"
 
             # Extract useful information
@@ -187,7 +139,7 @@ check_testpypi_availability() {
 
             return 0
         else
-            print_success "Package $package_name==$version is AVAILABLE on TestPyPI"
+            print_success "Package $package_name==$version is AVAILABLE on $index_display_name"
             print_timing "Response time: ${duration}s"
             echo "Raw response: $response"
             return 0
@@ -195,7 +147,7 @@ check_testpypi_availability() {
     else
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
-        print_error "Package $package_name==$version is NOT AVAILABLE on TestPyPI"
+        print_error "Package $package_name==$version is NOT AVAILABLE on $index_display_name"
         print_timing "Response time: ${duration}s"
         return 1
     fi
@@ -217,23 +169,19 @@ wait_for_availability() {
     echo ""
 
     while [ $elapsed_time -lt $timeout_seconds ]; do
-        # Check availability
-        if [ "$index_type" = "pypi" ]; then
-            if check_pypi_availability "$package_name" "$version" >/dev/null 2>&1; then
-                local end_time=$(date +%s)
-                local total_wait_time=$((end_time - start_time))
-                print_success "Package $package_name==$version is now AVAILABLE on PyPI!"
-                print_timing "Total wait time: ${total_wait_time}s"
-                return 0
+        # Check availability using the unified function
+        if check_availability "$package_name" "$version" "$index_type" >/dev/null 2>&1; then
+            local end_time=$(date +%s)
+            local total_wait_time=$((end_time - start_time))
+            local index_display_name
+            if [ "$index_type" = "pypi" ]; then
+                index_display_name="PyPI"
+            else
+                index_display_name="TestPyPI"
             fi
-        elif [ "$index_type" = "testpypi" ]; then
-            if check_testpypi_availability "$package_name" "$version" >/dev/null 2>&1; then
-                local end_time=$(date +%s)
-                local total_wait_time=$((end_time - start_time))
-                print_success "Package $package_name==$version is now AVAILABLE on TestPyPI!"
-                print_timing "Total wait time: ${total_wait_time}s"
-                return 0
-            fi
+            print_success "Package $package_name==$version is now AVAILABLE on $index_display_name!"
+            print_timing "Total wait time: ${total_wait_time}s"
+            return 0
         fi
 
         # Calculate remaining time
@@ -259,52 +207,7 @@ wait_for_availability() {
     return 1
 }
 
-# Function to check package availability via pip
-check_pip_availability() {
-    local package_name="$1"
-    local version="$2"
-    local index_url="$3"
-    local index_name="$4"
 
-    print_info "Checking $index_name availability via pip for $package_name==$version..."
-
-    # Create temporary directory for testing
-    local temp_dir=$(mktemp -d)
-    local start_time=$(date +%s)
-
-    # Function to clean up
-    cleanup_pip_test() {
-        rm -rf "$temp_dir"
-    }
-
-    # Set up trap to clean up on exit
-    trap cleanup_pip_test EXIT
-
-    # Change to temp directory
-    cd "$temp_dir"
-
-    # Try to install the package
-    if uv add --index "$index_url" --index-strategy unsafe-best-match "$package_name==$version" >/dev/null 2>&1; then
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-
-        print_success "Package $package_name==$version is INSTALLABLE from $index_name"
-        print_timing "Installation time: ${duration}s"
-
-        # Get package info
-        local package_info=$(uv pip show "$package_name" 2>/dev/null || echo "Package info not available")
-        echo "Package information:"
-        echo "$package_info" | sed 's/^/  /'
-
-        return 0
-    else
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        print_error "Package $package_name==$version is NOT INSTALLABLE from $index_name"
-        print_timing "Failed after: ${duration}s"
-        return 1
-    fi
-}
 
 # Function to show deployment time information
 show_deployment_times() {
@@ -341,13 +244,12 @@ show_usage() {
     echo "  --testpypi          Check only TestPyPI availability"
     echo ""
     echo "Additional Options:"
-    echo "  --pip-test          Also test pip installation"
-    echo "  --wait              Wait for package to become available"
-    echo "  --timeout SECONDS   Maximum wait time in seconds (default: 600 for PyPI, 300 for TestPyPI)"
-    echo "  --interval SECONDS  Check interval in seconds (default: 30)"
-    echo "  --timing            Show detailed timing information"
-    echo "  --deployment-times  Show typical deployment time information"
-    echo "  --help              Show this help message"
+echo "  --wait              Wait for package to become available"
+echo "  --timeout SECONDS   Maximum wait time in seconds (default: 600 for PyPI, 300 for TestPyPI)"
+echo "  --interval SECONDS  Check interval in seconds (default: 30)"
+echo "  --timing            Show detailed timing information"
+echo "  --deployment-times  Show typical deployment time information"
+echo "  --help              Show this help message"
     echo ""
     echo "Arguments:"
     echo "  PACKAGE_NAME        Package name to check (default: zenodotos)"
@@ -356,7 +258,6 @@ show_usage() {
     echo "Examples:"
     echo "  $0 --pypi                            # Check only PyPI"
     echo "  $0 --testpypi                        # Check only TestPyPI"
-    echo "  $0 --pypi --pip-test                 # Check PyPI with pip installation test"
     echo "  $0 --testpypi --wait                 # Wait for TestPyPI availability (up to 5 minutes)"
     echo "  $0 --pypi --wait --timeout 1800      # Wait for PyPI availability (up to 30 minutes)"
     echo "  $0 --deployment-times                # Show deployment time information"
@@ -372,7 +273,6 @@ show_usage() {
 # Parse command line arguments
 CHECK_PYPI=false
 CHECK_TESTPYPI=false
-CHECK_PIP=false
 WAIT_FOR_AVAILABILITY=false
 TIMEOUT_SECONDS=0
 INTERVAL_SECONDS=30
@@ -402,10 +302,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
 
-        --pip-test)
-            CHECK_PIP=true
-            shift
-            ;;
+
         --wait)
             WAIT_FOR_AVAILABILITY=true
             shift
@@ -446,7 +343,10 @@ while [[ $# -gt 0 ]]; do
             exit 1
             ;;
         *)
-            if [ -z "$PACKAGE_NAME" ] || [ "$PACKAGE_NAME" = "zenodotos" ]; then
+            # If this looks like a version number and we don't have a version yet, treat it as version
+            if [ -z "$VERSION" ] && [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+                VERSION="$1"
+            elif [ -z "$PACKAGE_NAME" ] || [ "$PACKAGE_NAME" = "zenodotos" ]; then
                 PACKAGE_NAME="$1"
             elif [ -z "$VERSION" ]; then
                 VERSION="$1"
@@ -516,23 +416,14 @@ if [ "$CHECK_PYPI" = true ]; then
             PYPI_AVAILABLE=false
         fi
     else
-        if check_pypi_availability "$PACKAGE_NAME" "$VERSION"; then
+        if check_availability "$PACKAGE_NAME" "$VERSION" "pypi"; then
             PYPI_AVAILABLE=true
         else
             PYPI_AVAILABLE=false
         fi
     fi
 
-    # Test pip installation if requested
-    if [ "$CHECK_PIP" = true ] && [ "$PYPI_AVAILABLE" = true ]; then
-        echo ""
-        print_info "Testing pip installation from PyPI..."
-        if check_pip_availability "$PACKAGE_NAME" "$VERSION" "https://pypi.org/simple/" "PyPI"; then
-            PYPI_INSTALLABLE=true
-        else
-            PYPI_INSTALLABLE=false
-        fi
-    fi
+
 
     echo ""
 fi
@@ -550,23 +441,14 @@ if [ "$CHECK_TESTPYPI" = true ]; then
             TESTPYPI_AVAILABLE=false
         fi
     else
-        if check_testpypi_availability "$PACKAGE_NAME" "$VERSION"; then
+        if check_availability "$PACKAGE_NAME" "$VERSION" "testpypi"; then
             TESTPYPI_AVAILABLE=true
         else
             TESTPYPI_AVAILABLE=false
         fi
     fi
 
-    # Test pip installation if requested
-    if [ "$CHECK_PIP" = true ] && [ "$TESTPYPI_AVAILABLE" = true ]; then
-        echo ""
-        print_info "Testing pip installation from TestPyPI..."
-        if check_pip_availability "$PACKAGE_NAME" "$VERSION" "https://test.pypi.org/simple/" "TestPyPI"; then
-            TESTPYPI_INSTALLABLE=true
-        else
-            TESTPYPI_INSTALLABLE=false
-        fi
-    fi
+
 
     echo ""
 fi
@@ -583,13 +465,6 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 if [ "$CHECK_PYPI" = true ]; then
     if [ "$PYPI_AVAILABLE" = true ]; then
         print_success "✅ PyPI: $PACKAGE_NAME==$VERSION is AVAILABLE"
-        if [ "$CHECK_PIP" = true ]; then
-            if [ "$PYPI_INSTALLABLE" = true ]; then
-                print_success "✅ PyPI: Package is INSTALLABLE"
-            else
-                print_error "❌ PyPI: Package is NOT INSTALLABLE"
-            fi
-        fi
     else
         print_error "❌ PyPI: $PACKAGE_NAME==$VERSION is NOT AVAILABLE"
     fi
@@ -598,13 +473,6 @@ fi
 if [ "$CHECK_TESTPYPI" = true ]; then
     if [ "$TESTPYPI_AVAILABLE" = true ]; then
         print_success "✅ TestPyPI: $PACKAGE_NAME==$VERSION is AVAILABLE"
-        if [ "$CHECK_PIP" = true ]; then
-            if [ "$TESTPYPI_INSTALLABLE" = true ]; then
-                print_success "✅ TestPyPI: Package is INSTALLABLE"
-            else
-                print_error "❌ TestPyPI: Package is NOT INSTALLABLE"
-            fi
-        fi
     else
         print_error "❌ TestPyPI: $PACKAGE_NAME==$VERSION is NOT AVAILABLE"
     fi
@@ -617,7 +485,7 @@ fi
 
 echo ""
 print_info "💡 Tips:"
-echo "  • Use --pip-test to verify installation works"
+echo "  • Use ./scripts/test-package-install.sh to verify installation works"
 echo "  • Use --deployment-times to see typical timing information"
 echo "  • Check again in a few minutes if package was recently uploaded"
 echo "  • Use --pypi or --testpypi to check only specific indexes"

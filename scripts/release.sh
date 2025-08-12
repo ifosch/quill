@@ -165,7 +165,7 @@ echo ""
 echo "Decoupled Workflow:"
 echo "  1. Publish: ./scripts/release.sh --testpypi"
 echo "  2. Verify: ./scripts/check-package-availability.sh --testpypi --wait <version>"
-echo "  3. Test: ./scripts/test-pypi-install.sh <version>"
+echo "  3. Test: ./scripts/test-package-install.sh --testpypi <version>"
 }
 
 # Parse command line arguments
@@ -232,7 +232,7 @@ if [ "$PUBLISH_TESTPYPI" = true ]; then
     echo ""
     print_info "📋 Next Steps:"
     print_info "  • Check availability: ./scripts/check-package-availability.sh --testpypi --wait $(get_current_version)"
-    print_info "  • Test installation: ./scripts/test-pypi-install.sh $(get_current_version)"
+    print_info "  • Test installation: ./scripts/test-package-install.sh --testpypi $(get_current_version)"
     print_info "  • View deployment times: ./scripts/check-package-availability.sh --deployment-times"
 fi
 

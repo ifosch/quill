@@ -34,7 +34,7 @@ The package availability checker (`scripts/check-package-availability.sh`) provi
 ./scripts/check-package-availability.sh zenodotos 0.2.0
 
 # Check with pip installation test
-./scripts/check-package-availability.sh --pip-test zenodotos 0.2.0
+./scripts/check-package-availability.sh zenodotos 0.2.0
 ```
 
 ### View Deployment Time Information
@@ -58,8 +58,8 @@ The package availability checker (`scripts/check-package-availability.sh`) provi
 # Check with detailed timing information
 ./scripts/check-package-availability.sh --timing
 
-# Check with pip installation verification
-./scripts/check-package-availability.sh --pip-test
+# Check with detailed timing information
+./scripts/check-package-availability.sh --timing
 ```
 
 ### Options
@@ -73,7 +73,7 @@ The package availability checker (`scripts/check-package-availability.sh`) provi
 #### Additional Options
 | Option | Description |
 |--------|-------------|
-| `--pip-test` | Also test pip installation |
+
 | `--timing` | Show detailed timing information |
 | `--deployment-times` | Show typical deployment time information |
 | `--help` | Show help message |
@@ -86,11 +86,11 @@ The package availability checker (`scripts/check-package-availability.sh`) provi
 # Check current version on both indexes (default)
 ./scripts/check-package-availability.sh
 
-# Check current version with full verification
-./scripts/check-package-availability.sh --pip-test --timing
+# Check current version with detailed timing
+./scripts/check-package-availability.sh --timing
 
 # Check specific version on TestPyPI only
-./scripts/check-package-availability.sh --testpypi --pip-test zenodotos 0.2.0
+./scripts/check-package-availability.sh --testpypi zenodotos 0.2.0
 
 # Check production PyPI with timing
 ./scripts/check-package-availability.sh --pypi --timing zenodotos 0.2.0
@@ -110,15 +110,13 @@ The script provides clear status indicators:
 
 - ✅ **AVAILABLE**: Package is found on the index
 - ❌ **NOT AVAILABLE**: Package is not found on the index
-- ✅ **INSTALLABLE**: Package can be installed via pip
-- ❌ **NOT INSTALLABLE**: Package cannot be installed via pip
 
 ### Timing Information
 
 The script tracks various timing metrics:
 
 - **Response time**: How long the API request took
-- **Installation time**: How long pip installation took
+
 - **Upload time**: When the package was uploaded (if available)
 - **Time since upload**: How long ago the package was uploaded
 
@@ -181,13 +179,13 @@ You can manually verify package availability at any time:
 
 ```bash
 # After TestPyPI release
-./scripts/check-package-availability.sh --testpypi --pip-test
+./scripts/check-package-availability.sh --testpypi
 
 # After production release
-./scripts/check-package-availability.sh --pypi --pip-test
+./scripts/check-package-availability.sh --pypi
 
 # Check both indexes
-./scripts/check-package-availability.sh --pip-test
+./scripts/check-package-availability.sh
 ```
 
 ## Troubleshooting
@@ -248,7 +246,7 @@ brew install jq            # macOS
 ### During Development
 
 1. **Test frequently**: Check availability after each TestPyPI upload
-2. **Use pip testing**: Verify packages are actually installable
+2. **Use installation testing**: Verify packages are actually installable with `./scripts/test-package-install.sh`
 3. **Monitor timing**: Track deployment times for your packages
 4. **Document issues**: Note any unusual delays or problems
 
@@ -256,7 +254,7 @@ brew install jq            # macOS
 
 1. **Pre-release verification**: Check current version availability
 2. **Post-upload verification**: Verify upload success immediately
-3. **Installation testing**: Test actual installation before announcing
+3. **Installation testing**: Test actual installation with `./scripts/test-package-install.sh` before announcing
 4. **Monitoring**: Check periodically until fully propagated
 
 ### Automation
@@ -299,20 +297,40 @@ done
 set -e
 
 # Publish package
-./scripts/release.sh --test
+./scripts/release.sh --testpypi
 
 # Wait for propagation
 sleep 60
 
 # Verify availability
-if ./scripts/check-package-availability.sh --testpypi --pip-test; then
-    echo "Package is ready for testing"
-    exit 0
+if ./scripts/check-package-availability.sh --testpypi; then
+    echo "Package is available, testing installation..."
+    if ./scripts/test-package-install.sh --testpypi; then
+        echo "Package is ready for testing"
+        exit 0
+    else
+        echo "Package installation failed"
+        exit 1
+    fi
 else
     echo "Package not yet available"
     exit 1
 fi
 ```
+
+### Decoupled Workflow
+
+The release process is now decoupled into three independent steps:
+
+1. **Publish**: `./scripts/release.sh --testpypi` (build and publish only)
+2. **Verify**: `./scripts/check-package-availability.sh --testpypi --wait` (check availability)
+3. **Test**: `./scripts/test-package-install.sh --testpypi` (test installation)
+
+This separation allows for:
+- **Independent testing** of each step
+- **Flexible orchestration** in CI/CD pipelines
+- **Better error handling** and debugging
+- **Reusable components** for different workflows
 
 ## API Endpoints
 
@@ -341,6 +359,7 @@ Optional:
 
 ## Related Scripts
 
-- `scripts/release.sh`: Main release script with integrated availability checking
-- `scripts/test-pypi-install.sh`: Comprehensive TestPyPI installation testing
+- `scripts/release.sh`: Main release script (build and publish only)
+- `scripts/check-package-availability.sh`: Package availability checking
+- `scripts/test-package-install.sh`: Comprehensive package installation testing
 - `scripts/update-versions.sh`: Version management utilities

@@ -44,7 +44,7 @@ This checklist ensures a smooth and reliable release process for Zenodotos packa
 - [ ] **Publish to TestPyPI**: `./scripts/release.sh --testpypi`
 - [ ] **Verify TestPyPI upload**: Check https://test.pypi.org/project/zenodotos/
 - [ ] **Check package availability**: `./scripts/check-package-availability.sh --testpypi`
-- [ ] **Test TestPyPI installation**: `./scripts/test-pypi-install.sh`
+- [ ] **Test TestPyPI installation**: `./scripts/test-package-install.sh --testpypi`
 - [ ] **Verify CLI functionality**: Test all commands work
 - [ ] **Verify library functionality**: Test imports and basic usage
 
@@ -58,8 +58,10 @@ This checklist ensures a smooth and reliable release process for Zenodotos packa
 ## Post-Release Verification
 
 ### ✅ Package Availability Verification
-- [ ] **Check TestPyPI availability**: `./scripts/check-package-availability.sh --testpypi --pip-test`
-- [ ] **Check production PyPI availability**: `./scripts/check-package-availability.sh --pypi --pip-test`
+- [ ] **Check TestPyPI availability**: `./scripts/check-package-availability.sh --testpypi`
+- [ ] **Check production PyPI availability**: `./scripts/check-package-availability.sh --pypi`
+- [ ] **Test TestPyPI installation**: `./scripts/test-package-install.sh --testpypi`
+- [ ] **Test production PyPI installation**: `./scripts/test-package-install.sh --pypi`
 - [ ] **Verify deployment times**: `./scripts/check-package-availability.sh --deployment-times`
 - [ ] **Monitor propagation**: Check availability periodically until fully propagated
 
@@ -124,7 +126,7 @@ This checklist ensures a smooth and reliable release process for Zenodotos packa
 #### Installation Failures
 - **Issue**: Package installs but doesn't work
 - **Solution**: Check entry points and package structure
-- **Check**: Test with `./scripts/test-pypi-install.sh`
+- **Check**: Test with `./scripts/test-package-install.sh --testpypi`
 
 ## Release Notes Template
 
