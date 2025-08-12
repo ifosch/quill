@@ -338,12 +338,28 @@ The library now provides:
 - [ ] **First Test Release** - Publish to TestPyPI and validate installation
 - [ ] **First Production Release** - Publish to production PyPI
 
-### Phase 2: Automated Publishing (Future)
+### Phase 1.5: Script Decoupling (Current Focus)
+- [ ] **Decouple Release Script** - Remove automatic availability checking from `release.sh`
+- [ ] **Decouple Availability Checker** - Make `check-package-availability.sh` completely independent
+- [ ] **Decouple Installation Tester** - Ensure `test-pypi-install.sh` works independently
+- [ ] **Update Documentation** - Reflect new separated architecture
+- [ ] **Test Decoupled Workflow** - Verify each step works independently
+
+**Benefits of Decoupling:**
+- **Clear Separation of Concerns**: Each script has a single responsibility
+- **Independent Testing**: Each step can be tested and debugged separately
+- **Flexible Orchestration**: GitHub Actions can handle complex workflows
+- **Better Error Handling**: Each step can fail independently
+- **Reusable Components**: Scripts can be used outside the release process
+
+### Phase 2: Automated Publishing with GitHub Actions (Future)
 - [ ] **GitHub Actions Workflow** - Automated publishing on tag creation
+- [ ] **Release Orchestration** - Coordinate all three steps (publish → verify → test)
 - [ ] **Automated Version Management** - Extract version from git tags
 - [ ] **Release Notes Generation** - Auto-generate from conventional commits
 - [ ] **Package Signing** - GPG signing for enhanced security
 - [ ] **Automated Testing** - Pre-publishing validation in isolated environments
+- [ ] **GitHub Release Creation** - Automatic tag creation and release notes
 
 ### Publishing Process
 1. **Manual Publishing** (Current):
@@ -352,11 +368,20 @@ The library now provides:
    - TestPyPI validation before production release
    - Manual verification of published packages
 
-2. **Automated Publishing** (Future):
+2. **Decoupled Publishing** (Phase 1.5):
+   - Update version in `pyproject.toml`
+   - Step 1: Run `./scripts/release.sh --testpypi` (publish only)
+   - Step 2: Run `./scripts/check-package-availability.sh --testpypi --wait` (verify availability)
+   - Step 3: Run `./scripts/test-pypi-install.sh <version>` (test installation)
+   - Repeat for PyPI if TestPyPI successful
+   - Manual orchestration of steps
+
+3. **Automated Publishing** (Phase 2):
    - Tag-based triggers (`v*` tags)
    - Automated version extraction
+   - GitHub Actions orchestrates all three steps
    - Quality gates and validation
-   - Automated release notes
+   - Automated release notes and GitHub releases
 
 ## Maintenance
 
