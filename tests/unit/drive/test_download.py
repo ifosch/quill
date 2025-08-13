@@ -329,7 +329,9 @@ class TestDriveClientDownload:
             with pytest.raises(ValueError, match="Unsupported format: invalid_format"):
                 client.export("test_id", format="invalid_format")
 
-    @pytest.mark.parametrize("format_type", ["html", "pdf", "xlsx", "csv", "md"])
+    @pytest.mark.parametrize(
+        "format_type", ["html", "pdf", "xlsx", "csv", "md", "rtf", "txt"]
+    )
     def test_export_format_validation_valid_formats(self, format_type):
         """Test format validation for valid formats."""
         client = DriveClient()
@@ -420,3 +422,57 @@ class TestDriveClientDownload:
         client = DriveClient()
         extension = client._get_file_extension_for_format("md")
         assert extension == "md"
+
+    def test_export_google_doc_to_plain_text(self):
+        """Test export of Google Doc to plain text format."""
+        client = DriveClient()
+
+        # Mock the Google Drive API service
+        mock_google_drive_service = MagicMock()
+
+        # Mock Google's export request
+        mock_google_export_request = MagicMock()
+        mock_google_export_request.execute.return_value = (
+            b"Plain text content\n\nThis is a test document in plain text format."
+        )
+        mock_google_drive_service.files().export.return_value = (
+            mock_google_export_request
+        )
+
+        # Mock Google's file metadata call for output path
+        mock_google_get_request = MagicMock()
+        mock_google_get_request.execute.return_value = {"name": "Test Document"}
+        mock_google_drive_service.files().get.return_value = mock_google_get_request
+
+        # Setup client with mocked Google service
+        client.service = mock_google_drive_service
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_path = os.path.join(temp_dir, "test.txt")
+            result = client.export("test_id", output_path=output_path, format="txt")
+
+            # Verify the correct MIME type was used for plain text
+            mock_google_drive_service.files().export.assert_called_with(
+                fileId="test_id", mimeType="text/plain"
+            )
+            assert result == output_path
+
+            # Verify the content was written correctly
+            with open(output_path, "rb") as f:
+                content = f.read()
+            assert (
+                content
+                == b"Plain text content\n\nThis is a test document in plain text format."
+            )
+
+    def test_get_mime_type_for_plain_text_format(self):
+        """Test MIME type mapping for plain text format."""
+        client = DriveClient()
+        mime_type = client._get_mime_type_for_format("txt")
+        assert mime_type == "text/plain"
+
+    def test_get_file_extension_for_plain_text_format(self):
+        """Test file extension mapping for plain text format."""
+        client = DriveClient()
+        extension = client._get_file_extension_for_format("txt")
+        assert extension == "txt"

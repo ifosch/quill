@@ -299,6 +299,8 @@ Override the default format with these options:
 - `xlsx`: Excel format (for spreadsheets)
 - `csv`: CSV format (for spreadsheets)
 - `md`: Markdown format (for Google Docs)
+- `rtf`: Rich Text Format (for Google Docs)
+- `txt`: Plain text format (for Google Docs)
 
 #### Examples
 
@@ -308,6 +310,9 @@ zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx
 
 # Export a Google Doc to Markdown
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format md
+
+# Export a Google Doc to Plain Text
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format txt
 
 # Export a Google Sheet to Excel
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format xlsx
@@ -449,7 +454,7 @@ Run tests with coverage (fails if coverage is less than 80%):
 pytest --cov=zenodotos --cov-report=term-missing --cov-fail-under=80
 ```
 
-**Current test coverage: 96%** ✅ (exceeds 80% requirement)
+**Current test coverage: 95.76%** ✅ (exceeds 80% requirement)
 
 ### Code Quality Checks
 
@@ -506,7 +511,7 @@ pre-commit run --all-files
 
 ### Project Standards
 
-- **Test Coverage**: Minimum 80% (currently 95.93%)
+- **Test Coverage**: Minimum 80% (currently 95.76%)
 - **Type Safety**: Full type annotation coverage with `ty`
 - **Code Quality**: Enforced via `ruff` linting
 - **Commit Messages**: Follow conventional commit format

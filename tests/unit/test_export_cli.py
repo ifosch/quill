@@ -212,6 +212,26 @@ class TestExportCommand:
                 "1abc123", output_path=None, format="rtf"
             )
 
+    def test_export_with_txt_format(self):
+        """Test export command with TXT format."""
+        runner = CliRunner()
+
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+            mock_zenodotos.export_file.return_value = "My Document.txt"
+
+            result = runner.invoke(cli, ["export", "1abc123", "--format", "txt"])
+
+            assert result.exit_code == 0
+            assert "Successfully exported" in result.output
+            assert "My Document.txt" in result.output
+
+            # Verify Zenodotos was called with TXT format
+            mock_zenodotos.export_file.assert_called_once_with(
+                "1abc123", output_path=None, format="txt"
+            )
+
     # New tests for query-based export functionality
     def test_export_with_query_single_match(self):
         """Test export command with query that returns single match."""

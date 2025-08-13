@@ -159,6 +159,10 @@ The library now provides:
   - [x] Enhanced export formats
     - [x] Markdown export (md)
     - [x] RTF export (rtf)
+    - [x] TXT (Plain Text)
+    - [ ] ODT (OpenDocument Text)
+    - [ ] ODS (OpenDocument Spreadsheet)
+    - [ ] ODP (OpenDocument Presentation)
     - [ ] PDF export with page ranges
     - [ ] HTML export with embedded images
     - [ ] Custom export templates
@@ -388,7 +392,7 @@ The library now provides:
 
 ### Code Quality
 - [x] Code coverage
-  - [x] Maintain >80% coverage (currently 95.93%)
+  - [x] Maintain >80% coverage (currently 95.76%)
   - [x] Critical path coverage
 - [x] Code style
   - [x] Consistent formatting (ruff)
@@ -420,7 +424,7 @@ The library now provides:
 
 ## Project Health Summary
 
-- **Test Coverage:** 96% (exceeds 80% requirement) - All 222 tests passing
+- **Test Coverage:** 95.76% (exceeds 80% requirement) - All 242 tests passing
 - **Documentation:** Complete with Sphinx-generated API docs and comprehensive user guides
 - **Code Quality:** High standards maintained with ruff formatting, ty type checking, and Google-style docstrings
 - **Feature Completeness:** Core file management and export features fully implemented
