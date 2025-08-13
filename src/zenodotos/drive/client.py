@@ -205,7 +205,7 @@ class DriveClient:
         Raises:
             ValueError: If the format is not supported.
         """
-        supported_formats = ["html", "pdf", "xlsx", "csv", "md", "rtf"]
+        supported_formats = ["html", "pdf", "xlsx", "csv", "md", "rtf", "txt"]
         if format not in supported_formats:
             raise ValueError(f"Unsupported format: {format}")
 
@@ -256,6 +256,7 @@ class DriveClient:
             "csv": "text/csv",
             "md": "text/markdown",
             "rtf": "application/rtf",
+            "txt": "text/plain",
         }
         return mime_type_mapping.get(format, "application/zip")
 
@@ -275,5 +276,6 @@ class DriveClient:
             "csv": "csv",
             "md": "md",
             "rtf": "rtf",
+            "txt": "txt",
         }
         return extension_mapping.get(format, "zip")

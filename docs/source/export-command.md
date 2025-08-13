@@ -20,7 +20,7 @@ You can export files using either a file ID or a search query. File ID and query
 
 - `--query TEXT`: Search query to find files to export (e.g., "name contains 'report'")
 - `--output TEXT`: Output path for the exported file. If not provided, saves to current directory with document name
-- `--format [html|pdf|xlsx|csv|md|rtf]`: Export format (auto-detected if not specified)
+- `--format [html|pdf|xlsx|csv|md|rtf|txt]`: Export format (auto-detected if not specified)
 - `--verbose`: Show detailed progress information
 - `--help`: Show help message and exit
 
@@ -108,6 +108,7 @@ You can override the smart defaults with these format options:
 - `csv`: CSV format (for spreadsheets)
 - `md`: Markdown format (for Google Docs)
 - `rtf`: Rich Text Format (for Google Docs)
+- `txt`: Plain text format (for Google Docs)
 
 ## Usage Examples
 
@@ -160,6 +161,9 @@ zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format md
 
 # Export a Google Doc to Rich Text Format
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format rtf
+
+# Export a Google Doc to Plain Text
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format txt
 
 # Export a Google Sheet to CSV instead of XLSX
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format csv

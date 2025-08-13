@@ -6,7 +6,7 @@ This checklist ensures a smooth and reliable release process for Zenodotos packa
 
 ### ✅ Code Quality Checks
 - [ ] **All tests pass**: `uv run pytest`
-- [ ] **Code coverage >80%**: Currently at 95.93%
+- [ ] **Code coverage >80%**: Currently at 95.76%
 - [ ] **Linting passes**: `uv run ruff check .`
 - [ ] **Formatting is correct**: `uv run ruff format --check .`
 - [ ] **Type checking passes**: `uv run ty check`
@@ -188,7 +188,7 @@ If automated release fails:
 
 A successful release should achieve:
 
-- ✅ **All tests pass** (222 tests, 96% coverage)
+- ✅ **All tests pass** (242 tests, 95.76% coverage)
 - ✅ **Package installs correctly** from both TestPyPI and PyPI
 - ✅ **CLI functionality** works as expected
 - ✅ **Library functionality** works as expected
