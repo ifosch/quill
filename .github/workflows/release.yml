@@ -1,17 +1,8 @@
-name: Manual Package Release
+name: Automated Package Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'New version to release (e.g., 0.2.2)'
-        required: true
-        type: string
-      skip_testpypi:
-        description: 'Skip TestPyPI and go directly to PyPI'
-        required: false
-        type: boolean
-        default: false
+  release:
+    types: [published]
 
 env:
   PYTHON_VERSION: '3.11'
@@ -28,7 +19,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch full history for tagging
-          token: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -45,14 +35,19 @@ jobs:
           uv sync
           uv run pip install --upgrade pip
 
-      - name: Validate version format
+      - name: Get version from release tag
         run: |
+          # Extract version from release tag (remove 'v' prefix)
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "✅ Version from release tag: $VERSION"
+
           # Validate version format (semantic versioning)
-          if [[ ! "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "❌ Error: Version must be in format X.Y.Z (e.g., 0.2.2)"
             exit 1
           fi
-          echo "✅ Version format validated: ${{ inputs.version }}"
+          echo "✅ Version format validated: $VERSION"
 
       - name: Run tests
         run: |
@@ -61,45 +56,20 @@ jobs:
           uv run ruff format --check .
           uv run ty check
 
-      - name: Check and update version in pyproject.toml
+      - name: Verify version in pyproject.toml
         run: |
           # Get current version from pyproject.toml
           CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           echo "Current version in pyproject.toml: $CURRENT_VERSION"
-          echo "Target version: ${{ inputs.version }}"
+          echo "Target version from release tag: $VERSION"
 
-          if [ "$CURRENT_VERSION" = "${{ inputs.version }}" ]; then
-            echo "✅ Version already matches target version. No update needed."
-            echo "Skipping version bump and lock file update."
+          if [ "$CURRENT_VERSION" = "$VERSION" ]; then
+            echo "✅ Version in pyproject.toml matches release tag"
           else
-            echo "🔄 Updating version from $CURRENT_VERSION to ${{ inputs.version }}"
-            # Update version in pyproject.toml
-            sed -i 's/^version = ".*"/version = "${{ inputs.version }}"/' pyproject.toml
-
-            # Update uv.lock
-            uv lock
-
-            # Show the changes
-            echo "Updated pyproject.toml:"
-            grep '^version = ' pyproject.toml
-            echo "Updated uv.lock"
+            echo "❌ Version mismatch: pyproject.toml has $CURRENT_VERSION but release tag is v$VERSION"
+            echo "Please ensure pyproject.toml version matches the release tag before publishing"
+            exit 1
           fi
-
-      - name: Commit version bump (if needed)
-        run: |
-          # Check if there are any changes to commit
-          if git diff --staged --quiet && git diff --quiet; then
-            echo "✅ No changes to commit. Version already matches target."
-          else
-            echo "🔄 Committing version bump..."
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
-            git add pyproject.toml uv.lock
-            git commit -m "feat(release): bump version to ${{ inputs.version }}"
-            git push origin HEAD:${{ github.ref_name }}
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
       - name: TestPyPI Release
         if: ${{ !inputs.skip_testpypi }}
@@ -115,7 +85,7 @@ jobs:
         if: ${{ !inputs.skip_testpypi }}
         run: |
           echo "🔍 Checking TestPyPI availability..."
-          ./scripts/check-package-availability.sh --testpypi --wait zenodotos ${{ inputs.version }}
+          ./scripts/check-package-availability.sh --testpypi --wait zenodotos $VERSION
         env:
           TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
 
@@ -123,7 +93,7 @@ jobs:
         if: ${{ !inputs.skip_testpypi }}
         run: |
           echo "🧪 Testing TestPyPI installation..."
-          ./scripts/test-package-install.sh --testpypi zenodotos ${{ inputs.version }}
+          ./scripts/test-package-install.sh --testpypi zenodotos $VERSION
 
       - name: PyPI Release
         run: |
@@ -137,62 +107,71 @@ jobs:
       - name: Check PyPI availability
         run: |
           echo "🔍 Checking PyPI availability..."
-          ./scripts/check-package-availability.sh --pypi --wait zenodotos ${{ inputs.version }}
+          ./scripts/check-package-availability.sh --pypi --wait zenodotos $VERSION
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 
       - name: Test PyPI installation
         run: |
           echo "🧪 Testing PyPI installation..."
-          ./scripts/test-package-install.sh --pypi zenodotos ${{ inputs.version }}
+          ./scripts/test-package-install.sh --pypi zenodotos $VERSION
 
-      - name: Create and push Git tag
+      - name: Verify Git tag exists
         run: |
-          echo "🏷️ Creating Git tag v${{ inputs.version }}..."
-          git tag v${{ inputs.version }}
-          git push origin v${{ inputs.version }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          echo "🏷️ Verifying Git tag exists..."
+          if git tag --list | grep -q "v$VERSION"; then
+            echo "✅ Git tag v$VERSION exists"
+          else
+            echo "❌ Git tag v$VERSION not found"
+            exit 1
+          fi
 
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-        with:
-          tag_name: v${{ inputs.version }}
-          release_name: Release v${{ inputs.version }}
-          body: |
-            ## Release v${{ inputs.version }}
+      - name: Update GitHub Release
+        run: |
+          echo "📝 Updating GitHub Release with package information..."
 
-            This release was automatically created by the GitHub Actions workflow.
+          # Get the release notes from the existing release
+          RELEASE_BODY=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/v$VERSION" | \
+            jq -r '.body // ""')
 
-            ### Changes
-            - Version bump to ${{ inputs.version }}
-            - Automated release process
+          # Add package information to release notes
+          PACKAGE_INFO="
 
-            ### Verification
-            - ✅ Published to TestPyPI
-            - ✅ TestPyPI availability confirmed
-            - ✅ TestPyPI installation tested
-            - ✅ Published to PyPI
-            - ✅ PyPI availability confirmed
-            - ✅ PyPI installation tested
+          ## Package Information
 
-            ### Installation
-            ```bash
-            pip install zenodotos==${{ inputs.version }}
-            ```
-          draft: false
-          prerelease: false
+          ### Verification
+          - ✅ Published to TestPyPI
+          - ✅ TestPyPI availability confirmed
+          - ✅ TestPyPI installation tested
+          - ✅ Published to PyPI
+          - ✅ PyPI availability confirmed
+          - ✅ PyPI installation tested
+
+          ### Installation
+          \`\`\`bash
+          pip install zenodotos==$VERSION
+          \`\`\`
+
+          ### Package Links
+          - **PyPI**: https://pypi.org/project/zenodotos/$VERSION/
+          - **TestPyPI**: https://test.pypi.org/project/zenodotos/$VERSION/"
+
+          # Update the release
+          curl -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/v$VERSION" \
+            -d "{\"body\":\"$RELEASE_BODY$PACKAGE_INFO\"}"
 
       - name: Success message
         run: |
-          echo "🎉 Release v${{ inputs.version }} completed successfully!"
+          echo "🎉 Release v$VERSION completed successfully!"
           echo ""
           echo "📦 Package is available on PyPI:"
-          echo "   https://pypi.org/project/zenodotos/${{ inputs.version }}/"
+          echo "   https://pypi.org/project/zenodotos/$VERSION/"
           echo ""
-          echo "🏷️ Git tag created: v${{ inputs.version }}"
+          echo "🏷️ Git tag: v$VERSION"
           echo ""
-          echo "📋 Release created:"
-          echo "   https://github.com/${{ github.repository }}/releases/tag/v${{ inputs.version }}"
+          echo "📋 Release updated:"
+          echo "   https://github.com/${{ github.repository }}/releases/tag/v$VERSION"
