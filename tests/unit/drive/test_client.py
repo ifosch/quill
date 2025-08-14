@@ -247,3 +247,58 @@ def test_get_file_error_handling(
 
     with pytest.raises(error_class, match=error_message):
         drive_client.get_file("123")
+
+
+class TestExportFormatHandling:
+    """Test export format handling methods."""
+
+    def test_validate_format_supported(self, drive_client):
+        """Test that supported formats are validated successfully."""
+        supported_formats = ["html", "pdf", "xlsx", "csv", "md", "rtf", "txt", "odt"]
+
+        for format in supported_formats:
+            # Should not raise any exception
+            drive_client._validate_format(format)
+
+    def test_validate_format_unsupported(self, drive_client):
+        """Test that unsupported formats raise ValueError."""
+        with pytest.raises(ValueError, match="Unsupported format: invalid"):
+            drive_client._validate_format("invalid")
+
+    def test_get_mime_type_for_format(self, drive_client):
+        """Test MIME type mapping for different formats."""
+        mime_type_tests = [
+            ("html", "application/zip"),
+            ("pdf", "application/pdf"),
+            (
+                "xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            ),
+            ("csv", "text/csv"),
+            ("md", "text/markdown"),
+            ("rtf", "application/rtf"),
+            ("txt", "text/plain"),
+            ("odt", "application/vnd.oasis.opendocument.text"),
+        ]
+
+        for format, expected_mime_type in mime_type_tests:
+            assert drive_client._get_mime_type_for_format(format) == expected_mime_type
+
+    def test_get_file_extension_for_format(self, drive_client):
+        """Test file extension mapping for different formats."""
+        extension_tests = [
+            ("html", "zip"),
+            ("pdf", "pdf"),
+            ("xlsx", "xlsx"),
+            ("csv", "csv"),
+            ("md", "md"),
+            ("rtf", "rtf"),
+            ("txt", "txt"),
+            ("odt", "odt"),
+        ]
+
+        for format, expected_extension in extension_tests:
+            assert (
+                drive_client._get_file_extension_for_format(format)
+                == expected_extension
+            )

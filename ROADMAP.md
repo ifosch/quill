@@ -160,7 +160,7 @@ The library now provides:
     - [x] Markdown export (md)
     - [x] RTF export (rtf)
     - [x] TXT (Plain Text)
-    - [ ] ODT (OpenDocument Text)
+    - [x] ODT (OpenDocument Text)
     - [ ] ODS (OpenDocument Spreadsheet)
     - [ ] ODP (OpenDocument Presentation)
     - [ ] PDF export with page ranges
