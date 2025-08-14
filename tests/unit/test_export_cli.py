@@ -173,7 +173,7 @@ class TestExportCommand:
         result = runner.invoke(cli, ["export", "--help"])
 
         assert result.exit_code == 0
-        assert "html|pdf|xlsx|csv|md|rtf" in result.output
+        assert "html|pdf|xlsx|csv|md|rtf|txt|odt" in result.output
 
     def test_export_smart_default_no_format_specified(self):
         """Test export command uses smart defaults when no format specified."""
@@ -230,6 +230,26 @@ class TestExportCommand:
             # Verify Zenodotos was called with TXT format
             mock_zenodotos.export_file.assert_called_once_with(
                 "1abc123", output_path=None, format="txt"
+            )
+
+    def test_export_with_odt_format(self):
+        """Test export command with ODT format."""
+        runner = CliRunner()
+
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+            mock_zenodotos.export_file.return_value = "My Document.odt"
+
+            result = runner.invoke(cli, ["export", "1abc123", "--format", "odt"])
+
+            assert result.exit_code == 0
+            assert "Successfully exported" in result.output
+            assert "My Document.odt" in result.output
+
+            # Verify Zenodotos was called with ODT format
+            mock_zenodotos.export_file.assert_called_once_with(
+                "1abc123", output_path=None, format="odt"
             )
 
     # New tests for query-based export functionality

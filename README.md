@@ -301,6 +301,7 @@ Override the default format with these options:
 - `md`: Markdown format (for Google Docs)
 - `rtf`: Rich Text Format (for Google Docs)
 - `txt`: Plain text format (for Google Docs)
+- `odt`: OpenDocument Text format (for Google Docs)
 
 #### Examples
 
@@ -313,6 +314,9 @@ zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format md
 
 # Export a Google Doc to Plain Text
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format txt
+
+# Export a Google Doc to OpenDocument Text
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format odt
 
 # Export a Google Sheet to Excel
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format xlsx
