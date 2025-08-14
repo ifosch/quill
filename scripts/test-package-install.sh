@@ -204,8 +204,8 @@ print_success "Project initialized"
 
 # Install package with retry logic
 print_info "Installing $PACKAGE_NAME from $INDEX_NAME..."
-MAX_RETRIES=3
-RETRY_DELAY=30
+MAX_RETRIES=5
+RETRY_DELAY=60
 
 for attempt in $(seq 1 $MAX_RETRIES); do
     print_info "Installation attempt $attempt of $MAX_RETRIES..."
