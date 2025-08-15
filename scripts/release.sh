@@ -77,7 +77,9 @@ validate_environment() {
 
 # Function to get current version
 get_current_version() {
-    grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/'
+    # For dynamic versioning, get version from Git tag
+    # Remove 'v' prefix from the current Git tag
+    git describe --tags --abbrev=0 | sed 's/^v//'
 }
 
 # Function to build package
@@ -90,8 +92,13 @@ build_package() {
     # Build package
     uv build
 
-    if [ -f "dist/zenodotos-$(get_current_version).tar.gz" ]; then
+    # For dynamic versioning, check if any package was built successfully
+    # The exact filename depends on the version from Git tag
+    if ls dist/zenodotos-*.tar.gz 1> /dev/null 2>&1; then
         print_success "Package built successfully"
+        # Show the actual built package name
+        BUILT_PACKAGE=$(ls dist/zenodotos-*.tar.gz | head -1)
+        print_info "Built package: $(basename "$BUILT_PACKAGE")"
     else
         print_error "Package build failed"
         exit 1
@@ -213,9 +220,18 @@ if [ "$PUBLISH_TESTPYPI" = false ] && [ "$PUBLISH_PYPI" = false ]; then
 fi
 
 # Main execution
-    print_info "Starting Zenodotos release process..."
-print_info "Current version: $(get_current_version)"
-print_info "Note: Package version is $(get_current_version), git tag should be v$(get_current_version)"
+print_info "Starting Zenodotos release process..."
+
+# Get version from Git tag for dynamic versioning
+VERSION=$(get_current_version)
+if [ -z "$VERSION" ]; then
+    print_error "No Git tag found. Please ensure you're on a tagged commit for releases."
+    print_info "For development builds, use: git tag v0.2.8 && git push origin v0.2.8"
+    exit 1
+fi
+
+print_info "Current version: $VERSION"
+print_info "Note: Package version will be $VERSION from Git tag v$VERSION"
 
 # Validate environment
 validate_environment
@@ -228,11 +244,11 @@ if [ "$PUBLISH_TESTPYPI" = true ]; then
     print_info "Publishing to TestPyPI..."
     publish_to_test_pypi
     print_success "TestPyPI release completed successfully!"
-    print_info "Version $(get_current_version) is now available on TestPyPI"
+    print_info "Version $VERSION is now available on TestPyPI"
     echo ""
     print_info "📋 Next Steps:"
-    print_info "  • Check availability: ./scripts/check-package-availability.sh --testpypi --wait $(get_current_version)"
-    print_info "  • Test installation: ./scripts/test-package-install.sh --testpypi $(get_current_version)"
+    print_info "  • Check availability: ./scripts/check-package-availability.sh --testpypi --wait $VERSION"
+    print_info "  • Test installation: ./scripts/test-package-install.sh --testpypi $VERSION"
     print_info "  • View deployment times: ./scripts/check-package-availability.sh --deployment-times"
 fi
 
@@ -240,10 +256,10 @@ if [ "$PUBLISH_PYPI" = true ]; then
     print_info "Publishing to production PyPI..."
     publish_to_production_pypi
     print_success "Production PyPI release completed successfully!"
-    print_info "Version $(get_current_version) is now available on production PyPI"
+    print_info "Version $VERSION is now available on production PyPI"
     echo ""
     print_info "📋 Next Steps:"
-    print_info "  • Check availability: ./scripts/check-package-availability.sh --pypi --wait $(get_current_version)"
-    print_info "  • Test installation: pip install zenodotos==$(get_current_version)"
+    print_info "  • Check availability: ./scripts/check-package-availability.sh --pypi --wait $VERSION"
+    print_info "  • Test installation: pip install zenodotos==$VERSION"
     print_info "  • View deployment times: ./scripts/check-package-availability.sh --deployment-times"
 fi
