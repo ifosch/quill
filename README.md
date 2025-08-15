@@ -298,6 +298,7 @@ Override the default format with these options:
 - `pdf`: PDF export
 - `xlsx`: Excel format (for spreadsheets)
 - `csv`: CSV format (for spreadsheets)
+- `ods`: OpenDocument Spreadsheet format (for Google Sheets)
 - `md`: Markdown format (for Google Docs)
 - `rtf`: Rich Text Format (for Google Docs)
 - `txt`: Plain text format (for Google Docs)
@@ -324,6 +325,9 @@ zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format epub
 
 # Export a Google Sheet to Excel
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format xlsx
+
+# Export a Google Sheet to LibreOffice format (ODS)
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format ods
 
 # Export a presentation to PDF
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format pdf

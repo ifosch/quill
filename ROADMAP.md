@@ -161,7 +161,7 @@ The library now provides:
     - [x] RTF export (rtf)
     - [x] TXT (Plain Text)
     - [x] ODT (OpenDocument Text)
-    - [ ] ODS (OpenDocument Spreadsheet)
+    - [x] ODS (OpenDocument Spreadsheet)
     - [ ] ODP (OpenDocument Presentation)
     - [ ] PDF export with page ranges
     - [ ] HTML export with embedded images

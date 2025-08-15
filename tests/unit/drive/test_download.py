@@ -317,6 +317,39 @@ class TestDriveClientDownload:
             )
             assert result == output_path
 
+    def test_export_ods_format_for_google_sheets(self):
+        """Test ODS format export for Google Sheets."""
+        client = DriveClient()
+
+        # Mock the Google Drive API service
+        mock_google_drive_service = MagicMock()
+
+        # Mock Google's export request
+        mock_google_export_request = MagicMock()
+        mock_google_export_request.execute.return_value = b"exported ods content"
+        mock_google_drive_service.files().export.return_value = (
+            mock_google_export_request
+        )
+
+        # Mock Google's file metadata call for filename
+        mock_google_get_request = MagicMock()
+        mock_google_get_request.execute.return_value = {"name": "Test Spreadsheet"}
+        mock_google_drive_service.files().get.return_value = mock_google_get_request
+
+        # Setup client with mocked Google service
+        client.service = mock_google_drive_service
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_path = os.path.join(temp_dir, "test.ods")
+            result = client.export("test_id", output_path=output_path, format="ods")
+
+            # Verify ODS format was used
+            mock_google_drive_service.files().export.assert_called_with(
+                fileId="test_id",
+                mimeType="application/vnd.oasis.opendocument.spreadsheet",
+            )
+            assert result == output_path
+
     def test_export_invalid_format_raises_error(self):
         """Test that invalid format raises ValueError."""
         client = DriveClient()
@@ -330,7 +363,8 @@ class TestDriveClientDownload:
                 client.export("test_id", format="invalid_format")
 
     @pytest.mark.parametrize(
-        "format_type", ["html", "pdf", "xlsx", "csv", "md", "rtf", "txt", "odt", "epub"]
+        "format_type",
+        ["html", "pdf", "xlsx", "csv", "md", "rtf", "txt", "odt", "ods", "epub"],
     )
     def test_export_format_validation_valid_formats(self, format_type):
         """Test format validation for valid formats."""
