@@ -182,6 +182,8 @@ git commit -m "chore: update ruff to 0.12.0"
 git push origin main
 
 # 5. Check GitHub Actions tab
+- Verify CI workflows pass with updated versions
+- Check that release workflow uses correct versions
 ```
 
 This system ensures that all environments use the same versions, reducing inconsistencies and maintenance overhead.

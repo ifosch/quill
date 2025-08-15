@@ -307,14 +307,15 @@ If you encounter issues:
 
 Planned enhancements to the publishing process:
 
-1. **Automated GitHub Actions** workflow for tag-based releases
-2. **Automated version management** from git tags
-3. **Release notes generation** from conventional commits
+1. **Workflow linking** between release and test workflows
+2. **Automated testing** with scheduled execution
+3. **Notification integration** for test results
 4. **Package signing** with GPG keys
-5. **Automated testing** in isolated environments
+5. **Cross-platform testing** on different operating systems
 
 ## Related Documentation
 
+- [GitHub Actions Workflows](./github-actions.md) - Automated release and testing workflows
 - [Version Management](./version-management.md) - Managing tool versions
 - [Development Setup](./installation.md) - Setting up the development environment
 - [Contributing Guide](../contributing.md) - Contributing to the project
