@@ -57,26 +57,11 @@ jobs:
           uv run ty check
 
       - name: TestPyPI Release
-        if: ${{ !inputs.skip_testpypi }}
         run: |
           echo "🚀 Publishing to TestPyPI..."
           ./scripts/release.sh --testpypi
         env:
           TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
-
-      - name: Check TestPyPI availability
-        if: ${{ !inputs.skip_testpypi }}
-        run: |
-          echo "🔍 Checking TestPyPI availability..."
-          ./scripts/check-package-availability.sh --testpypi --wait zenodotos $VERSION
-        env:
-          TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
-
-      - name: Test TestPyPI installation
-        if: ${{ !inputs.skip_testpypi }}
-        run: |
-          echo "🧪 Testing TestPyPI installation..."
-          ./scripts/test-package-install.sh --testpypi zenodotos $VERSION
 
       - name: PyPI Release
         run: |
@@ -84,18 +69,6 @@ jobs:
           ./scripts/release.sh --pypi
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-
-      - name: Check PyPI availability
-        run: |
-          echo "🔍 Checking PyPI availability..."
-          ./scripts/check-package-availability.sh --pypi --wait zenodotos $VERSION
-        env:
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-
-      - name: Test PyPI installation
-        run: |
-          echo "🧪 Testing PyPI installation..."
-          ./scripts/test-package-install.sh --pypi zenodotos $VERSION
 
       - name: Verify Git tag exists
         run: |
@@ -121,13 +94,9 @@ jobs:
 
           ## Package Information
 
-          ### Verification
+          ### Publishing Status
           - ✅ Published to TestPyPI
-          - ✅ TestPyPI availability confirmed
-          - ✅ TestPyPI installation tested
           - ✅ Published to PyPI
-          - ✅ PyPI availability confirmed
-          - ✅ PyPI installation tested
 
           ### Installation
           \`\`\`bash
@@ -136,7 +105,16 @@ jobs:
 
           ### Package Links
           - **PyPI**: https://pypi.org/project/zenodotos/$VERSION/
-          - **TestPyPI**: https://test.pypi.org/project/zenodotos/$VERSION/"
+          - **TestPyPI**: https://test.pypi.org/project/zenodotos/$VERSION/
+
+          ### Testing
+          > **Note**: Package installation testing is now handled by a separate workflow.
+          >
+          > To test the package installation, use the **Test Package Installation** workflow:
+          > 1. Go to Actions → Test Package Installation
+          > 2. Click "Run workflow"
+          > 3. Configure the test parameters as needed
+          > 4. Run the test to verify installation works correctly"
 
           # Update the release
           curl -X PATCH \
@@ -156,3 +134,7 @@ jobs:
           echo ""
           echo "📋 Release updated:"
           echo "   https://github.com/${{ github.repository }}/releases/tag/v$VERSION"
+          echo ""
+          echo "🧪 Next Steps:"
+          echo "   To test package installation, use the 'Test Package Installation' workflow"
+          echo "   This allows for flexible testing with configurable wait times for index propagation."

@@ -357,12 +357,13 @@ The library now provides:
 - **Better Error Handling**: Each step can fail independently
 - **Reusable Components**: Scripts can be used outside the release process
 
-### Phase 2: Automated Publishing with GitHub Actions (Current Focus)
-- [x] **GitHub Actions Workflow** - Manual release workflow with workflow_dispatch
-- [x] **Release Orchestration** - Coordinate all three steps (publish → verify → test)
-- [x] **Version Management** - Manual version input with validation
+### Phase 2: Automated Publishing with GitHub Actions (Completed ✅)
+- [x] **GitHub Actions Workflow** - Automated release workflow triggered by release published
+- [x] **Separated Workflows** - Release and testing workflows separated for better reliability
+- [x] **Version Management** - Automatic version extraction from release tag with validation
 - [x] **Automated Testing** - Pre-publishing validation in isolated environments
-- [x] **GitHub Release Creation** - Automatic tag creation and release notes
+- [x] **GitHub Release Creation** - Automatic release updates with package information
+- [x] **Manual Test Workflow** - Flexible testing workflow with configurable parameters
 - [ ] **Package Signing** - GPG signing for enhanced security (future)
 - [ ] **Release Notes Generation** - Auto-generate from conventional commits (future)
 
@@ -381,12 +382,14 @@ The library now provides:
    - Repeat for PyPI if TestPyPI successful
    - Manual orchestration of steps
 
-3. **Automated Publishing** (Phase 2):
-   - Manual workflow dispatch with version input
-   - Automated version validation and update
-   - GitHub Actions orchestrates all three steps
+3. **Automated Publishing** (Phase 2 - Completed):
+   - Automatic trigger on release published
+   - Automated version extraction and validation
+   - GitHub Actions handles publishing only
    - Quality gates and validation
-   - Automated Git tagging and GitHub releases
+   - Automated GitHub release updates
+   - Separate manual testing workflow for flexible verification
+   - GitHub release version auto-detection for testing
 
 ## Maintenance
 

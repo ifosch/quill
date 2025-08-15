@@ -40,30 +40,28 @@ This checklist ensures a smooth and reliable release process for Zenodotos packa
 - [ ] **Verify build artifacts**: Check `dist/` directory
 - [ ] **Test package locally**: `uv pip install dist/zenodotos-*.tar.gz`
 
-### ✅ TestPyPI Publishing
-- [ ] **Publish to TestPyPI**: `./scripts/release.sh --testpypi`
-- [ ] **Verify TestPyPI upload**: Check https://test.pypi.org/project/zenodotos/
-- [ ] **Check package availability**: `./scripts/check-package-availability.sh --testpypi`
-- [ ] **Test TestPyPI installation**: `./scripts/test-package-install.sh --testpypi`
-- [ ] **Verify CLI functionality**: Test all commands work
-- [ ] **Verify library functionality**: Test imports and basic usage
+### ✅ Automated Publishing (GitHub Actions)
+- [x] **Create GitHub release**: Triggers automatic publishing workflow
+- [x] **Automatic TestPyPI publishing**: Handled by release workflow
+- [x] **Automatic PyPI publishing**: Handled by release workflow
+- [x] **Release completion**: Workflow completes quickly after publishing
 
-### ✅ Production PyPI Publishing
-- [ ] **Publish to production PyPI**: `./scripts/release.sh --pypi`
-- [ ] **Verify production upload**: Check https://pypi.org/project/zenodotos/
-- [ ] **Check package availability**: `./scripts/check-package-availability.sh --pypi`
-- [ ] **Test production installation**: `pip install zenodotos`
-- [ ] **Verify production functionality**: Test CLI and library
+### ✅ Manual Testing (Optional)
+- [ ] **Run test workflow**: Go to Actions → Test Package Installation
+- [ ] **Configure test parameters**: Package, version, target index, wait time
+- [ ] **Verify TestPyPI installation**: Tests availability and installation
+- [ ] **Verify PyPI installation**: Tests availability and installation
+- [ ] **Review test results**: Check workflow output for success/failure
 
 ## Post-Release Verification
 
 ### ✅ Package Availability Verification
-- [ ] **Check TestPyPI availability**: `./scripts/check-package-availability.sh --testpypi`
-- [ ] **Check production PyPI availability**: `./scripts/check-package-availability.sh --pypi`
-- [ ] **Test TestPyPI installation**: `./scripts/test-package-install.sh --testpypi`
-- [ ] **Test production PyPI installation**: `./scripts/test-package-install.sh --pypi`
-- [ ] **Verify deployment times**: `./scripts/check-package-availability.sh --deployment-times`
-- [ ] **Monitor propagation**: Check availability periodically until fully propagated
+- [ ] **Use test workflow**: Go to Actions → Test Package Installation
+- [ ] **Test both indexes**: Configure target_index to "both"
+- [ ] **Set appropriate wait time**: 300s for TestPyPI, 600s for PyPI
+- [ ] **Review availability results**: Check workflow output
+- [ ] **Verify installation**: Confirm package installs and works correctly
+- [ ] **Monitor propagation**: Re-run test workflow if needed
 
 ### ✅ Installation Testing
 - [ ] **Clean environment test**: Install in fresh virtual environment
@@ -81,28 +79,31 @@ This checklist ensures a smooth and reliable release process for Zenodotos packa
 ### ✅ Git Repository Updates
 - [ ] **Version changes committed**: `git add pyproject.toml`
 - [ ] **Conventional commit message**: `git commit -m "feat: bump version to X.Y.Z"`
-- [ ] **Git tag created**: `git tag vX.Y.Z` (note the `v` prefix for semantic versioning)
-- [ ] **Tag pushed to remote**: `git push origin vX.Y.Z`
 - [ ] **Changes pushed to main**: `git push origin main`
+- [ ] **GitHub release created**: Go to Releases → Create new release
+- [ ] **Tag version**: Use `vX.Y.Z` format (e.g., `v0.2.10`)
+- [ ] **Publish release**: Triggers automated publishing workflow
 
 **Versioning Notes**:
 - Package version in `pyproject.toml`: `X.Y.Z` (without `v` prefix)
 - Git tag: `vX.Y.Z` (with `v` prefix for semantic versioning)
 
-## Automated Release (Future)
+## Automated Release (Current)
 
 ### ✅ GitHub Actions Setup
-- [ ] **Release workflow** created: `.github/workflows/release.yml`
-- [ ] **Secrets configured**: `TEST_PYPI_TOKEN`, `PYPI_TOKEN`
-- [ ] **Tag triggers** configured: `on: push: tags: ['v*']`
-- [ ] **Quality gates** implemented: Tests must pass before publishing
-- [ ] **Rollback capability** available: Package yanking if needed
+- [x] **Release workflow** created: `.github/workflows/release.yml`
+- [x] **Test workflow** created: `.github/workflows/test-package.yml`
+- [x] **Secrets configured**: `TEST_PYPI_TOKEN`, `PYPI_TOKEN`
+- [x] **Release triggers** configured: `on: release: types: [published]`
+- [x] **Quality gates** implemented: Tests must pass before publishing
+- [x] **Separated workflows** for publishing and testing
 
 ### ✅ Automated Testing
-- [ ] **Pre-publishing tests** run automatically
-- [ ] **Post-publishing tests** verify installation
-- [ ] **Cross-platform testing** (if applicable)
-- [ ] **Dependency compatibility** testing
+- [x] **Pre-publishing tests** run automatically in release workflow
+- [x] **Manual testing workflow** available for post-publishing verification
+- [x] **Configurable wait times** for index propagation delays
+- [x] **GitHub release version auto-detection** for testing
+- [x] **Flexible testing options** (TestPyPI, PyPI, or both)
 
 ## Troubleshooting
 
@@ -126,7 +127,7 @@ This checklist ensures a smooth and reliable release process for Zenodotos packa
 #### Installation Failures
 - **Issue**: Package installs but doesn't work
 - **Solution**: Check entry points and package structure
-- **Check**: Test with `./scripts/test-package-install.sh --testpypi`
+- **Check**: Use the test workflow to verify installation
 
 ## Release Notes Template
 
@@ -181,8 +182,9 @@ If automated release fails:
 1. **Check logs**: Review GitHub Actions logs
 2. **Identify issue**: Determine root cause
 3. **Fix locally**: Test fix manually
-4. **Re-run workflow**: Push new tag or manual trigger
+4. **Re-run workflow**: Create new GitHub release
 5. **Verify**: Confirm successful release
+6. **Test installation**: Use test workflow to verify package works
 
 ## Success Metrics
 
