@@ -254,7 +254,17 @@ class TestExportFormatHandling:
 
     def test_validate_format_supported(self, drive_client):
         """Test that supported formats are validated successfully."""
-        supported_formats = ["html", "pdf", "xlsx", "csv", "md", "rtf", "txt", "odt"]
+        supported_formats = [
+            "html",
+            "pdf",
+            "xlsx",
+            "csv",
+            "md",
+            "rtf",
+            "txt",
+            "odt",
+            "epub",
+        ]
 
         for format in supported_formats:
             # Should not raise any exception
@@ -279,6 +289,7 @@ class TestExportFormatHandling:
             ("rtf", "application/rtf"),
             ("txt", "text/plain"),
             ("odt", "application/vnd.oasis.opendocument.text"),
+            ("epub", "application/epub+zip"),
         ]
 
         for format, expected_mime_type in mime_type_tests:
@@ -295,6 +306,7 @@ class TestExportFormatHandling:
             ("rtf", "rtf"),
             ("txt", "txt"),
             ("odt", "odt"),
+            ("epub", "epub"),
         ]
 
         for format, expected_extension in extension_tests:
