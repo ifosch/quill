@@ -20,7 +20,7 @@ You can export files using either a file ID or a search query. File ID and query
 
 - `--query TEXT`: Search query to find files to export (e.g., "name contains 'report'")
 - `--output TEXT`: Output path for the exported file. If not provided, saves to current directory with document name
-- `--format [html|pdf|xlsx|csv|md|rtf|txt|odt|epub]`: Export format (auto-detected if not specified)
+- `--format [html|pdf|xlsx|csv|md|rtf|txt|odt|ods|epub]`: Export format (auto-detected if not specified)
 - `--verbose`: Show detailed progress information
 - `--help`: Show help message and exit
 
@@ -106,6 +106,7 @@ You can override the smart defaults with these format options:
 - `pdf`: PDF export
 - `xlsx`: Excel format (for spreadsheets)
 - `csv`: CSV format (for spreadsheets)
+- `ods`: OpenDocument Spreadsheet format (for Google Sheets)
 - `md`: Markdown format (for Google Docs)
 - `rtf`: Rich Text Format (for Google Docs)
 - `txt`: Plain text format (for Google Docs)
@@ -175,6 +176,9 @@ zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format epub
 
 # Export a Google Sheet to CSV instead of XLSX
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format csv
+
+# Export a Google Sheet to LibreOffice format (ODS)
+zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format ods
 
 # Export a presentation to HTML instead of PDF
 zenodotos export 1abc123def456ghi789jkl012mno345pqr678stu901vwx --format html

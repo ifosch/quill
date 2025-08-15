@@ -214,6 +214,7 @@ class DriveClient:
             "rtf",
             "txt",
             "odt",
+            "ods",
             "epub",
         ]
         if format not in supported_formats:
@@ -268,6 +269,7 @@ class DriveClient:
             "rtf": "application/rtf",
             "txt": "text/plain",
             "odt": "application/vnd.oasis.opendocument.text",
+            "ods": "application/vnd.oasis.opendocument.spreadsheet",
             "epub": "application/epub+zip",
         }
         return mime_type_mapping.get(format, "application/zip")
@@ -290,6 +292,7 @@ class DriveClient:
             "rtf": "rtf",
             "txt": "txt",
             "odt": "odt",
+            "ods": "ods",
             "epub": "epub",
         }
         return extension_mapping.get(format, "zip")

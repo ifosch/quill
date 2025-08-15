@@ -162,7 +162,7 @@ def get_file(file_id, query, fields):
 @click.option(
     "--format",
     type=click.Choice(
-        ["html", "pdf", "xlsx", "csv", "md", "rtf", "txt", "odt", "epub"]
+        ["html", "pdf", "xlsx", "csv", "md", "rtf", "txt", "odt", "ods", "epub"]
     ),
     help="Export format (auto-detected if not specified)",
 )
@@ -181,7 +181,7 @@ def export(file_id, query, output, format, verbose):
     - Google Drawings: PNG
     - Google Forms: ZIP
 
-    Use --format to override the default format. Supported formats: html, pdf, xlsx, csv, md, rtf, txt, odt, epub
+    Use --format to override the default format. Supported formats: html, pdf, xlsx, csv, ods, md, rtf, txt, odt, epub
 
     Either FILE_ID or --query must be provided. Use --query to search for files by name or other criteria.
     """
