@@ -205,7 +205,17 @@ class DriveClient:
         Raises:
             ValueError: If the format is not supported.
         """
-        supported_formats = ["html", "pdf", "xlsx", "csv", "md", "rtf", "txt", "odt"]
+        supported_formats = [
+            "html",
+            "pdf",
+            "xlsx",
+            "csv",
+            "md",
+            "rtf",
+            "txt",
+            "odt",
+            "epub",
+        ]
         if format not in supported_formats:
             raise ValueError(f"Unsupported format: {format}")
 
@@ -258,6 +268,7 @@ class DriveClient:
             "rtf": "application/rtf",
             "txt": "text/plain",
             "odt": "application/vnd.oasis.opendocument.text",
+            "epub": "application/epub+zip",
         }
         return mime_type_mapping.get(format, "application/zip")
 
@@ -279,5 +290,6 @@ class DriveClient:
             "rtf": "rtf",
             "txt": "txt",
             "odt": "odt",
+            "epub": "epub",
         }
         return extension_mapping.get(format, "zip")

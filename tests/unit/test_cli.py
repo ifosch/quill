@@ -494,6 +494,22 @@ class TestExport:
                 "test123", output_path=None, format="pdf"
             )
 
+    def test_with_epub_format(self):
+        """Test export with EPUB format."""
+        runner = CliRunner()
+        with patch("zenodotos.cli.commands.Zenodotos") as mock_zenodotos_class:
+            mock_zenodotos = Mock()
+            mock_zenodotos_class.return_value = mock_zenodotos
+
+            mock_zenodotos.export_file.return_value = "/path/to/exported/file.epub"
+
+            result = runner.invoke(cli, ["export", "test123", "--format", "epub"])
+
+            assert result.exit_code == 0
+            mock_zenodotos.export_file.assert_called_once_with(
+                "test123", output_path=None, format="epub"
+            )
+
     def test_with_output_path(self):
         """Test export with output path."""
         runner = CliRunner()
