@@ -1,6 +1,11 @@
 """Zenodotos - Google Drive Library and CLI Tool."""
 
-__version__ = "0.1.1"
+import importlib.metadata
+
+try:
+    __version__ = importlib.metadata.version(__name__)
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "0.0.0"  # Fallback for development mode
 
 # Main library exports
 from .client import Zenodotos
