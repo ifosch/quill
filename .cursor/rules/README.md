@@ -15,7 +15,7 @@ This document outlines the specific rules and guidelines for the Zenodotos proje
 - All Python code must be linted and formatted using `ruff`
 - All Python code must be type-checked using `ty`
 - All Python tests must be written and executed using `pytest`
-- Run `ruff check` for linting, `ruff format` for formatting, `ty check` for type checking, and `pytest` for testing
+- Run `uv run ruff check src/ tests/` for linting, `uv run ruff format src/ tests/` for formatting, `uv run ty src/` for type checking, and `uv run pytest` for testing
 - Fix all linting, formatting, type errors, and test failures before committing
 - Configure ruff, ty, and pytest settings in pyproject.toml
 - Maintain high test coverage (minimum 80% coverage)
@@ -59,11 +59,11 @@ This document outlines the specific rules and guidelines for the Zenodotos proje
 
 ### Code Verification Process
 Before committing changes, ensure:
-1. Python code passes ruff linting (`ruff check .`)
-2. Python code is properly formatted (`ruff format .`)
-3. Python code passes type checking (`ty check .`)
-4. All tests pass (`pytest`)
-5. Documentation builds without warnings (`sphinx-build -b html docs/source docs/build/html`)
+1. Python code passes ruff linting (`uv run ruff check src/ tests/`)
+2. Python code is properly formatted (`uv run ruff format src/ tests/`)
+3. Python code passes type checking (`uv run ty src/`)
+4. All tests pass (`uv run pytest`)
+5. Documentation builds without warnings (`uv run sphinx-build -b html docs/source docs/build/html`)
 6. Build process succeeds (`uv build`)
 7. Package can be installed locally (`uv sync`)
 8. Pre-commit checks pass (`pre-commit run --all-files`)
@@ -76,7 +76,7 @@ Before committing changes, ensure:
 - Include a detailed body explaining the change and relevant decisions
 
 ### Test Coverage
-- Use `pytest-cov` to measure test coverage
+- Use `uv run pytest --cov=zenodotos --cov-report=term-missing --cov-fail-under=80` to measure test coverage
 - Ensure test coverage is at least 80% (enforced via `--cov-fail-under=80` in pyproject.toml)
 - Generate coverage reports with `--cov-report=term-missing`
 - Investigate and address uncovered code
