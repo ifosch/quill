@@ -56,21 +56,6 @@ jobs:
           uv run ruff format --check .
           uv run ty check
 
-      - name: Verify version in pyproject.toml
-        run: |
-          # Get current version from pyproject.toml
-          CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
-          echo "Current version in pyproject.toml: $CURRENT_VERSION"
-          echo "Target version from release tag: $VERSION"
-
-          if [ "$CURRENT_VERSION" = "$VERSION" ]; then
-            echo "✅ Version in pyproject.toml matches release tag"
-          else
-            echo "❌ Version mismatch: pyproject.toml has $CURRENT_VERSION but release tag is v$VERSION"
-            echo "Please ensure pyproject.toml version matches the release tag before publishing"
-            exit 1
-          fi
-
       - name: TestPyPI Release
         if: ${{ !inputs.skip_testpypi }}
         run: |
@@ -78,8 +63,6 @@ jobs:
           ./scripts/release.sh --testpypi
         env:
           TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
-
-
 
       - name: Check TestPyPI availability
         if: ${{ !inputs.skip_testpypi }}
@@ -101,8 +84,6 @@ jobs:
           ./scripts/release.sh --pypi
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-
-
 
       - name: Check PyPI availability
         run: |

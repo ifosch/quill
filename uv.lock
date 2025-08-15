@@ -1062,7 +1062,6 @@ wheels = [
 
 [[package]]
 name = "zenodotos"
-version = "0.2.6"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
